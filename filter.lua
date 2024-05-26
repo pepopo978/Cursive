@@ -1,0 +1,76 @@
+if not Cursive.superwow then
+	return
+end
+
+local filter = {
+	"infight",
+	"alive",
+	"hostile",
+	"attackable",
+}
+
+filter.attackable = function(unit)
+	return UnitCanAttack("player", unit) and true or false
+end
+
+filter.infight = function(unit)
+	return UnitAffectingCombat(unit) and true or false
+end
+
+filter.alive = function(unit)
+	return not UnitIsDead(unit) and true or false
+end
+
+filter.range = function(unit)
+	return CheckInteractDistance(unit, 4) and true or false
+end
+
+filter.icon = function(unit)
+	return GetRaidTargetIndex(unit) and true or false
+end
+
+filter.normal = function(unit)
+	local elite = UnitClassification(unit)
+	return elite == "normal" and true or false
+end
+
+filter.elite = function(unit)
+	local elite = UnitClassification(unit)
+	return (elite == "elite" or elite == "rareelite") and true or false
+end
+
+filter.hostile = function(unit)
+	return UnitIsEnemy("player", unit) and true or false
+end
+
+filter.range = function(unit)
+	return CheckInteractDistance(unit, 4) and true or false
+end
+
+Cursive.filter = filter
+
+function Cursive:ShouldDisplayGuid(guid)
+	local exists, targetGuid = UnitExists("target")
+
+	-- always show target if attackable
+	if (targetGuid == guid) == true and filter.attackable(guid) then
+		return true
+	end
+
+	-- always show raid marks if attackable
+	if filter.icon(guid) and filter.attackable(guid) then
+		return true
+	end
+
+	-- apply filters
+	local shouldDisplay = true -- default to true
+
+	-- otherwise apply filters
+	for id, filter_name in pairs(Cursive.filter) do
+		if filter[filter_name] then
+			shouldDisplay = shouldDisplay and filter[filter_name](guid)
+		end
+	end
+
+	return shouldDisplay
+end

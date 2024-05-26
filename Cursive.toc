@@ -1,0 +1,33 @@
+## Interface: 11200
+## Title: Cursive
+## Author: Pepopo
+## Notes: Uses SuperWoW GUIDs to show units in combat and track curses
+## Version: 1.0
+## SavedVariablesPerCharacter: CursiveDB
+## X-Embeds: Ace2, FuBarPlugin-2.0, CompostLib, DewDropLib, TabletLib
+
+Libs\AceOO-2.0\AceOO-2.0.lua
+Libs\AceAddon-2.0\AceAddon-2.0.lua
+Libs\AceConsole-2.0\AceConsole-2.0.lua
+Libs\AceHook-2.1\AceHook-2.1.lua
+Libs\AceDB-2.0\AceDB-2.0.lua
+Libs\AceDebug-2.0\AceDebug-2.0.lua
+Libs\AceEvent-2.0\AceEvent-2.0.lua
+Libs\AceLocale-2.2\AceLocale-2.2.lua
+Libs\AceModuleCore-2.0\AceModuleCore-2.0.lua
+Libs\Dewdrop\Dewdrop-2.0.lua
+Libs\Tablet\Tablet-2.0.lua
+Libs\FuBarPlugin\FuBarPlugin-2.0.lua
+
+global.lua
+utils.lua
+settings.lua
+core.lua
+spells\druid.lua
+spells\hunter.lua
+spells\mage.lua
+spells\warlock.lua
+curses.lua
+filter.lua
+ui.lua
+commands.lua
