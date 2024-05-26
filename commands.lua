@@ -202,6 +202,7 @@ function Cursive:Multicurse(spellName, priority, noFailureWarning)
 	end
 
 	local selectedPriority = priority or "HIGHEST_HP"
+	local targetedGuid = nil
 
 	-- remove (Rank x) from spellName if it exists
 	local spellNameNoRank = string.gsub(spellName, "%(.+%)", "")
