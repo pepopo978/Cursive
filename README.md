@@ -6,6 +6,9 @@
 >
 > It won't work without it. Really.
 
+![image](https://github.com/pepopo978/Cursive/assets/149287158/801511af-29c7-4baf-b1ac-5e8c52f0f846)
+
+
 Cursive combines ShaguScan unit scanning with curse tracking similar to DotTimer and the ability to automatically curse targets similar to Decursive.
 
 `/cursive` for commands, minimap icon to edit options.
