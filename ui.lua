@@ -321,6 +321,14 @@ local function DisplayGuid(guid, row, col)
 				curse.timer:SetText(remaining)
 				curse.timer:Show()
 				curse:Show()
+
+				if remaining < 1 then
+					if Cursive.curses:ShouldPlayExpiringSound(curseName, guid) then
+						PlaySoundFile("Interface\\AddOns\\Cursive\\sounds\\expiring.mp3")
+					end
+				elseif Cursive.curses:HasRequestedExpiringSound(curseName, guid) then
+					Cursive.curses:EnableExpiringSound(curseName, guid)
+				end
 			else
 				curse.timer:Hide()
 				curse:Hide()
@@ -343,7 +351,7 @@ ui:SetScript("OnUpdate", function()
 	if (this.tick or 1) > GetTime() then
 		return
 	else
-		this.tick = GetTime() + .8
+		this.tick = GetTime() + .2
 	end
 
 	if not ui.rootBarFrame then
@@ -386,6 +394,13 @@ ui:SetScript("OnUpdate", function()
 			end
 
 			local active = UnitExists(guid) and Cursive.filter.alive(guid)
+			if active then
+				local old = GetTime() - time >= 900 -- >= 15 minutes old
+				if old and not UnitIsVisible(guid) then
+					active = false
+				end
+			end
+
 			if not active then
 				-- remove from core
 				Cursive.core.remove(guid)

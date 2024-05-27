@@ -1,11 +1,30 @@
 local curseCommands = "|cffffcc00Cursive:|cffffaaaa Commands:"
+local curseOptions = "Options (separate with ,):"
+
+local commandOptions = {
+	["warnings"] = "Display text warnings when a curse fails to cast.",
+	["resistsound"] = "Play a sound when a curse is resisted.",
+	["expiringsound"] = "Play a sound when a curse is about to expire.",
+}
 
 local commands = {
-	["curse"] = "/cursive curse <spellName:str>|<guid?:str>|<noFailureWarning:int[0,1]: Casts spell if not already on target/guid",
-	["multicurse"] = "/cursive multicurse <spellName:str>|<priority?:str>|<noFailureWarning:int[0,1]: Picks target based on priority and casts spell if not already on target.  Priority options: HIGHEST_HP, RAID_MARK.",
+	["curse"] = "/cursive curse <spellName:str>|<guid?:str>|<options?:List<str>>: Casts spell if not already on target/guid",
+	["multicurse"] = "/cursive multicurse <spellName:str>|<priority?:str>|<options?:List<str>>: Picks target based on priority and casts spell if not already on target.  Priority options: HIGHEST_HP, RAID_MARK.",
 }
 
 local curseNoTarget = "|cffffcc00Cursive:|cffffaaaa Couldn't find a target to curse."
+
+local function parseOptions(optionsStr)
+	local options = {  }
+
+	for option, _ in pairs(commandOptions) do
+		if string.find(optionsStr, option) then
+			options[option] = true
+		end
+	end
+
+	return options
+end
 
 local function handleSlashCommands(msg, editbox)
 	if not msg or msg == "" then
@@ -13,16 +32,22 @@ local function handleSlashCommands(msg, editbox)
 		for command, description in pairs(commands) do
 			DEFAULT_CHAT_FRAME:AddMessage(description)
 		end
+		DEFAULT_CHAT_FRAME:AddMessage(curseOptions)
+		for option, description in pairs(commandOptions) do
+			DEFAULT_CHAT_FRAME:AddMessage(option .. ": " .. description)
+		end
 		return
 	end
 	-- get first word in string
 	local _, _, command, args = string.find(msg, "(%w+) (.*)")
 	if command == "curse" then
-		local spellName, targetedGuid, noFailureWarning = Cursive.utils.strsplit("|", args)
-		Cursive:Curse(spellName, targetedGuid, noFailureWarning)
+		local spellName, targetedGuid, optionsStr = Cursive.utils.strsplit("|", args)
+		local options = parseOptions(optionsStr)
+		Cursive:Curse(spellName, targetedGuid, options)
 	elseif command == "multicurse" then
-		local spellName, priority, noFailureWarning = Cursive.utils.strsplit("|", args)
-		Cursive:Multicurse(spellName, priority, noFailureWarning)
+		local spellName, priority, optionsStr = Cursive.utils.strsplit("|", args)
+		local options = parseOptions(optionsStr)
+		Cursive:Multicurse(spellName, priority, options)
 	end
 end
 
@@ -68,6 +93,10 @@ local crowdControlledSpellIds = {
 	[8629] = { name = "Gouge", rank = 3, duration = 4 },
 	[11285] = { name = "Gouge", rank = 4, duration = 4 },
 	[11286] = { name = "Gouge", rank = 5, duration = 4 },
+
+	[3355] = { name = "Freezing Trap", rank = 1, duration = 10 },
+	[14308] = { name = "Freezing Trap", rank = 2, duration = 15 },
+	[14309] = { name = "Freezing Trap", rank = 3, duration = 20 },
 }
 
 local function isMobCrowdControlled(guid)
@@ -168,7 +197,17 @@ local function pickRaidMarkTarget(selectedPriority, spellNameNoRank, skipCheckRa
 	return targetedGuid
 end
 
-function Cursive:Curse(spellName, targetedGuid, noFailureWarning)
+local function castSpellWithOptions(spellName, targetedGuid, options)
+	if options["resistsound"] then
+		Cursive.curses:EnableResistSound(targetedGuid)
+	end
+	if options["expiringsound"] then
+		Cursive.curses:RequestExpiringSound(spellName, targetedGuid)
+	end
+	CastSpellByName(spellName, targetedGuid)
+end
+
+function Cursive:Curse(spellName, targetedGuid, options)
 	if not spellName or not targetedGuid then
 		DEFAULT_CHAT_FRAME:AddMessage(commands["curse"])
 		return
@@ -178,7 +217,7 @@ function Cursive:Curse(spellName, targetedGuid, noFailureWarning)
 		_, targetedGuid = UnitExists(targetedGuid)
 
 		if not targetedGuid then
-			if not (noFailureWarning and noFailureWarning == "1") then
+			if options["warnings"] then
 				DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
 			end
 			return
@@ -189,13 +228,13 @@ function Cursive:Curse(spellName, targetedGuid, noFailureWarning)
 	local spellNameNoRank = string.gsub(spellName, "%(.+%)", "")
 
 	if targetedGuid and not Cursive.curses:HasCurse(spellNameNoRank, targetedGuid) and not isMobCrowdControlled(targetedGuid) then
-		CastSpellByName(spellName, targetedGuid)
-	elseif not (noFailureWarning and noFailureWarning == "1") then
+		castSpellWithOptions(spellName, targetedGuid, options)
+	elseif options["warnings"] then
 		DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
 	end
 end
 
-function Cursive:Multicurse(spellName, priority, noFailureWarning)
+function Cursive:Multicurse(spellName, priority, options)
 	if not spellName then
 		DEFAULT_CHAT_FRAME:AddMessage(commands["multicurse"])
 		return
@@ -219,8 +258,8 @@ function Cursive:Multicurse(spellName, priority, noFailureWarning)
 	end
 
 	if targetedGuid then
-		CastSpellByName(spellName, targetedGuid)
-	elseif not (noFailureWarning and noFailureWarning == "1") then
+		castSpellWithOptions(spellName, targetedGuid, options)
+	elseif options["warnings"] then
 		DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
 	end
 end

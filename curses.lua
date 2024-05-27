@@ -6,6 +6,9 @@ local curses = {
 	trackedCurseIds = {},
 	trackedCurseNamesToTextures = {},
 	guids = {},
+	resistSoundGuids = {},
+	expiringSoundGuids = {},
+	requestedExpiringSoundGuids = {} -- guid added on spellcast, moved to expiringSoundGuids once rendered by ui
 }
 
 -- combat events for curses
@@ -65,6 +68,10 @@ Cursive:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE",
 			if spell and target then
 				if curses.trackedCurseNamesToTextures[spell] and lastGuid then
 					Cursive:CancelScheduledEvent("addCurse" .. lastGuid .. spell)
+					-- check if sound should be played
+					if curses:ShouldPlayResistSound(lastGuid) then
+						PlaySoundFile("Interface\\AddOns\\Cursive\\Sounds\\resist.mp3")
+					end
 				end
 			end
 		end
@@ -72,6 +79,50 @@ Cursive:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE",
 
 function curses:TimeRemaining(curseData)
 	return math.ceil(curseData.duration - (GetTime() - curseData.start))
+end
+
+function curses:EnableResistSound(guid)
+	curses.resistSoundGuids[guid] = true
+end
+
+function curses:EnableExpiringSound(spellName, guid)
+	if curses.requestedExpiringSoundGuids[guid] and curses.requestedExpiringSoundGuids[guid][spellName] then
+		curses.requestedExpiringSoundGuids[guid][spellName] = nil
+	end
+
+	if not curses.expiringSoundGuids[guid] then
+		curses.expiringSoundGuids[guid] = {}
+	end
+	curses.expiringSoundGuids[guid][spellName] = true
+end
+
+function curses:RequestExpiringSound(spellName, guid)
+	if not curses.requestedExpiringSoundGuids[guid] then
+		curses.requestedExpiringSoundGuids[guid] = {}
+	end
+	curses.requestedExpiringSoundGuids[guid][spellName] = true
+end
+
+function curses:HasRequestedExpiringSound(spellName, guid)
+	return curses.requestedExpiringSoundGuids[guid] and curses.requestedExpiringSoundGuids[guid][spellName]
+end
+
+function curses:ShouldPlayExpiringSound(spellName, guid)
+	if curses.expiringSoundGuids[guid] and curses.expiringSoundGuids[guid][spellName] then
+		curses.expiringSoundGuids[guid][spellName] = nil -- remove entry to avoid playing sound multiple times
+		return true
+	end
+
+	return false
+end
+
+function curses:ShouldPlayResistSound(guid)
+	if curses.resistSoundGuids[guid] then
+		curses.resistSoundGuids[guid] = nil -- remove entry to avoid playing sound multiple times
+		return true
+	end
+
+	return false
 end
 
 function curses:HasCurse(spellName, targetGuid)
@@ -101,6 +152,9 @@ end
 
 function curses:RemoveGuid(guid)
 	curses.guids[guid] = nil
+	curses.resistSoundGuids[guid] = nil
+	curses.expiringSoundGuids[guid] = nil
+	curses.requestedExpiringSoundGuids[guid] = nil
 end
 
 Cursive.curses = curses
