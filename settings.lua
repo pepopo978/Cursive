@@ -5,19 +5,210 @@ end
 Cursive:RegisterDB("CursiveDB")
 Cursive:RegisterDefaults("profile", {
 	enabled = true,
+	clickthrough = false,
+	showbackdrop = true,
 	caption = "Cursive",
 	anchor = "CENTER",
 	x = -240,
 	y = 120,
-	maxcol = 1,
 
 	-- editable
 	scale = 1,
-	width = 100,
-	height = 14,
+	healthwidth = 100,
+	height = 16,
+	raidiconsize = 16,
+	curseiconsize = 16,
+	maxcurses = 3,
 	spacing = 4,
 	maxrow = 10,
+	maxcol = 1,
+	textsize = 9,
+
+	filterincombat = true,
+	filterhostile = true,
+	filterattackable = true,
+	filterrange = false,
 })
+
+local barOptions = {
+	["barwidth"] = {
+		type = "range",
+		name = "Health Bar Width",
+		desc = "Health Bar Width",
+		order = 10,
+		min = 30,
+		max = 150,
+		step = 5,
+		get = function()
+			return Cursive.db.profile.healthwidth
+		end,
+		set = function(v)
+			if v ~= Cursive.db.profile.healthwidth then
+				Cursive.db.profile.healthwidth = v
+				Cursive.UpdateFramesFromConfig()
+			end
+		end,
+	},
+	["barheight"] = {
+		type = "range",
+		name = "Health Bar Height",
+		desc = "Health Bar Height",
+		order = 20,
+		min = 10,
+		max = 30,
+		step = 2,
+		get = function()
+			return Cursive.db.profile.height
+		end,
+		set = function(v)
+			if v ~= Cursive.db.profile.height then
+				Cursive.db.profile.height = v
+				Cursive.UpdateFramesFromConfig()
+			end
+		end,
+	},
+	["raidiconsize"] = {
+		type = "range",
+		name = "Raid Icon Size",
+		desc = "Raid Icon Size",
+		order = 30,
+		min = 10,
+		max = 30,
+		step = 1,
+		get = function()
+			return Cursive.db.profile.raidiconsize
+		end,
+		set = function(v)
+			if v ~= Cursive.db.profile.raidiconsize then
+				Cursive.db.profile.raidiconsize = v
+				Cursive.UpdateFramesFromConfig()
+			end
+		end,
+	},
+	["curseiconsize"] = {
+		type = "range",
+		name = "Curse Icon Size",
+		desc = "Curse Icon Size",
+		order = 40,
+		min = 10,
+		max = 30,
+		step = 1,
+		get = function()
+			return Cursive.db.profile.curseiconsize
+		end,
+		set = function(v)
+			if v ~= Cursive.db.profile.curseiconsize then
+				Cursive.db.profile.curseiconsize = v
+				Cursive.UpdateFramesFromConfig()
+			end
+		end,
+	},
+	["spacing"] = {
+		type = "range",
+		name = "Spacing",
+		desc = "Spacing",
+		order = 50,
+		min = 0,
+		max = 10,
+		step = 1,
+		get = function()
+			return Cursive.db.profile.spacing
+		end,
+		set = function(v)
+			if v ~= Cursive.db.profile.spacing then
+				Cursive.db.profile.spacing = v
+				Cursive.UpdateFramesFromConfig()
+			end
+		end,
+	},
+	["textsize"] = {
+		type = "range",
+		name = "Text Size",
+		desc = "Text Size",
+		order = 60,
+		min = 8,
+		max = 20,
+		step = 1,
+		get = function()
+			return Cursive.db.profile.textsize
+		end,
+		set = function(v)
+			if v ~= Cursive.db.profile.textsize then
+				Cursive.db.profile.textsize = v
+				Cursive.UpdateFramesFromConfig()
+			end
+		end,
+	},
+	["scale"] = {
+		type = "range",
+		name = "Scale",
+		desc = "Scale",
+		order = 70,
+		min = 0.5,
+		max = 2,
+		step = 0.1,
+		get = function()
+			return Cursive.db.profile.scale
+		end,
+		set = function(v)
+			if v ~= Cursive.db.profile.scale then
+				Cursive.db.profile.scale = v
+				Cursive.UpdateFramesFromConfig()
+			end
+		end,
+	},
+}
+
+local mobFilters = {
+	["incombat"] = {
+		type = "toggle",
+		name = "In Combat",
+		desc = "In Combat",
+		order = 1,
+		get = function()
+			return Cursive.db.profile.filterincombat
+		end,
+		set = function(v)
+			Cursive.db.profile.filterincombat = v
+		end,
+	},
+	["hostile"] = {
+		type = "toggle",
+		name = "Hostile",
+		desc = "Hostile",
+		order = 2,
+		get = function()
+			return Cursive.db.profile.filterhostile
+		end,
+		set = function(v)
+			Cursive.db.profile.filterhostile = v
+		end,
+	},
+	["attackable"] = {
+		type = "toggle",
+		name = "Attackable",
+		desc = "Attackable",
+		order = 3,
+		get = function()
+			return Cursive.db.profile.filterattackable
+		end,
+		set = function(v)
+			Cursive.db.profile.filterattackable = v
+		end,
+	},
+	["range"] = {
+		type = "toggle",
+		name = "Within 28 Range",
+		desc = "Within 28 Range",
+		order = 4,
+		get = function()
+			return Cursive.db.profile.filterrange
+		end,
+		set = function(v)
+			Cursive.db.profile.filterrange = v
+		end,
+	},
+}
 
 Cursive.cmdtable = {
 	type = "group",
@@ -40,56 +231,73 @@ Cursive.cmdtable = {
 				end
 			end,
 		},
-		["barwidth"] = {
-			type = "range",
-			name = "Health Bar Width",
-			desc = "Health Bar Width",
-			order = 1,
-			min = 30,
-			max = 150,
-			step = 5,
+		["clickthrough"] = {
+			type = "toggle",
+			name = "Allow clickthrough",
+			desc = "This will allow you to click through the frame to target mobs behind it, but prevents dragging the frame.",
+			order = 2,
 			get = function()
-				return Cursive.db.profile.width
+				return Cursive.db.profile.clickthrough
 			end,
 			set = function(v)
-				Cursive.db.profile.width = v
+				Cursive.db.profile.clickthrough = v
+				Cursive.UpdateFramesFromConfig()
 			end,
 		},
-		["barheight"] = {
-			type = "range",
-			name = "Health Bar Height",
-			desc = "Health Bar Height",
+		["showbackdrop"] = {
+			type = "toggle",
+			name = "Show Frame Background",
+			desc = "Toggle the frame background to help with positioning",
 			order = 1,
-			min = 10,
-			max = 30,
-			step = 2,
 			get = function()
-				return Cursive.db.profile.height
+				return Cursive.db.profile.showbackdrop
 			end,
 			set = function(v)
-				Cursive.db.profile.height = v
+				Cursive.db.profile.showbackdrop = v
+				Cursive.UpdateFramesFromConfig()
 			end,
 		},
-		["spacing"] = {
-			type = "range",
-			name = "Spacing",
-			desc = "Spacing",
-			order = 1,
-			min = 0,
-			max = 10,
-			step = 1,
-			get = function()
-				return Cursive.db.profile.spacing
+		["resetframe"] = {
+			type = "execute",
+			name = "Reset Frame",
+			desc = "Move the frame back to the default position",
+			order = 2,
+			func = function()
+				Cursive.db.profile.anchor = "CENTER"
+				Cursive.db.profile.x = -100
+				Cursive.db.profile.y = -100
+				Cursive.UpdateFramesFromConfig()
 			end,
-			set = function(v)
-				Cursive.db.profile.spacing = v
-			end,
+		},
+		["spacer"] = {
+			type = "header",
+			name = " ",
+			order = 3,
+		},
+		["bardisplay"] = {
+			type = "group",
+			name = "Bar Display Settings",
+			desc = "Bar Display Settings",
+			order = 10,
+			args = barOptions
+		},
+		["filters"] = {
+			type = "group",
+			name = "Mob filters",
+			desc = "Target and Raid Marks always shown",
+			order = 20,
+			args = mobFilters
+		},
+		["spacer2"] = {
+			type = "header",
+			name = " ",
+			order = 21,
 		},
 		["maxrow"] = {
 			type = "range",
 			name = "Max Rows",
 			desc = "Max Rows",
-			order = 1,
+			order = 30,
 			min = 1,
 			max = 20,
 			step = 1,
@@ -97,22 +305,28 @@ Cursive.cmdtable = {
 				return Cursive.db.profile.maxrow
 			end,
 			set = function(v)
-				Cursive.db.profile.maxrow = v
+				if v ~= Cursive.db.profile.maxrow then
+					Cursive.db.profile.maxrow = v
+					Cursive.UpdateFramesFromConfig()
+				end
 			end,
 		},
-		["scale"] = {
+		["maxcol"] = {
 			type = "range",
-			name = "Scale",
-			desc = "Scale",
-			order = 1,
-			min = 0.5,
-			max = 2,
-			step = 0.1,
+			name = "Max Columns",
+			desc = "Max Columns",
+			order = 40,
+			min = 1,
+			max = 20,
+			step = 1,
 			get = function()
-				return Cursive.db.profile.scale
+				return Cursive.db.profile.maxcol
 			end,
 			set = function(v)
-				Cursive.db.profile.scale = v
+				if v ~= Cursive.db.profile.maxcol then
+					Cursive.db.profile.maxcol = v
+					Cursive.UpdateFramesFromConfig()
+				end
 			end,
 		},
 	}

@@ -10,13 +10,12 @@ AURAADDEDSELFHARMFUL = "You are afflicted by %s (1)."
 AURAADDEDSELFHELPFUL = "You gain %s (1)."
 
 Cursive.core = CreateFrame("Frame", "Cursive", UIParent)
-Cursive.core:RegisterEvent("ADDON_LOADED")
 Cursive.core.guids = {}
 
 Cursive.core.add = function(unit)
 	local _, guid = UnitExists(unit)
 
-	if guid then
+	if guid and not UnitIsDead(unit) then
 		Cursive.core.guids[guid] = GetTime()
 	end
 end
@@ -26,7 +25,9 @@ Cursive.core.addGuid = function(guid)
 	if string.sub(guid, 1, 2) ~= "0x" then
 		return
 	end
-	Cursive.core.guids[guid] = GetTime()
+	if UnitExists(guid) and not UnitIsDead(guid) then
+		Cursive.core.guids[guid] = GetTime()
+	end
 end
 
 Cursive.core.remove = function(guid)
@@ -47,12 +48,7 @@ Cursive.core.disable = function()
 end
 
 Cursive.core:SetScript("OnEvent", function()
-	if event == "ADDON_LOADED" and arg1 == "Cursive" then
-		Cursive.curses:LoadCurses()
-		if Cursive.db.profile.enabled then
-			Cursive.core.enable()
-		end
-	elseif event == "PLAYER_TARGET_CHANGED" then
+	if event == "PLAYER_TARGET_CHANGED" then
 		this.add("target")
 	else
 		-- arg1 is guid

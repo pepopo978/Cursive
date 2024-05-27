@@ -2,12 +2,7 @@ if not Cursive.superwow then
 	return
 end
 
-local filter = {
-	"infight",
-	"alive",
-	"hostile",
-	"attackable",
-}
+local filter = {}
 
 filter.attackable = function(unit)
 	return UnitCanAttack("player", unit) and true or false
@@ -50,10 +45,20 @@ end
 Cursive.filter = filter
 
 function Cursive:ShouldDisplayGuid(guid)
-	local exists, targetGuid = UnitExists("target")
+	-- never display units that don't exist
+	if not UnitExists(guid) then
+		return false
+	end
+
+	-- never display dead units
+	if not Cursive.filter.alive(guid) then
+		return false
+	end
+
+	local _, targetGuid = UnitExists("target")
 
 	-- always show target if attackable
-	if (targetGuid == guid) == true and filter.attackable(guid) then
+	if (targetGuid == guid) and filter.attackable(guid) then
 		return true
 	end
 
@@ -65,11 +70,20 @@ function Cursive:ShouldDisplayGuid(guid)
 	-- apply filters
 	local shouldDisplay = true -- default to true
 
-	-- otherwise apply filters
-	for id, filter_name in pairs(Cursive.filter) do
-		if filter[filter_name] then
-			shouldDisplay = shouldDisplay and filter[filter_name](guid)
-		end
+	if Cursive.db.profile.filterincombat then
+		shouldDisplay = shouldDisplay and filter.infight(guid)
+	end
+
+	if Cursive.db.profile.filterhostile then
+		shouldDisplay = shouldDisplay and filter.hostile(guid)
+	end
+
+	if Cursive.db.profile.filterattackable then
+		shouldDisplay = shouldDisplay and filter.attackable(guid)
+	end
+
+	if Cursive.db.profile.filterrange then
+		shouldDisplay = shouldDisplay and filter.range(guid)
 	end
 
 	return shouldDisplay
