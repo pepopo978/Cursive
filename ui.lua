@@ -92,7 +92,7 @@ ui.BarUpdate = function()
 	local name = UnitName(this.guid)
 	local hp = UnitHealth(this.guid)
 	-- convert hp to k if > 1000
-	if hp and hp  > 1000 then
+	if hp and hp > 1000 then
 		-- round to 1 decimal
 		hp = math.floor(hp / 100) / 10 .. "k"
 	end
@@ -115,7 +115,7 @@ ui.BarUpdate = function()
 	end
 
 	-- show raid icon if existing
-	if GetRaidTargetIndex(this.guid) then
+	if GetRaidTargetIndex(this.guid) and Cursive.filter.alive(this.guid) then
 		SetRaidTargetIconTexture(this.icon, GetRaidTargetIndex(this.guid))
 		this.icon:Show()
 	else
@@ -251,24 +251,29 @@ ui:SetScript("OnUpdate", function()
 	-- run through all guids and fill with bars
 	local title_size = 12 + config.spacing
 	local width, height = config.width, config.height + title_size
-	local x, y, count = 0, 0, 0
+	local x, y, rowCount, colCount = 0, 0, 0, 1
 
 	for guid, time in pairs(Cursive.core.guids) do
 		-- apply filters
 		local shouldDisplay = Cursive:ShouldDisplayGuid(guid)
 
-		local exists = UnitExists(guid)
+		local exists = UnitExists(guid) and Cursive.filter.alive(guid)
 
 		-- display element if filters allow it
 		if exists and shouldDisplay then
-			count = count + 1
+			rowCount = rowCount + 1
 
-			if count > config.maxrow then
-				count, x = 1, x + config.width + config.spacing
-				width = math.max(x + config.width, width)
+			if rowCount > config.maxrow then
+				if colCount < config.maxcol then
+					colCount = colCount + 1
+					rowCount, x = 1, x + config.width + config.spacing
+					width = math.max(x + config.width, width)
+				else
+					break
+				end
 			end
 
-			y = (count - 1) * (config.height + config.spacing) + title_size
+			y = (rowCount - 1) * (config.height + config.spacing) + title_size
 			height = math.max(y + config.height + config.spacing, height)
 
 			root.frames[guid] = root.frames[guid] or root:CreateBar(guid)
@@ -285,6 +290,13 @@ ui:SetScript("OnUpdate", function()
 				root.frames[guid]:SetWidth(config.width)
 				root.frames[guid]:SetHeight(config.height)
 				root.frames[guid].sizes = config.width .. config.height
+			end
+
+			for i = 1, 3 do
+				if not root.frames[guid]["curse" .. i].sizes or root.frames[guid]["curse" .. i].sizes ~= config.width .. config.height then
+					root.frames[guid]["curse" .. i]:SetWidth(config.height)
+					root.frames[guid]["curse" .. i]:SetHeight(config.height)
+				end
 			end
 
 			-- update curses

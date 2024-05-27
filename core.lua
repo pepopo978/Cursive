@@ -48,6 +48,7 @@ end
 
 Cursive.core:SetScript("OnEvent", function()
 	if event == "ADDON_LOADED" and arg1 == "Cursive" then
+		Cursive.curses:LoadCurses()
 		if Cursive.db.profile.enabled then
 			Cursive.core.enable()
 		end

@@ -9,6 +9,7 @@ Cursive:RegisterDefaults("profile", {
 	anchor = "CENTER",
 	x = -240,
 	y = 120,
+	maxcol = 1,
 
 	-- editable
 	scale = 1,
@@ -16,7 +17,6 @@ Cursive:RegisterDefaults("profile", {
 	height = 14,
 	spacing = 4,
 	maxrow = 10,
-	maxcol = 1,
 })
 
 Cursive.cmdtable = {
@@ -98,21 +98,6 @@ Cursive.cmdtable = {
 			end,
 			set = function(v)
 				Cursive.db.profile.maxrow = v
-			end,
-		},
-		["maxcol"] = {
-			type = "range",
-			name = "Max Columns",
-			desc = "Max Columns",
-			order = 1,
-			min = 1,
-			max = 5,
-			step = 1,
-			get = function()
-				return Cursive.db.profile.maxcol
-			end,
-			set = function(v)
-				Cursive.db.profile.maxcol = v
 			end,
 		},
 		["scale"] = {

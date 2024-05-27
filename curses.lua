@@ -1,9 +1,12 @@
+if not Cursive.superwow then
+	return
+end
+
 local curses = {
 	trackedCurseIds = {},
 	trackedCurseNamesToTextures = {},
 	guids = {},
 }
-Cursive.curses = curses
 
 -- combat events for curses
 local afflict_test = "^(.+) is afflicted by (.+) %((%d+)%)" -- for stacks 2-5 will be "Fire Vulnerability (2)".
@@ -13,30 +16,31 @@ local resist_test = "Your (.+) was resisted by (.+)"
 
 local lastGuid = nil
 
--- curses to track
-local _, className = UnitClass("player")
-if className == "WARLOCK" then
-	curses.trackedCurseIds = getWarlockSpells()
-elseif className == "PRIEST" then
-	curses.trackedCurseIds = getPriestSpells()
-elseif className == "MAGE" then
-	curses.trackedCurseIds = getMageSpells()
-elseif className == "DRUID" then
-	curses.trackedCurseIds = getDruidSpells()
-elseif className == "HUNTER" then
-	curses.trackedCurseIds = getHunterSpells()
-elseif className == "ROGUE" then
-	curses.trackedCurseIds = getRogueSpells()
-end
+function curses:LoadCurses()
+	-- curses to track
+	local _, className = UnitClass("player")
+	if className == "WARLOCK" then
+		curses.trackedCurseIds = getWarlockSpells()
+	elseif className == "PRIEST" then
+		curses.trackedCurseIds = getPriestSpells()
+	elseif className == "MAGE" then
+		curses.trackedCurseIds = getMageSpells()
+	elseif className == "DRUID" then
+		curses.trackedCurseIds = getDruidSpells()
+	elseif className == "HUNTER" then
+		curses.trackedCurseIds = getHunterSpells()
+	elseif className == "ROGUE" then
+		curses.trackedCurseIds = getRogueSpells()
+	end
 
-curses.trackedCurseNamesToTextures = {}
-for id, data in pairs(curses.trackedCurseIds) do
-	-- get the texture
-	local name, rank, texture = SpellInfo(id)
-	-- update trackedCurseNamesToTextures
-	curses.trackedCurseNamesToTextures[data.name] = texture
-	-- update trackedCurseIds
-	curses.trackedCurseIds[id].texture = texture
+	for id, data in pairs(curses.trackedCurseIds) do
+		-- get the texture
+		local name, rank, texture = SpellInfo(id)
+		-- update trackedCurseNamesToTextures
+		curses.trackedCurseNamesToTextures[data.name] = texture
+		-- update trackedCurseIds
+		curses.trackedCurseIds[id].texture = texture
+	end
 end
 
 Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, spellID, castDuration)
@@ -98,3 +102,5 @@ end
 function curses:RemoveGuid(guid)
 	curses.guids[guid] = nil
 end
+
+Cursive.curses = curses
