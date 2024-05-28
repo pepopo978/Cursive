@@ -28,6 +28,7 @@ Cursive:RegisterDefaults("profile", {
 	filterhostile = true,
 	filterattackable = true,
 	filterrange = false,
+	filterraidmark = false,
 })
 
 local barOptions = {
@@ -206,6 +207,18 @@ local mobFilters = {
 		end,
 		set = function(v)
 			Cursive.db.profile.filterrange = v
+		end,
+	},
+	["raidmark"] = {
+		type = "toggle",
+		name = "Has Raid Mark",
+		desc = "Has Raid Mark",
+		order = 5,
+		get = function()
+			return Cursive.db.profile.filterraidmark
+		end,
+		set = function(v)
+			Cursive.db.profile.filterraidmark = v
 		end,
 	},
 }

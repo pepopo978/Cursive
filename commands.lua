@@ -131,7 +131,7 @@ end
 
 local function pickTarget(selectedPriority, spellNameNoRank, checkRange)
 	-- Curse the target that best matches the selected priority
-	local highestPriorityValue = 0
+	local highestPriorityValue = -1
 	local targetedGuid = nil
 
 	local _, currentTargetGuid = UnitExists("target")
