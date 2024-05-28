@@ -26,6 +26,8 @@ core.lua
 spells\druid.lua
 spells\hunter.lua
 spells\mage.lua
+spells\priest.lua
+spells\rogue.lua
 spells\warlock.lua
 curses.lua
 filter.lua
