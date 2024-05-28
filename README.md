@@ -15,12 +15,12 @@ Cursive combines ShaguScan unit scanning with curse tracking similar to DotTimer
 `/cursive` for commands, minimap icon to edit options.
 
 ### Curse
-`/cursive curse <spellName:str>|<guid?:str>|<noFailureWarning?:int[0,1]`: Casts spell if not already on target/guid
+`/cursive curse <spellName:str>|<guid?:str>|<options?:str>`: Casts spell if not already on target/guid
 
-EXAMPLE: `/cursive curse Corruption|target|1` will attempt to cast Corruption on your target if it's not already on them and won't warn you if it does nothing.
+EXAMPLE: `/cursive curse Corruption|target` will attempt to cast Corruption on your target if it's not already on them and they aren't cc'ed.
 
 ### Multicurse
-`/cursive multicurse <spellName:str>|<priority?:str>|<noFailureWarning?:int[0,1]`: Picks target based on priority and casts spell if not already on target.  
+`/cursive multicurse <spellName:str>|<priority?:str>|<options?:str>`: Picks target based on priority and casts spell if not already on target and they aren't cc'ed.  
 Priority options: HIGHEST_HP, RAID_MARK
 
 EXAMPLE: `/cursive multicurse Corruption|HIGHEST_HP` will attempt to cast Corruption picking the target with the highest HP that doesn't already have it and will warn you if it does nothing.
