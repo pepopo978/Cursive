@@ -17,9 +17,11 @@ local curseNoTarget = "|cffffcc00Cursive:|cffffaaaa Couldn't find a target to cu
 local function parseOptions(optionsStr)
 	local options = {  }
 
-	for option, _ in pairs(commandOptions) do
-		if string.find(optionsStr, option) then
-			options[option] = true
+	if optionsStr then
+		for option, _ in pairs(commandOptions) do
+			if string.find(optionsStr, option) then
+				options[option] = true
+			end
 		end
 	end
 
