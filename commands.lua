@@ -129,58 +129,32 @@ local function isMobCrowdControlled(guid)
 	return false
 end
 
-local function pickHighestHpTarget(selectedPriority, spellNameNoRank, skipCheckRange)
-	-- Curse the target with the highest HP
-	local highestHP = 0
+local function pickTarget(selectedPriority, spellNameNoRank, checkRange)
+	-- Curse the target that best matches the selected priority
+	local highestPriorityValue = 0
 	local targetedGuid = nil
+
+	local _, currentTargetGuid = UnitExists("target")
 
 	for guid, time in pairs(Cursive.core.guids) do
 		-- apply filters
 		local shouldDisplay = Cursive:ShouldDisplayGuid(guid)
-		-- check if target exists/displayed/infight
-		if UnitExists(guid) and shouldDisplay and Cursive.filter.infight(guid) then
-			if not skipCheckRange and CheckInteractDistance(guid, 4) then
-				-- check if the target has the curse
-				if not Cursive.curses:HasCurse(spellNameNoRank, guid) and not isMobCrowdControlled(guid) then
-					local health = UnitHealth(guid)
-					if health > highestHP then
-						highestHP = health
-						targetedGuid = guid
-					end
-				end
-			end
-		end
-	end
-
-	-- run again if no target found ignoring range
-	if not targetedGuid and not skipCheckRange then
-		targetedGuid = pickHighestHpTarget(selectedPriority, spellNameNoRank, true)
-	end
-
-	return targetedGuid
-end
-
-local function pickRaidMarkTarget(selectedPriority, spellNameNoRank, skipCheckRange)
-	-- Curse the target with the highest raid mark
-	local highestMark = 0
-	local targetedGuid = nil
-
-	for guid, time in pairs(Cursive.core.guids) do
-		-- apply filters
-		local shouldDisplay = Cursive:ShouldDisplayGuid(guid)
-		-- check if target exists/displayed/infight
-		if UnitExists(guid) and shouldDisplay and Cursive.filter.infight(guid) then
-			if not skipCheckRange and CheckInteractDistance(guid, 4) then
-				-- check if the target has the curse
-				if not Cursive.curses:HasCurse(spellNameNoRank, guid) and not isMobCrowdControlled(guid) then
-					local raidMark = GetRaidTargetIndex(guid)
-					if not raidMark or raidMark == 0 then
-						if highestMark == 0 then
-							targetedGuid = guid
+		-- check if target displayed
+		if shouldDisplay then
+			-- check if in combat already or player is actively targeting the mob
+			if Cursive.filter.infight(guid) or guid == currentTargetGuid then
+				if checkRange == true and CheckInteractDistance(guid, 4) then
+					-- check if the target has the curse
+					if not Cursive.curses:HasCurse(spellNameNoRank, guid) and not isMobCrowdControlled(guid) then
+						local value
+						if selectedPriority == "HIGHEST_HP" then
+							value = UnitHealth(guid)
+						elseif selectedPriority == "RAID_MARK" then
+							value = GetRaidTargetIndex(guid) or 0
 						end
-					else
-						if raidMark > highestMark then
-							highestMark = raidMark
+
+						if value > highestPriorityValue then
+							highestPriorityValue = value
 							targetedGuid = guid
 						end
 					end
@@ -190,19 +164,19 @@ local function pickRaidMarkTarget(selectedPriority, spellNameNoRank, skipCheckRa
 	end
 
 	-- run again if no target found ignoring range
-	if not targetedGuid and not skipCheckRange then
-		targetedGuid = pickRaidMarkTarget(selectedPriority, spellNameNoRank, true)
+	if not targetedGuid and checkRange == true then
+		targetedGuid = pickTarget(selectedPriority, spellNameNoRank, false)
 	end
 
 	return targetedGuid
 end
 
-local function castSpellWithOptions(spellName, targetedGuid, options)
+local function castSpellWithOptions(spellName, spellNameNoRank, targetedGuid, options)
 	if options["resistsound"] then
 		Cursive.curses:EnableResistSound(targetedGuid)
 	end
 	if options["expiringsound"] then
-		Cursive.curses:RequestExpiringSound(spellName, targetedGuid)
+		Cursive.curses:RequestExpiringSound(spellNameNoRank, targetedGuid)
 	end
 	CastSpellByName(spellName, targetedGuid)
 end
@@ -228,7 +202,7 @@ function Cursive:Curse(spellName, targetedGuid, options)
 	local spellNameNoRank = string.gsub(spellName, "%(.+%)", "")
 
 	if targetedGuid and not Cursive.curses:HasCurse(spellNameNoRank, targetedGuid) and not isMobCrowdControlled(targetedGuid) then
-		castSpellWithOptions(spellName, targetedGuid, options)
+		castSpellWithOptions(spellName, spellNameNoRank, targetedGuid, options)
 	elseif options["warnings"] then
 		DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
 	end
@@ -240,25 +214,20 @@ function Cursive:Multicurse(spellName, priority, options)
 		return
 	end
 
+	if priority and (priority ~= "HIGHEST_HP" and priority ~= "RAID_MARK") then
+		DEFAULT_CHAT_FRAME:AddMessage(commands["multicurse"])
+		return
+	end
+
 	local selectedPriority = priority or "HIGHEST_HP"
-	local targetedGuid = nil
 
 	-- remove (Rank x) from spellName if it exists
 	local spellNameNoRank = string.gsub(spellName, "%(.+%)", "")
 
-	if not targetedGuid then
-		if selectedPriority == "HIGHEST_HP" then
-			targetedGuid = pickHighestHpTarget(selectedPriority, spellNameNoRank)
-		elseif selectedPriority == "RAID_MARK" then
-			targetedGuid = pickRaidMarkTarget(selectedPriority, spellNameNoRank)
-		else
-			DEFAULT_CHAT_FRAME:AddMessage(multiCurseUsage)
-			return
-		end
-	end
+	local targetedGuid = pickTarget(selectedPriority, spellNameNoRank, true)
 
 	if targetedGuid then
-		castSpellWithOptions(spellName, targetedGuid, options)
+		castSpellWithOptions(spellName, spellNameNoRank, targetedGuid, options)
 	elseif options["warnings"] then
 		DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
 	end

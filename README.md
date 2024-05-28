@@ -47,3 +47,16 @@ All commands will ignore targets with the following CCs on them:
 - Sap
 - Gouge
 - Freezing Trap
+
+Multicurse will only ever target enemies that are already in combat (except if you target a mob directly first) to prevent pulling things you didn't intend like marked patrols.
+
+Raid mark priority is based on the following order:
+- Skull = 8
+- Cross = 7
+- Square = 6
+- Moon = 5
+- Triangle = 4
+- Circle = 3
+- Star = 2
+- Diamond = 1
+- No mark = 0

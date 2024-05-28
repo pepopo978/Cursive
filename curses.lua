@@ -85,31 +85,31 @@ function curses:EnableResistSound(guid)
 	curses.resistSoundGuids[guid] = true
 end
 
-function curses:EnableExpiringSound(spellName, guid)
-	if curses.requestedExpiringSoundGuids[guid] and curses.requestedExpiringSoundGuids[guid][spellName] then
-		curses.requestedExpiringSoundGuids[guid][spellName] = nil
+function curses:EnableExpiringSound(spellNameNoRank, guid)
+	if curses.requestedExpiringSoundGuids[guid] and curses.requestedExpiringSoundGuids[guid][spellNameNoRank] then
+		curses.requestedExpiringSoundGuids[guid][spellNameNoRank] = nil
 	end
 
 	if not curses.expiringSoundGuids[guid] then
 		curses.expiringSoundGuids[guid] = {}
 	end
-	curses.expiringSoundGuids[guid][spellName] = true
+	curses.expiringSoundGuids[guid][spellNameNoRank] = true
 end
 
-function curses:RequestExpiringSound(spellName, guid)
+function curses:RequestExpiringSound(spellNameNoRank, guid)
 	if not curses.requestedExpiringSoundGuids[guid] then
 		curses.requestedExpiringSoundGuids[guid] = {}
 	end
-	curses.requestedExpiringSoundGuids[guid][spellName] = true
+	curses.requestedExpiringSoundGuids[guid][spellNameNoRank] = true
 end
 
-function curses:HasRequestedExpiringSound(spellName, guid)
-	return curses.requestedExpiringSoundGuids[guid] and curses.requestedExpiringSoundGuids[guid][spellName]
+function curses:HasRequestedExpiringSound(spellNameNoRank, guid)
+	return curses.requestedExpiringSoundGuids[guid] and curses.requestedExpiringSoundGuids[guid][spellNameNoRank]
 end
 
-function curses:ShouldPlayExpiringSound(spellName, guid)
-	if curses.expiringSoundGuids[guid] and curses.expiringSoundGuids[guid][spellName] then
-		curses.expiringSoundGuids[guid][spellName] = nil -- remove entry to avoid playing sound multiple times
+function curses:ShouldPlayExpiringSound(spellNameNoRank, guid)
+	if curses.expiringSoundGuids[guid] and curses.expiringSoundGuids[guid][spellNameNoRank] then
+		curses.expiringSoundGuids[guid][spellNameNoRank] = nil -- remove entry to avoid playing sound multiple times
 		return true
 	end
 
