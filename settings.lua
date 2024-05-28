@@ -6,7 +6,7 @@ Cursive:RegisterDB("CursiveDB")
 Cursive:RegisterDefaults("profile", {
 	enabled = true,
 	clickthrough = false,
-	showbackdrop = true,
+	showbackdrop = false,
 	caption = "Cursive",
 	anchor = "CENTER",
 	x = -240,
