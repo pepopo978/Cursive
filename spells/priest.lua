@@ -36,5 +36,14 @@ function getPriestSpells()
 		[10894] = { name = "Shadow Word: Pain", rank = 8, duration = 24 },
 
 		[15286] = { name = "Vampiric Embrace", rank = 1, duration = 60 },
+
+		[14914] = { name = "Holy Fire", rank = 1, duration = 10 },
+		[15262] = { name = "Holy Fire", rank = 2, duration = 10 },
+		[15263] = { name = "Holy Fire", rank = 3, duration = 10 },
+		[15264] = { name = "Holy Fire", rank = 4, duration = 10 },
+		[15265] = { name = "Holy Fire", rank = 5, duration = 10 },
+		[15266] = { name = "Holy Fire", rank = 6, duration = 10 },
+		[15267] = { name = "Holy Fire", rank = 7, duration = 10 },
+		[15261] = { name = "Holy Fire", rank = 8, duration = 10 },
 	}
 end
