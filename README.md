@@ -11,6 +11,10 @@
 
 Cursive combines ShaguScan unit scanning with curse tracking similar to DotTimer and the ability to automatically curse targets similar to Decursive.
 
+### Recommended setup
+Move the Cursive label to the desired position on the screen.  You can turn on 'Show Frame Background' in the settings to help with this.  Once you have it where you want it, turn off 'Show Frame Background' and turn on 'Allow clickthrough'
+ so that it doesn't block your clicks when it's not displaying mobs.
+
 ## Commands
 `/cursive` for commands, minimap icon to edit options.
 
