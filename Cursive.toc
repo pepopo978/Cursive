@@ -7,7 +7,7 @@
 ## X-Embeds: Ace2, FuBarPlugin-2.0, CompostLib, DewDropLib, TabletLib
 
 Libs\AceLibrary\AceLibrary.lua
-Libs\AceDebug-2.0\AceDebug-2.0.lua
+Libs\AceDebug\AceDebug-2.0.lua
 
 Libs\AceOO-2.0\AceOO-2.0.lua
 Libs\AceAddon-2.0\AceAddon-2.0.lua
