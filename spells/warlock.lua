@@ -56,5 +56,10 @@ function getWarlockSpells()
 
 		[710] = { name = "Banish", rank = 1, duration = 30 },
 		[18647] = { name = "Banish", rank = 2, duration = 30 },
+
+		[18265] = { name = "Siphon Life", rank = 1, duration = 30 },
+		[18879] = { name = "Siphon Life", rank = 2, duration = 30 },
+		[18880] = { name = "Siphon Life", rank = 3, duration = 30 },
+		[18881] = { name = "Siphon Life", rank = 4, duration = 30 },
 	}
 end
