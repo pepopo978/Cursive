@@ -327,7 +327,7 @@ Cursive.cmdtable = {
 			desc = "Max Curses",
 			order = 22,
 			min = 1,
-			max = 5,
+			max = 8,
 			step = 1,
 			get = function()
 				return Cursive.db.profile.maxcurses

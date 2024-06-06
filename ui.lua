@@ -268,8 +268,8 @@ local function CreateBar(guid)
 		bar.border = border
 	end
 
-	-- display up to 3 curses
-	for i = 1, 3 do
+	-- display up to maxcurses curses
+	for i = 1, config.maxcurses do
 		local curse = barFrame:CreateTexture(nil, "OVERLAY")
 		curse:SetWidth(config.curseiconsize)
 		curse:SetHeight(config.curseiconsize)
@@ -315,7 +315,7 @@ local function DisplayGuid(guid, row, col)
 	local guidCurses = Cursive.curses.guids[guid]
 	if guidCurses then
 		for curseName, curseData in pairs(guidCurses) do
-			if curseNumber > 3 then
+			if curseNumber > Cursive.db.profile.maxcurses then
 				break
 			end
 
