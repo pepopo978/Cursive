@@ -4,15 +4,17 @@ end
 
 Cursive:RegisterDB("CursiveDB")
 Cursive:RegisterDefaults("profile", {
-	enabled = true,
-	clickthrough = false,
-	showbackdrop = false,
 	caption = "Cursive",
 	anchor = "CENTER",
 	x = -240,
 	y = 120,
 
 	-- editable
+	enabled = true,
+	clickthrough = false,
+	showbackdrop = false,
+	showtitle = true,
+
 	scale = 1,
 	healthwidth = 100,
 	height = 16,
@@ -244,11 +246,24 @@ Cursive.cmdtable = {
 				end
 			end,
 		},
+		["showtitle"] = {
+			type = "toggle",
+			name = "Show Title",
+			desc = "Show the title of the frame",
+			order = 3,
+			get = function()
+				return Cursive.db.profile.showtitle
+			end,
+			set = function(v)
+				Cursive.db.profile.showtitle = v
+				Cursive.UpdateFramesFromConfig()
+			end,
+		},
 		["clickthrough"] = {
 			type = "toggle",
 			name = "Allow clickthrough",
 			desc = "This will allow you to click through the frame to target mobs behind it, but prevents dragging the frame.",
-			order = 2,
+			order = 5,
 			get = function()
 				return Cursive.db.profile.clickthrough
 			end,
@@ -261,7 +276,7 @@ Cursive.cmdtable = {
 			type = "toggle",
 			name = "Show Frame Background",
 			desc = "Toggle the frame background to help with positioning",
-			order = 1,
+			order = 7,
 			get = function()
 				return Cursive.db.profile.showbackdrop
 			end,
@@ -274,7 +289,7 @@ Cursive.cmdtable = {
 			type = "execute",
 			name = "Reset Frame",
 			desc = "Move the frame back to the default position",
-			order = 2,
+			order = 9,
 			func = function()
 				Cursive.db.profile.anchor = "CENTER"
 				Cursive.db.profile.x = -100
@@ -285,13 +300,13 @@ Cursive.cmdtable = {
 		["spacer"] = {
 			type = "header",
 			name = " ",
-			order = 3,
+			order = 11,
 		},
 		["bardisplay"] = {
 			type = "group",
 			name = "Bar Display Settings",
 			desc = "Bar Display Settings",
-			order = 10,
+			order = 13,
 			args = barOptions
 		},
 		["filters"] = {

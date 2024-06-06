@@ -51,6 +51,11 @@ local function UpdateRootBarFrame()
 
 	ui.rootBarFrame.caption:SetFont(STANDARD_TEXT_FONT, Cursive.db.profile.textsize, "THINOUTLINE")
 	ui.rootBarFrame.caption:SetText(Cursive.db.profile.caption)
+	if Cursive.db.profile.showtitle then
+		ui.rootBarFrame.caption:Show()
+	else
+		ui.rootBarFrame.caption:Hide()
+	end
 
 	ui.rootBarFrame:SetWidth(config.maxcol * GetBarWidth())
 	ui.rootBarFrame:SetHeight(config.maxrow * config.height)
