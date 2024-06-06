@@ -14,7 +14,7 @@ local curses = {
 -- combat events for curses
 local afflict_test = "^(.+) is afflicted by (.+) %((%d+)%)" -- for stacks 2-5 will be "Fire Vulnerability (2)".
 local gains_test = "^(.+) gains (.+) %((%d+)%)" -- for stacks 2-5 will be "Fire Vulnerability (2)".
-local fades_test = "(.+) fades from (.+)."
+local fades_test = "(.+) fades from (.+)"
 local resist_test = "Your (.+) was resisted by (.+)"
 
 local lastGuid = nil
@@ -44,6 +44,31 @@ function curses:LoadCurses()
 		-- update trackedCurseIds
 		curses.trackedCurseIds[id].texture = texture
 	end
+end
+
+function curses:ScanGuidForCurse(guid, curseSpellID)
+	for i = 1, 16 do
+		local _, _, _, spellID = UnitDebuff(guid, i)
+		if spellID then
+			if spellID == curseSpellID then
+				return true
+			end
+		else
+			break
+		end
+	end
+	for i = 1, 32 do
+		local _, _, spellID = UnitBuff(guid, i)
+		if spellID then
+			if spellID == curseSpellID then
+				return true
+			end
+		else
+			break
+		end
+	end
+
+	return nil
 end
 
 Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, spellID, castDuration)
@@ -76,6 +101,28 @@ Cursive:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE",
 			end
 		end
 ) -- resists
+
+Cursive:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER", function(message)
+	-- check if spell that faded is relevant
+	local _, _, spell, target = string.find(message, fades_test)
+	if spell and target then
+		if curses.trackedCurseNamesToTextures[spell] then
+			-- loop through targets with active curses
+			for guid, data in pairs(curses.guids) do
+				for curseName, curseData in pairs(data) do
+					if curseName == spell then
+						-- see if target still has that curse
+						if not curses:ScanGuidForCurse(guid, curseData.spellID) then
+							-- remove curse
+							curses:RemoveCurse(guid, curseName)
+						end
+					end
+				end
+			end
+		end
+	end
+end
+)
 
 function curses:TimeRemaining(curseData)
 	return math.ceil(curseData.duration - (GetTime() - curseData.start))
@@ -148,6 +195,15 @@ function curses:ApplyCurse(spellID, targetGuid, startTime)
 		start = startTime,
 		spellID = spellID,
 	}
+end
+
+function curses:RemoveCurse(guid, curseName)
+	if curses.guids[guid] and curses.guids[guid][curseName] then
+		curses.guids[guid][curseName] = nil
+	end
+	if curses.expiringSoundGuids[guid] and curses.expiringSoundGuids[guid][curseName] then
+		curses.expiringSoundGuids[guid][curseName] = nil
+	end
 end
 
 function curses:RemoveGuid(guid)

@@ -312,6 +312,13 @@ local function DisplayGuid(guid, row, col)
 	-- update curses
 	local curseNumber = 1
 
+	-- make sure old curses are hidden
+	for i = 1, Cursive.db.profile.maxcurses do
+		local curse = barFrame["curse" .. i]
+		curse:Hide()
+		curse.timer:Hide()
+	end
+
 	local guidCurses = Cursive.curses.guids[guid]
 	if guidCurses then
 		for curseName, curseData in pairs(guidCurses) do
@@ -334,9 +341,6 @@ local function DisplayGuid(guid, row, col)
 				elseif Cursive.curses:HasRequestedExpiringSound(curseName, guid) then
 					Cursive.curses:EnableExpiringSound(curseName, guid)
 				end
-			else
-				curse.timer:Hide()
-				curse:Hide()
 			end
 			curseNumber = curseNumber + 1
 		end
