@@ -306,6 +306,24 @@ Cursive.cmdtable = {
 			name = " ",
 			order = 21,
 		},
+		["maxcurses"] = {
+			type = "range",
+			name = "Max Curses",
+			desc = "Max Curses",
+			order = 22,
+			min = 1,
+			max = 5,
+			step = 1,
+			get = function()
+				return Cursive.db.profile.maxcurses
+			end,
+			set = function(v)
+				if v ~= Cursive.db.profile.maxcurses then
+					Cursive.db.profile.maxcurses = v
+					Cursive.UpdateFramesFromConfig()
+				end
+			end,
+		},
 		["maxrow"] = {
 			type = "range",
 			name = "Max Rows",
