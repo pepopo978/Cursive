@@ -145,7 +145,7 @@ local function pickTarget(selectedPriority, spellNameNoRank, checkRange)
 		if shouldDisplay then
 			-- check if in combat already or player is actively targeting the mob
 			if Cursive.filter.infight(guid) or guid == currentTargetGuid then
-				if checkRange == true and CheckInteractDistance(guid, 4) then
+				if checkRange == false or CheckInteractDistance(guid, 4) then
 					-- check if the target has the curse
 					if not Cursive.curses:HasCurse(spellNameNoRank, guid) and not isMobCrowdControlled(guid) then
 						local value
