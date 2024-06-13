@@ -7,6 +7,7 @@ local commandOptions = {
 	expiringsound = "Play a sound when a curse is about to expire.",
 	allowooc = "Allow out of combat targets to be multicursed.  Would only consider using this solo to avoid potentially griefing raids/dungeons by pulling unintended mobs.",
 	minhp = "Minimum HP for a target to be considered.  Example usage minhp=10000. ",
+	refreshtime = "Time threshold below which to allow refreshing a curse.  Default is 0 seconds."
 }
 
 local commands = {
@@ -26,6 +27,11 @@ local function parseOptions(optionsStr)
 				local _, _, minHp = string.find(optionsStr, "minhp=(%d+)")
 				if minHp then
 					options["minhp"] = tonumber(minHp)
+				end
+			elseif option == "refreshtime" then
+				local _, _, refreshTime = string.find(optionsStr, "refreshtime=(%d+)")
+				if refreshTime then
+					options["refreshtime"] = tonumber(refreshTime)
 				end
 			elseif string.find(optionsStr, option) then
 				options[option] = true
@@ -139,11 +145,15 @@ local function isMobCrowdControlled(guid)
 	return false
 end
 
-local function pickTarget(selectedPriority, spellNameNoRank, checkRange, minHp, ignoreInFight)
+local function pickTarget(selectedPriority, spellNameNoRank, checkRange, options)
 	-- Curse the target that best matches the selected priority
 	local highestPrimaryValue = -1
 	local highestSecondaryValue = -1
 	local targetedGuid = nil
+
+	local minHp = options["minhp"]
+	local ignoreInFight = options["allowooc"]
+	local refreshTime = options["refreshtime"]
 
 	local _, currentTargetGuid = UnitExists("target")
 
@@ -159,7 +169,7 @@ local function pickTarget(selectedPriority, spellNameNoRank, checkRange, minHp, 
 				-- prioritize targets within 28 yards first to improve chances of being in range
 				if checkRange == false or CheckInteractDistance(guid, 4) then
 					-- check if the target has the curse
-					if not Cursive.curses:HasCurse(spellNameNoRank, guid) and not isMobCrowdControlled(guid) then
+					if not Cursive.curses:HasCurse(spellNameNoRank, guid, refreshTime) and not isMobCrowdControlled(guid) then
 						local mobHp = UnitHealth(guid)
 						if not minHp or mobHp >= minHp then
 							local primaryValue
@@ -194,7 +204,7 @@ local function pickTarget(selectedPriority, spellNameNoRank, checkRange, minHp, 
 
 	-- run again if no target found ignoring range
 	if not targetedGuid and checkRange == true then
-		targetedGuid = pickTarget(selectedPriority, spellNameNoRank, false, minHp, ignoreInFight)
+		targetedGuid = pickTarget(selectedPriority, spellNameNoRank, false, options)
 	end
 
 	return targetedGuid
@@ -230,7 +240,7 @@ function Cursive:Curse(spellName, targetedGuid, options)
 	-- remove (Rank x) from spellName if it exists
 	local spellNameNoRank = string.gsub(spellName, "%(.+%)", "")
 
-	if targetedGuid and not Cursive.curses:HasCurse(spellNameNoRank, targetedGuid) and not isMobCrowdControlled(targetedGuid) then
+	if targetedGuid and not Cursive.curses:HasCurse(spellNameNoRank, targetedGuid, options["refreshtime"]) and not isMobCrowdControlled(targetedGuid) then
 		castSpellWithOptions(spellName, spellNameNoRank, targetedGuid, options)
 	elseif options["warnings"] then
 		DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
@@ -253,7 +263,7 @@ function Cursive:Multicurse(spellName, priority, options)
 	-- remove (Rank x) from spellName if it exists
 	local spellNameNoRank = string.gsub(spellName, "%(.+%)", "")
 
-	local targetedGuid = pickTarget(selectedPriority, spellNameNoRank, true, options["minhp"], options["allowooc"])
+	local targetedGuid = pickTarget(selectedPriority, spellNameNoRank, true, options)
 
 	if targetedGuid then
 		castSpellWithOptions(spellName, spellNameNoRank, targetedGuid, options)
