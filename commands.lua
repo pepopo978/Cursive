@@ -2,14 +2,16 @@ local curseCommands = "|cffffcc00Cursive:|cffffaaaa Commands:"
 local curseOptions = "Options (separate with ,):"
 
 local commandOptions = {
-	["warnings"] = "Display text warnings when a curse fails to cast.",
-	["resistsound"] = "Play a sound when a curse is resisted.",
-	["expiringsound"] = "Play a sound when a curse is about to expire.",
+	warnings = "Display text warnings when a curse fails to cast.",
+	resistsound = "Play a sound when a curse is resisted.",
+	expiringsound = "Play a sound when a curse is about to expire.",
+	allowooc = "Allow out of combat targets to be multicursed.  Would only consider using this solo to avoid potentially griefing raids/dungeons by pulling unintended mobs.",
+	minhp = "Minimum HP for a target to be considered.  Example usage minhp=10000. ",
 }
 
 local commands = {
 	["curse"] = "/cursive curse <spellName:str>|<guid?:str>|<options?:List<str>>: Casts spell if not already on target/guid",
-	["multicurse"] = "/cursive multicurse <spellName:str>|<priority?:str>|<options?:List<str>>: Picks target based on priority and casts spell if not already on target.  Priority options: HIGHEST_HP, RAID_MARK.",
+	["multicurse"] = "/cursive multicurse <spellName:str>|<priority?:str>|<options?:List<str>>: Picks target based on priority and casts spell if not already on target.  Priority options: HIGHEST_HP, RAID_MARK, HIGHEST_HP_RAID_MARK.",
 }
 
 local curseNoTarget = "|cffffcc00Cursive:|cffffaaaa Couldn't find a target to curse."
@@ -19,7 +21,13 @@ local function parseOptions(optionsStr)
 
 	if optionsStr then
 		for option, _ in pairs(commandOptions) do
-			if string.find(optionsStr, option) then
+			-- special case for minhp as it takes a param
+			if option == "minhp" then
+				local _, _, minHp = string.find(optionsStr, "minhp=(%d+)")
+				if minHp then
+					options["minhp"] = tonumber(minHp)
+				end
+			elseif string.find(optionsStr, option) then
 				options[option] = true
 			end
 		end
@@ -131,12 +139,15 @@ local function isMobCrowdControlled(guid)
 	return false
 end
 
-local function pickTarget(selectedPriority, spellNameNoRank, checkRange)
+local function pickTarget(selectedPriority, spellNameNoRank, checkRange, minHp, ignoreInFight)
 	-- Curse the target that best matches the selected priority
-	local highestPriorityValue = -1
+	local highestPrimaryValue = -1
+	local highestSecondaryValue = -1
 	local targetedGuid = nil
 
 	local _, currentTargetGuid = UnitExists("target")
+
+	local seenRaidMark = nil -- if we have seen a raid mark
 
 	for guid, time in pairs(Cursive.core.guids) do
 		-- apply filters
@@ -144,20 +155,36 @@ local function pickTarget(selectedPriority, spellNameNoRank, checkRange)
 		-- check if target displayed
 		if shouldDisplay then
 			-- check if in combat already or player is actively targeting the mob
-			if Cursive.filter.infight(guid) or guid == currentTargetGuid then
+			if ignoreInFight or Cursive.filter.infight(guid) or guid == currentTargetGuid then
+				-- prioritize targets within 28 yards first to improve chances of being in range
 				if checkRange == false or CheckInteractDistance(guid, 4) then
 					-- check if the target has the curse
 					if not Cursive.curses:HasCurse(spellNameNoRank, guid) and not isMobCrowdControlled(guid) then
-						local value
-						if selectedPriority == "HIGHEST_HP" then
-							value = UnitHealth(guid)
-						elseif selectedPriority == "RAID_MARK" then
-							value = GetRaidTargetIndex(guid) or 0
-						end
+						local mobHp = UnitHealth(guid)
+						if not minHp or mobHp >= minHp then
+							local primaryValue
+							local secondaryValue = -1
+							if selectedPriority == "HIGHEST_HP" then
+								primaryValue = UnitHealth(guid)
+							elseif selectedPriority == "RAID_MARK" then
+								primaryValue = GetRaidTargetIndex(guid) or 0
+							elseif selectedPriority == "HIGHEST_HP_RAID_MARK" then
+								secondaryValue = GetRaidTargetIndex(guid) or 0
+								if secondaryValue > 0 and not seenRaidMark then
+									highestPrimaryValue = -1 -- reset highestPriorityValue if this is the first raid mark we've seen
+									seenRaidMark = true
+								end
+								primaryValue = UnitHealth(guid)
+							end
 
-						if value > highestPriorityValue then
-							highestPriorityValue = value
-							targetedGuid = guid
+							if primaryValue > highestPrimaryValue then
+								highestPrimaryValue = primaryValue
+								highestSecondaryValue = secondaryValue
+								targetedGuid = guid
+							elseif primaryValue == highestPrimaryValue and secondaryValue > highestSecondaryValue then
+								highestSecondaryValue = secondaryValue
+								targetedGuid = guid
+							end
 						end
 					end
 				end
@@ -167,7 +194,7 @@ local function pickTarget(selectedPriority, spellNameNoRank, checkRange)
 
 	-- run again if no target found ignoring range
 	if not targetedGuid and checkRange == true then
-		targetedGuid = pickTarget(selectedPriority, spellNameNoRank, false)
+		targetedGuid = pickTarget(selectedPriority, spellNameNoRank, false, minHp, ignoreInFight)
 	end
 
 	return targetedGuid
@@ -226,7 +253,7 @@ function Cursive:Multicurse(spellName, priority, options)
 	-- remove (Rank x) from spellName if it exists
 	local spellNameNoRank = string.gsub(spellName, "%(.+%)", "")
 
-	local targetedGuid = pickTarget(selectedPriority, spellNameNoRank, true)
+	local targetedGuid = pickTarget(selectedPriority, spellNameNoRank, true, options["minhp"], options["allowooc"])
 
 	if targetedGuid then
 		castSpellWithOptions(spellName, spellNameNoRank, targetedGuid, options)
