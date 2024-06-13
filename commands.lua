@@ -1,4 +1,5 @@
 local curseCommands = "|cffffcc00Cursive:|cffffaaaa Commands:"
+local priorityChoices = "Priority choices:"
 local curseOptions = "Options (separate with ,):"
 
 local commandOptions = {
@@ -7,12 +8,18 @@ local commandOptions = {
 	expiringsound = "Play a sound when a curse is about to expire.",
 	allowooc = "Allow out of combat targets to be multicursed.  Would only consider using this solo to avoid potentially griefing raids/dungeons by pulling unintended mobs.",
 	minhp = "Minimum HP for a target to be considered.  Example usage minhp=10000. ",
-	refreshtime = "Time threshold below which to allow refreshing a curse.  Default is 0 seconds."
+	refreshtime = "Time threshold at which to allow refreshing a curse.  Default is 0 seconds."
 }
 
 local commands = {
 	["curse"] = "/cursive curse <spellName:str>|<guid?:str>|<options?:List<str>>: Casts spell if not already on target/guid",
-	["multicurse"] = "/cursive multicurse <spellName:str>|<priority?:str>|<options?:List<str>>: Picks target based on priority and casts spell if not already on target.  Priority options: HIGHEST_HP, RAID_MARK, HIGHEST_HP_RAID_MARK.",
+	["multicurse"] = "/cursive multicurse <spellName:str>|<priority?:str>|<options?:List<str>>: Picks target based on priority and casts spell if not already on target",
+}
+
+local priorities = {
+	["HIGHEST_HP"] = "Target with the highest HP.",
+	["RAID_MARK"] = "Target with the highest raid mark.",
+	["HIGHEST_HP_RAID_MARK"] = "Target with the highest HP and raid mark.",
 }
 
 local curseNoTarget = "|cffffcc00Cursive:|cffffaaaa Couldn't find a target to curse."
@@ -48,6 +55,11 @@ local function handleSlashCommands(msg, editbox)
 		for command, description in pairs(commands) do
 			DEFAULT_CHAT_FRAME:AddMessage(description)
 		end
+		DEFAULT_CHAT_FRAME:AddMessage(priorityChoices)
+		for priority, description in pairs(priorities) do
+			DEFAULT_CHAT_FRAME:AddMessage(priority .. ": " .. description)
+		end
+
 		DEFAULT_CHAT_FRAME:AddMessage(curseOptions)
 		for option, description in pairs(commandOptions) do
 			DEFAULT_CHAT_FRAME:AddMessage(option .. ": " .. description)
@@ -253,8 +265,11 @@ function Cursive:Multicurse(spellName, priority, options)
 		return
 	end
 
-	if priority and (priority ~= "HIGHEST_HP" and priority ~= "RAID_MARK") then
-		DEFAULT_CHAT_FRAME:AddMessage(commands["multicurse"])
+	if priority and not priorities[priority] then
+		DEFAULT_CHAT_FRAME:AddMessage(priorityChoices)
+		for choice, description in pairs(priorities) do
+			DEFAULT_CHAT_FRAME:AddMessage(choice .. ": " .. description)
+		end
 		return
 	end
 

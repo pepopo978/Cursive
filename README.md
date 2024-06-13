@@ -49,7 +49,7 @@ All commands can take the following options separated by commas:
 - `expiringsound` : "Play a sound when a curse is about to expire.",
 - `allowooc` : "Allow out of combat targets to be multicursed.  Would only consider using this solo to avoid potentially griefing raids/dungeons by pulling unintended mobs.",
 - `minhp=<number>` : "Minimum HP for a target to be considered.",
-- `refreshtime=<number>` : "Time threshold below which to allow refreshing a curse.  Default is 0 seconds.",
+- `refreshtime=<number>` : "Time threshold at which to allow refreshing a curse.  Default is 0 seconds.",
 
 EXAMPLE: `/cursive multicurse Corruption|HIGHEST_HP|warnings,resistsound,expiringsound,minhp=10000,refreshtime=2`
 
