@@ -25,17 +25,33 @@ EXAMPLE: `/cursive curse Corruption|target` will attempt to cast Corruption on y
 
 ### Multicurse
 `/cursive multicurse <spellName:str>|<priority?:str>|<options?:str>`: Picks target based on priority and casts spell if not already on target and they aren't cc'ed.  
-Priority options: HIGHEST_HP, RAID_MARK
 
 EXAMPLE: `/cursive multicurse Corruption|HIGHEST_HP` will attempt to cast Corruption picking the target with the highest HP that doesn't already have it and will warn you if it does nothing.
+## Priority Options
+- HIGHEST_HP - Target highest HP enemy without a curse first.
+- RAID_MARK  - Target largest raid mark enemy without a curse first.  Raid mark priority is as follows:
+  - Skull = 8 (1st priority)
+  - Cross = 7
+  - Square = 6
+  - Moon = 5
+  - Triangle = 4
+  - Circle = 3
+  - Star = 2
+  - Diamond = 1 (8th priority)
+  - No mark = 0
+- HIGHEST_HP_RAID_MARK - Target highest HP enemy with a raid (use raid mark priorities for identical hp), then highest HP enemy without a mark.
+
 
 ## Command Options
 All commands can take the following options separated by commas:
-- ["warnings"] : "Display text warnings when a curse fails to cast.",
-- ["resistsound"] : "Play a sound when a curse is resisted.",
-- ["expiringsound"] : "Play a sound when a curse is about to expire.",
+- `warnings` : "Display text warnings when a curse fails to cast.",
+- `resistsound` : "Play a sound when a curse is resisted.",
+- `expiringsound` : "Play a sound when a curse is about to expire.",
+- `allowooc` : "Allow out of combat targets to be multicursed.  Would only consider using this solo to avoid potentially griefing raids/dungeons by pulling unintended mobs.",
+- `minhp=<number>` : "Minimum HP for a target to be considered.",
+- `refreshtime=<number>` : "Time threshold at which to allow refreshing a curse.  Default is 0 seconds.",
 
-EXAMPLE: `/cursive multicurse Corruption|HIGHEST_HP|warnings,resistsound,expiringsound`
+EXAMPLE: `/cursive multicurse Corruption|HIGHEST_HP|warnings,resistsound,expiringsound,minhp=10000,refreshtime=2`
 
 ## Important info
 
@@ -54,14 +70,3 @@ All commands will ignore targets with the following CCs on them:
 - Banish
 
 Multicurse will only ever target enemies that are already in combat (except if you target a mob directly first) to prevent pulling things you didn't intend like marked patrols.
-
-Raid mark priority is based on the following order:
-- Skull = 8
-- Cross = 7
-- Square = 6
-- Moon = 5
-- Triangle = 4
-- Circle = 3
-- Star = 2
-- Diamond = 1
-- No mark = 0

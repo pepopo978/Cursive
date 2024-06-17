@@ -172,12 +172,18 @@ function curses:ShouldPlayResistSound(guid)
 	return false
 end
 
-function curses:HasCurse(spellName, targetGuid)
+function curses:HasCurse(spellName, targetGuid, minRemaining)
+	if not minRemaining then
+		minRemaining = 0 -- default to 0
+	end
+
 	if curses.guids[targetGuid] and curses.guids[targetGuid][spellName] then
 		local remaining = Cursive.curses:TimeRemaining(curses.guids[targetGuid][spellName])
-		return remaining > 0
+		if remaining > minRemaining then
+			return true
+		end
 	end
-	return false
+	return nil
 end
 
 function curses:ApplyCurse(spellID, targetGuid, startTime)
