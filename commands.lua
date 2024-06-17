@@ -125,6 +125,9 @@ local crowdControlledSpellIds = {
 	[3355] = { name = "Freezing Trap", rank = 1, duration = 10 },
 	[14308] = { name = "Freezing Trap", rank = 2, duration = 15 },
 	[14309] = { name = "Freezing Trap", rank = 3, duration = 20 },
+
+	[710] = { name = "Banish", rank = 1, duration = 30 },
+	[18647] = { name = "Banish", rank = 2, duration = 30 },
 }
 
 local function isMobCrowdControlled(guid)
