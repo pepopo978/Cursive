@@ -51,6 +51,7 @@ All commands will ignore targets with the following CCs on them:
 - Sap
 - Gouge
 - Freezing Trap
+- Banish
 
 Multicurse will only ever target enemies that are already in combat (except if you target a mob directly first) to prevent pulling things you didn't intend like marked patrols.
 
