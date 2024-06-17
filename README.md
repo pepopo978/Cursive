@@ -19,12 +19,12 @@ Move the Cursive label to the desired position on the screen.  You can turn on '
 `/cursive` for commands, minimap icon to edit options.
 
 ### Curse
-`/cursive curse <spellName:str>|<guid?:str>|<options?:str>`: Casts spell if not already on target/guid
+`/cursive curse <spellName:str>|<guid?:str>|<options?:comma separated str>`: Casts spell if not already on target/guid
 
 EXAMPLE: `/cursive curse Corruption|target` will attempt to cast Corruption on your target if it's not already on them and they aren't cc'ed.
 
 ### Multicurse
-`/cursive multicurse <spellName:str>|<priority?:str>|<options?:str>`: Picks target based on priority and casts spell if not already on target and they aren't cc'ed.  
+`/cursive multicurse <spellName:str>|<priority?:str>|<options?:comma separated str>`: Picks target based on priority and casts spell if not already on target and they aren't cc'ed.  
 
 EXAMPLE: `/cursive multicurse Corruption|HIGHEST_HP` will attempt to cast Corruption picking the target with the highest HP that doesn't already have it and will warn you if it does nothing.
 ## Priority Options
