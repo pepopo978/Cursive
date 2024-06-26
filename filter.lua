@@ -12,6 +12,10 @@ filter.infight = function(unit)
 	return UnitAffectingCombat(unit) and true or false
 end
 
+filter.hascurse = function(unit)
+	return Cursive.curses:HasAnyCurse(unit) and true or false
+end
+
 filter.alive = function(unit)
 	return not UnitIsDead(unit) and true or false
 end
@@ -72,6 +76,10 @@ function Cursive:ShouldDisplayGuid(guid)
 
 	if Cursive.db.profile.filterincombat then
 		shouldDisplay = shouldDisplay and filter.infight(guid)
+	end
+
+	if Cursive.db.profile.filterhascurse then
+		shouldDisplay = shouldDisplay and filter.hascurse(guid)
 	end
 
 	if Cursive.db.profile.filterhostile then

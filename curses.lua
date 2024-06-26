@@ -172,6 +172,13 @@ function curses:ShouldPlayResistSound(guid)
 	return false
 end
 
+function curses:HasAnyCurse(guid)
+	if curses.guids[guid] and next(curses.guids[guid]) then
+		return true
+	end
+	return nil
+end
+
 function curses:HasCurse(spellName, targetGuid, minRemaining)
 	if not minRemaining then
 		minRemaining = 0 -- default to 0

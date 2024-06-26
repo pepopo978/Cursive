@@ -31,6 +31,7 @@ Cursive:RegisterDefaults("profile", {
 	filterattackable = true,
 	filterrange = false,
 	filterraidmark = false,
+	filterhascurse = false,
 })
 
 local barOptions = {
@@ -221,6 +222,18 @@ local mobFilters = {
 		end,
 		set = function(v)
 			Cursive.db.profile.filterraidmark = v
+		end,
+	},
+	["hascurse"] = {
+		type = "toggle",
+		name = "Has Curse",
+		desc = "Only show units you have cursed",
+		order = 6,
+		get = function()
+			return Cursive.db.profile.filterhascurse
+		end,
+		set = function(v)
+			Cursive.db.profile.filterhascurse = v
 		end,
 	},
 }
