@@ -66,8 +66,8 @@ function Cursive:ShouldDisplayGuid(guid)
 		return true
 	end
 
-	-- always show raid marks if attackable
-	if filter.icon(guid) and filter.attackable(guid) then
+	-- always show raid marks if attackable and not in combat or this guid is affecting combat
+	if filter.icon(guid) and filter.attackable(guid) and (not UnitAffectingCombat("player") or UnitAffectingCombat(guid)) then
 		return true
 	end
 
