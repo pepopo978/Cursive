@@ -65,9 +65,5 @@ function getWarlockSpells()
 		[5782] = { name = "Fear", rank = 1, duration = 10 },
 		[6213] = { name = "Fear", rank = 2, duration = 15 },
 		[6215] = { name = "Fear", rank = 3, duration = 20 },
-
-		[6789] = { name = "Death Coil", rank = 1, duration = 3 },
-		[17925] = { name = "Death Coil", rank = 2, duration = 3 },
-		[17926] = { name = "Death Coil", rank = 3, duration = 3 },
 	}
 end
