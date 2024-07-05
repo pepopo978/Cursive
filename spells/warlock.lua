@@ -61,5 +61,13 @@ function getWarlockSpells()
 		[18879] = { name = "Siphon Life", rank = 2, duration = 30 },
 		[18880] = { name = "Siphon Life", rank = 3, duration = 30 },
 		[18881] = { name = "Siphon Life", rank = 4, duration = 30 },
+
+		[5782] = { name = "Fear", rank = 1, duration = 10 },
+		[6213] = { name = "Fear", rank = 2, duration = 15 },
+		[6215] = { name = "Fear", rank = 3, duration = 20 },
+
+		[6789] = { name = "Death Coil", rank = 1, duration = 3 },
+		[17925] = { name = "Death Coil", rank = 2, duration = 3 },
+		[17926] = { name = "Death Coil", rank = 3, duration = 3 },
 	}
 end
