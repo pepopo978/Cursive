@@ -22,8 +22,8 @@ function getWarlockSpells()
 		[7659] = { name = "Curse of Recklessness", rank = 3, duration = 120 },
 		[11717] = { name = "Curse of Recklessness", rank = 4, duration = 120 },
 
-		[17862] = { name = "Curse of Shadow", rank = 1, duration = 120 },
-		[17937] = { name = "Curse of Shadow", rank = 2, duration = 120 },
+		[17862] = { name = "Curse of Shadow", rank = 1, duration = 300 },
+		[17937] = { name = "Curse of Shadow", rank = 2, duration = 300 },
 
 		[1490] = { name = "Curse of the Elements", rank = 1, duration = 300 },
 		[11721] = { name = "Curse of the Elements", rank = 2, duration = 300 },
