@@ -16,10 +16,22 @@ local commands = {
 	["multicurse"] = "/cursive multicurse <spellName:str>|<priority?:str>|<options?:List<str>>: Picks target based on priority and casts spell if not already on target",
 }
 
+local PRIORITY_HIGHEST_HP = "HIGHEST_HP"
+local PRIORITY_RAID_MARK = "RAID_MARK"
+local PRIORITY_RAID_MARK_SQUARE = "RAID_MARK_SQUARE"
+local PRIORITY_INVERSE_RAID_MARK = "INVERSE_RAID_MARK"
+local PRIORITY_HIGHEST_HP_RAID_MARK = "HIGHEST_HP_RAID_MARK"
+local PRIORITY_HIGHEST_HP_RAID_MARK_SQUARE = "HIGHEST_HP_RAID_MARK_SQUARE"
+local PRIORITY_HIGHEST_HP_INVERSE_RAID_MARK = "HIGHEST_HP_INVERSE_RAID_MARK"
+
 local priorities = {
-	["HIGHEST_HP"] = "Target with the highest HP.",
-	["RAID_MARK"] = "Target with the highest raid mark.",
-	["HIGHEST_HP_RAID_MARK"] = "Target with the highest HP and raid mark.",
+	[PRIORITY_HIGHEST_HP] = "Target with the highest HP.",
+	[PRIORITY_RAID_MARK] = "Target with the highest raid mark.",
+	[PRIORITY_RAID_MARK_SQUARE] = "Target with the highest raid mark with Cross set to -1 and Skull set to -2 (Square highest prio at 6).",
+	[PRIORITY_INVERSE_RAID_MARK] = "Target with the lowest raid mark.",
+	[PRIORITY_HIGHEST_HP_RAID_MARK] = "Target with the highest HP and raid mark.",
+	[PRIORITY_HIGHEST_HP_RAID_MARK_SQUARE] = "Same as HIGHEST_HP_RAID_MARK but with RAID_MARK_SQUARE mark prio.",
+	[PRIORITY_HIGHEST_HP_INVERSE_RAID_MARK] = "Same as HIGHEST_HP_RAID_MARK but with INVERSE_RAID_MARK mark prio."
 }
 
 local curseNoTarget = "|cffffcc00Cursive:|cffffaaaa Couldn't find a target to curse."
@@ -91,6 +103,10 @@ local crowdControlledSpellIds = {
 	[9852] = { name = "Entangling Roots", rank = 5, duration = 24 },
 	[9853] = { name = "Entangling Roots", rank = 6, duration = 27 },
 
+	[2637] = { name = "Hibernate", rank = 1, duration = 20 },
+	[18657] = { name = "Hibernate", rank = 2, duration = 30 },
+	[18658] = { name = "Hibernate", rank = 3, duration = 40 },
+
 	[1425] = { name = "Shackle Undead", rank = 1, duration = 30 },
 	[9486] = { name = "Shackle Undead", rank = 2, duration = 40 },
 	[10956] = { name = "Shackle Undead", rank = 3, duration = 50 },
@@ -160,10 +176,22 @@ local function isMobCrowdControlled(guid)
 	return false
 end
 
+local function GetSquarePrioRaidTargetIndex(guid)
+	local index = GetRaidTargetIndex(guid)
+	if index == 7 then
+		return 0 -- cross becomes 0
+	elseif index == 8 then
+		return -1 -- skull becomes -1
+	elseif index == 0 then
+		return -2 -- nomark becomes -2
+	end
+	return index or -2
+end
+
 local function pickTarget(selectedPriority, spellNameNoRank, checkRange, options)
 	-- Curse the target that best matches the selected priority
-	local highestPrimaryValue = -1
-	local highestSecondaryValue = -1
+	local highestPrimaryValue = -10
+	local highestSecondaryValue = -10
 	local targetedGuid = nil
 
 	local minHp = options["minhp"]
@@ -187,19 +215,37 @@ local function pickTarget(selectedPriority, spellNameNoRank, checkRange, options
 					if not Cursive.curses:HasCurse(spellNameNoRank, guid, refreshTime) and not isMobCrowdControlled(guid) then
 						local mobHp = UnitHealth(guid)
 						if not minHp or mobHp >= minHp then
-							local primaryValue
+							local primaryValue = -1
 							local secondaryValue = -1
-							if selectedPriority == "HIGHEST_HP" then
-								primaryValue = UnitHealth(guid)
-							elseif selectedPriority == "RAID_MARK" then
+							if selectedPriority == PRIORITY_HIGHEST_HP then
+								primaryValue = UnitHealth(guid) or 0
+							elseif selectedPriority == PRIORITY_RAID_MARK then
 								primaryValue = GetRaidTargetIndex(guid) or 0
-							elseif selectedPriority == "HIGHEST_HP_RAID_MARK" then
+							elseif selectedPriority == PRIORITY_RAID_MARK_SQUARE then
+								primaryValue = GetSquarePrioRaidTargetIndex(guid)
+							elseif selectedPriority == PRIORITY_INVERSE_RAID_MARK then
+								primaryValue = -1 * (GetRaidTargetIndex(guid) or 9)
+							elseif selectedPriority == PRIORITY_HIGHEST_HP_RAID_MARK then
 								secondaryValue = GetRaidTargetIndex(guid) or 0
 								if secondaryValue > 0 and not seenRaidMark then
-									highestPrimaryValue = -1 -- reset highestPriorityValue if this is the first raid mark we've seen
+									highestPrimaryValue = -10 -- reset highestPriorityValue if this is the first raid mark we've seen
 									seenRaidMark = true
 								end
-								primaryValue = UnitHealth(guid)
+								primaryValue = UnitHealth(guid) or 0
+							elseif selectedPriority == PRIORITY_HIGHEST_HP_RAID_MARK_SQUARE then
+								secondaryValue = GetSquarePrioRaidTargetIndex(guid)
+								if secondaryValue > -2 and not seenRaidMark then
+									highestPrimaryValue = -10 -- reset highestPriorityValue if this is the first raid mark we've seen
+									seenRaidMark = true
+								end
+								primaryValue = UnitHealth(guid) or 0
+							elseif selectedPriority == PRIORITY_HIGHEST_HP_INVERSE_RAID_MARK then
+								secondaryValue = -1 * (GetRaidTargetIndex(guid) or 9)
+								if secondaryValue > -9 and not seenRaidMark then
+									highestPrimaryValue = -10 -- reset highestPriorityValue if this is the first raid mark we've seen
+									seenRaidMark = true
+								end
+								primaryValue = UnitHealth(guid) or 0
 							end
 
 							if primaryValue > highestPrimaryValue then
@@ -276,7 +322,7 @@ function Cursive:Multicurse(spellName, priority, options)
 		return
 	end
 
-	local selectedPriority = priority or "HIGHEST_HP"
+	local selectedPriority = priority or PRIORITY_HIGHEST_HP
 
 	-- remove (Rank x) from spellName if it exists
 	local spellNameNoRank = string.gsub(spellName, "%(.+%)", "")

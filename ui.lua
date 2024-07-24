@@ -330,6 +330,7 @@ local function DisplayGuid(guid, row, col)
 			local curse = barFrame["curse" .. curseNumber]
 			if remaining >= 0 then
 				curse:SetTexture(Cursive.curses.trackedCurseIds[curseData.spellID].texture)
+				-- curse:SetTexCoord(.078, .92, .079, .937) rounded icons
 				curse.timer:SetText(remaining)
 				curse.timer:Show()
 				curse:Show()
