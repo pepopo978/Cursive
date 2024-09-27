@@ -149,12 +149,22 @@ ui.BarUpdate = function()
 	-- update caption text
 	local name = UnitName(this.guid)
 	local hp = UnitHealth(this.guid)
+	if GetLocale() == "zhCN" then
+		if hp then
+			if hp >= 10000 then
+				hp = math.floor(hp / 1000) / 10 .. "万"
+			-- elseif hp >= 1000 then
+			-- 	hp = math.floor(hp / 100) / 10 .. "k"
+			end
+		end
+	else
 	-- convert hp to k if > 1000
-	if hp then
-		if hp >= 1000000 then
-			hp = math.floor(hp / 100000) / 10 .. "m"
-		elseif hp >= 1000 then
-			hp = math.floor(hp / 100) / 10 .. "k"
+		if hp then
+			if hp >= 1000000 then
+				hp = math.floor(hp / 100000) / 10 .. "m"
+			elseif hp >= 1000 then
+				hp = math.floor(hp / 100) / 10 .. "k"
+			end
 		end
 	end
 

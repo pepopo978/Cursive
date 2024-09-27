@@ -1,5 +1,5 @@
 ## Interface: 11200
-## Title: Cursive
+## Title: [|CFF33AAFFSUPERWOW|R] Cursive
 ## Author: Pepopo
 ## Notes: Uses SuperWoW GUIDs to show units in combat and track curses
 ## Version: 1.0
@@ -21,6 +21,7 @@ Libs\Dewdrop\Dewdrop-2.0.lua
 Libs\Tablet\Tablet-2.0.lua
 Libs\FuBarPlugin\FuBarPlugin-2.0.lua
 
+Localization.lua
 global.lua
 utils.lua
 settings.lua
