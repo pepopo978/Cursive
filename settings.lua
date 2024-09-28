@@ -2,9 +2,10 @@ if not Cursive.superwow then
 	return
 end
 
+local L = AceLibrary("AceLocale-2.2"):new("Cursive")
 Cursive:RegisterDB("CursiveDB")
 Cursive:RegisterDefaults("profile", {
-	caption = "Cursive",
+	caption = L["Cursive"],
 	anchor = "CENTER",
 	x = -240,
 	y = 120,
@@ -37,8 +38,8 @@ Cursive:RegisterDefaults("profile", {
 local barOptions = {
 	["barwidth"] = {
 		type = "range",
-		name = "Health Bar Width",
-		desc = "Health Bar Width",
+		name = L["Health Bar Width"],
+		desc = L["Health Bar Width"],
 		order = 10,
 		min = 30,
 		max = 150,
@@ -55,8 +56,8 @@ local barOptions = {
 	},
 	["barheight"] = {
 		type = "range",
-		name = "Health Bar Height",
-		desc = "Health Bar Height",
+		name = L["Health Bar Height"],
+		desc = L["Health Bar Height"],
 		order = 20,
 		min = 10,
 		max = 30,
@@ -73,8 +74,8 @@ local barOptions = {
 	},
 	["raidiconsize"] = {
 		type = "range",
-		name = "Raid Icon Size",
-		desc = "Raid Icon Size",
+		name = L["Raid Icon Size"],
+		desc = L["Raid Icon Size"],
 		order = 30,
 		min = 10,
 		max = 30,
@@ -91,8 +92,8 @@ local barOptions = {
 	},
 	["curseiconsize"] = {
 		type = "range",
-		name = "Curse Icon Size",
-		desc = "Curse Icon Size",
+		name = L["Curse Icon Size"],
+		desc = L["Curse Icon Size"],
 		order = 40,
 		min = 10,
 		max = 30,
@@ -109,8 +110,8 @@ local barOptions = {
 	},
 	["spacing"] = {
 		type = "range",
-		name = "Spacing",
-		desc = "Spacing",
+		name = L["Spacing"],
+		desc = L["Spacing"],
 		order = 50,
 		min = 0,
 		max = 10,
@@ -127,8 +128,8 @@ local barOptions = {
 	},
 	["textsize"] = {
 		type = "range",
-		name = "Text Size",
-		desc = "Text Size",
+		name = L["Text Size"],
+		desc = L["Text Size"],
 		order = 60,
 		min = 8,
 		max = 20,
@@ -145,8 +146,8 @@ local barOptions = {
 	},
 	["scale"] = {
 		type = "range",
-		name = "Scale",
-		desc = "Scale",
+		name = L["Scale"],
+		desc = L["Scale"],
 		order = 70,
 		min = 0.5,
 		max = 2,
@@ -166,8 +167,8 @@ local barOptions = {
 local mobFilters = {
 	["incombat"] = {
 		type = "toggle",
-		name = "In Combat",
-		desc = "In Combat",
+		name = L["In Combat"],
+		desc = L["In Combat"],
 		order = 1,
 		get = function()
 			return Cursive.db.profile.filterincombat
@@ -178,8 +179,8 @@ local mobFilters = {
 	},
 	["hostile"] = {
 		type = "toggle",
-		name = "Hostile",
-		desc = "Hostile",
+		name = L["Hostile"],
+		desc = L["Hostile"],
 		order = 2,
 		get = function()
 			return Cursive.db.profile.filterhostile
@@ -190,8 +191,8 @@ local mobFilters = {
 	},
 	["attackable"] = {
 		type = "toggle",
-		name = "Attackable",
-		desc = "Attackable",
+		name = L["Attackable"],
+		desc = L["Attackable"],
 		order = 3,
 		get = function()
 			return Cursive.db.profile.filterattackable
@@ -202,8 +203,8 @@ local mobFilters = {
 	},
 	["range"] = {
 		type = "toggle",
-		name = "Within 28 Range",
-		desc = "Within 28 Range",
+		name = L["Within 28 Range"],
+		desc = L["Within 28 Range"],
 		order = 4,
 		get = function()
 			return Cursive.db.profile.filterrange
@@ -214,8 +215,8 @@ local mobFilters = {
 	},
 	["raidmark"] = {
 		type = "toggle",
-		name = "Has Raid Mark",
-		desc = "Has Raid Mark",
+		name = L["Has Raid Mark"],
+		desc = L["Has Raid Mark"],
 		order = 5,
 		get = function()
 			return Cursive.db.profile.filterraidmark
@@ -226,8 +227,8 @@ local mobFilters = {
 	},
 	["hascurse"] = {
 		type = "toggle",
-		name = "Has Curse",
-		desc = "Only show units you have cursed",
+		name = L["Has Curse"],
+		desc = L["Only show units you have cursed"],
 		order = 6,
 		get = function()
 			return Cursive.db.profile.filterhascurse
@@ -244,8 +245,8 @@ Cursive.cmdtable = {
 	args = {
 		["enabled"] = {
 			type = "toggle",
-			name = "Enabled",
-			desc = "Enable/Disable Cursive",
+			name = L["Enabled"],
+			desc = L["Enable/Disable Cursive"],
 			order = 1,
 			get = function()
 				return Cursive.db.profile.enabled
@@ -261,8 +262,8 @@ Cursive.cmdtable = {
 		},
 		["showtitle"] = {
 			type = "toggle",
-			name = "Show Title",
-			desc = "Show the title of the frame",
+			name = L["Show Title"],
+			desc = L["Show the title of the frame"],
 			order = 3,
 			get = function()
 				return Cursive.db.profile.showtitle
@@ -274,8 +275,8 @@ Cursive.cmdtable = {
 		},
 		["clickthrough"] = {
 			type = "toggle",
-			name = "Allow clickthrough",
-			desc = "This will allow you to click through the frame to target mobs behind it, but prevents dragging the frame.",
+			name = L["Allow clickthrough"],
+			desc = L["This will allow you to click through the frame to target mobs behind it, but prevents dragging the frame."],
 			order = 5,
 			get = function()
 				return Cursive.db.profile.clickthrough
@@ -287,8 +288,8 @@ Cursive.cmdtable = {
 		},
 		["showbackdrop"] = {
 			type = "toggle",
-			name = "Show Frame Background",
-			desc = "Toggle the frame background to help with positioning",
+			name = L["Show Frame Background"],
+			desc = L["Toggle the frame background to help with positioning"],
 			order = 7,
 			get = function()
 				return Cursive.db.profile.showbackdrop
@@ -300,8 +301,8 @@ Cursive.cmdtable = {
 		},
 		["resetframe"] = {
 			type = "execute",
-			name = "Reset Frame",
-			desc = "Move the frame back to the default position",
+			name = L["Reset Frame"],
+			desc = L["Move the frame back to the default position"],
 			order = 9,
 			func = function()
 				Cursive.db.profile.anchor = "CENTER"
@@ -317,15 +318,15 @@ Cursive.cmdtable = {
 		},
 		["bardisplay"] = {
 			type = "group",
-			name = "Bar Display Settings",
-			desc = "Bar Display Settings",
+			name = L["Bar Display Settings"],
+			desc = L["Bar Display Settings"],
 			order = 13,
 			args = barOptions
 		},
 		["filters"] = {
 			type = "group",
-			name = "Mob filters",
-			desc = "Target and Raid Marks always shown",
+			name = L["Mob filters"],
+			desc = L["Target and Raid Marks always shown"],
 			order = 20,
 			args = mobFilters
 		},
@@ -336,8 +337,8 @@ Cursive.cmdtable = {
 		},
 		["maxcurses"] = {
 			type = "range",
-			name = "Max Curses",
-			desc = "Max Curses",
+			name = L["Max Curses"],
+			desc = L["Max Curses"],
 			order = 22,
 			min = 1,
 			max = 8,
@@ -354,8 +355,8 @@ Cursive.cmdtable = {
 		},
 		["maxrow"] = {
 			type = "range",
-			name = "Max Rows",
-			desc = "Max Rows",
+			name = L["Max Rows"],
+			desc = L["Max Rows"],
 			order = 30,
 			min = 1,
 			max = 20,
@@ -372,8 +373,8 @@ Cursive.cmdtable = {
 		},
 		["maxcol"] = {
 			type = "range",
-			name = "Max Columns",
-			desc = "Max Columns",
+			name = L["Max Columns"],
+			desc = L["Max Columns"],
 			order = 40,
 			min = 1,
 			max = 20,
