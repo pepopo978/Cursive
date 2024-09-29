@@ -1,7 +1,7 @@
 if not Cursive.superwow then
 	return
 end
-
+local L = AceLibrary("AceLocale-2.2"):new("Cursive")
 local curses = {
 	trackedCurseIds = {},
 	trackedCurseNamesToTextures = {},
@@ -14,8 +14,8 @@ local curses = {
 -- combat events for curses
 local afflict_test = "^(.+) is afflicted by (.+) %((%d+)%)" -- for stacks 2-5 will be "Fire Vulnerability (2)".
 local gains_test = "^(.+) gains (.+) %((%d+)%)" -- for stacks 2-5 will be "Fire Vulnerability (2)".
-local fades_test = "(.+) fades from (.+)"
-local resist_test = "Your (.+) was resisted by (.+)"
+local fades_test = L["(.+) fades from (.+)"]
+local resist_test = L["Your (.+) was resisted by (.+)"]
 
 local lastGuid = nil
 
