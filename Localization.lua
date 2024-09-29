@@ -21,6 +21,10 @@ L:RegisterTranslations("enUS", function() return {
         ["Same as HIGHEST_HP_RAID_MARK but with INVERSE_RAID_MARK mark prio."] = true,
         ["|cffffcc00Cursive:|cffffaaaa Couldn't find a target to curse."] = true,
 
+        -- curses
+        ["(.+) fades from (.+)"] = true,
+        ["Your (.+) was resisted by (.+)"] = true,
+
         -- global
         ["|cffffcc00Cursive:|cffffaaaa Couldn't detect SuperWoW."] = true,
         ["|cffffcc00Cursive:|cffffaaaa Loaded.  /cursive for commands and minimap icon for options."] = true,
@@ -157,6 +161,10 @@ L:RegisterTranslations("zhCN", function() return {
         ["Same as HIGHEST_HP_RAID_MARK but with RAID_MARK_SQUARE mark prio."] = "与HIGHEST_HP_RAID_MARK相同，但是RAID_MARK_SQUARE标记优先.",
         ["Same as HIGHEST_HP_RAID_MARK but with INVERSE_RAID_MARK mark prio."] = "与HIGHEST_HP_RAID_MARK相同，但是INVERSE_RAID_MARK标记优先.",
         ["|cffffcc00Cursive:|cffffaaaa Couldn't find a target to curse."] = "|cffffcc00Cursive:|cffffaaaa 找不到要诅咒的目标.",
+
+        -- curses
+        ["(.+) fades from (.+)"] = "(.+)效果从(.+)身上消失",
+        ["Your (.+) was resisted by (.+)"] = "你的(.+)被(.+)抵抗了",
 
         -- global
         ["|cffffcc00Cursive:|cffffaaaa Couldn't detect SuperWoW."] = "|cffffcc00Cursive:|cffffaaaa 无法检测到SuperWoW.",
