@@ -9,7 +9,8 @@ local commandOptions = {
 	expiringsound = L["Play a sound when a curse is about to expire."],
 	allowooc = L["Allow out of combat targets to be multicursed.  Would only consider using this solo to avoid potentially griefing raids/dungeons by pulling unintended mobs."],
 	minhp = L["Minimum HP for a target to be considered.  Example usage minhp=10000. "],
-	refreshtime = L["Time threshold at which to allow refreshing a curse.  Default is 0 seconds."]
+	refreshtime = L["Time threshold at which to allow refreshing a curse.  Default is 0 seconds."],
+	ignoretarget = L["Ignore the current target when choosing target for multicurse.  Does not affect 'curse' command."],
 }
 
 local commands = {
@@ -70,12 +71,12 @@ local function handleSlashCommands(msg, editbox)
 		end
 		DEFAULT_CHAT_FRAME:AddMessage(priorityChoices)
 		for priority, description in pairs(priorities) do
-			DEFAULT_CHAT_FRAME:AddMessage("|CFFFFFF00"..priority .. "|R: " .. description)
+			DEFAULT_CHAT_FRAME:AddMessage("|CFFFFFF00" .. priority .. "|R: " .. description)
 		end
 
 		DEFAULT_CHAT_FRAME:AddMessage(curseOptions)
 		for option, description in pairs(commandOptions) do
-			DEFAULT_CHAT_FRAME:AddMessage("|CFFFFFF00"..option .. "|R: " .. description)
+			DEFAULT_CHAT_FRAME:AddMessage("|CFFFFFF00" .. option .. "|R: " .. description)
 		end
 		return
 	end
@@ -208,54 +209,56 @@ local function pickTarget(selectedPriority, spellNameNoRank, checkRange, options
 		local shouldDisplay = Cursive:ShouldDisplayGuid(guid)
 		-- check if target displayed
 		if shouldDisplay then
-			-- check if in combat already or player is actively targeting the mob
-			if ignoreInFight or Cursive.filter.infight(guid) or guid == currentTargetGuid then
-				-- prioritize targets within 28 yards first to improve chances of being in range
-				if checkRange == false or CheckInteractDistance(guid, 4) then
-					-- check if the target has the curse
-					if not Cursive.curses:HasCurse(spellNameNoRank, guid, refreshTime) and not isMobCrowdControlled(guid) then
-						local mobHp = UnitHealth(guid)
-						if not minHp or mobHp >= minHp then
-							local primaryValue = -1
-							local secondaryValue = -1
-							if selectedPriority == PRIORITY_HIGHEST_HP then
-								primaryValue = UnitHealth(guid) or 0
-							elseif selectedPriority == PRIORITY_RAID_MARK then
-								primaryValue = GetRaidTargetIndex(guid) or 0
-							elseif selectedPriority == PRIORITY_RAID_MARK_SQUARE then
-								primaryValue = GetSquarePrioRaidTargetIndex(guid)
-							elseif selectedPriority == PRIORITY_INVERSE_RAID_MARK then
-								primaryValue = -1 * (GetRaidTargetIndex(guid) or 9)
-							elseif selectedPriority == PRIORITY_HIGHEST_HP_RAID_MARK then
-								secondaryValue = GetRaidTargetIndex(guid) or 0
-								if secondaryValue > 0 and not seenRaidMark then
-									highestPrimaryValue = -10 -- reset highestPriorityValue if this is the first raid mark we've seen
-									seenRaidMark = true
+			if not options["ignoretarget"] or guid ~= currentTargetGuid then
+				-- check if in combat already or player is actively targeting the mob
+				if ignoreInFight or Cursive.filter.infight(guid) or guid == currentTargetGuid then
+					-- prioritize targets within 28 yards first to improve chances of being in range
+					if checkRange == false or CheckInteractDistance(guid, 4) then
+						-- check if the target has the curse
+						if not Cursive.curses:HasCurse(spellNameNoRank, guid, refreshTime) and not isMobCrowdControlled(guid) then
+							local mobHp = UnitHealth(guid)
+							if not minHp or mobHp >= minHp then
+								local primaryValue = -1
+								local secondaryValue = -1
+								if selectedPriority == PRIORITY_HIGHEST_HP then
+									primaryValue = UnitHealth(guid) or 0
+								elseif selectedPriority == PRIORITY_RAID_MARK then
+									primaryValue = GetRaidTargetIndex(guid) or 0
+								elseif selectedPriority == PRIORITY_RAID_MARK_SQUARE then
+									primaryValue = GetSquarePrioRaidTargetIndex(guid)
+								elseif selectedPriority == PRIORITY_INVERSE_RAID_MARK then
+									primaryValue = -1 * (GetRaidTargetIndex(guid) or 9)
+								elseif selectedPriority == PRIORITY_HIGHEST_HP_RAID_MARK then
+									secondaryValue = GetRaidTargetIndex(guid) or 0
+									if secondaryValue > 0 and not seenRaidMark then
+										highestPrimaryValue = -10 -- reset highestPriorityValue if this is the first raid mark we've seen
+										seenRaidMark = true
+									end
+									primaryValue = UnitHealth(guid) or 0
+								elseif selectedPriority == PRIORITY_HIGHEST_HP_RAID_MARK_SQUARE then
+									secondaryValue = GetSquarePrioRaidTargetIndex(guid)
+									if secondaryValue > -2 and not seenRaidMark then
+										highestPrimaryValue = -10 -- reset highestPriorityValue if this is the first raid mark we've seen
+										seenRaidMark = true
+									end
+									primaryValue = UnitHealth(guid) or 0
+								elseif selectedPriority == PRIORITY_HIGHEST_HP_INVERSE_RAID_MARK then
+									secondaryValue = -1 * (GetRaidTargetIndex(guid) or 9)
+									if secondaryValue > -9 and not seenRaidMark then
+										highestPrimaryValue = -10 -- reset highestPriorityValue if this is the first raid mark we've seen
+										seenRaidMark = true
+									end
+									primaryValue = UnitHealth(guid) or 0
 								end
-								primaryValue = UnitHealth(guid) or 0
-							elseif selectedPriority == PRIORITY_HIGHEST_HP_RAID_MARK_SQUARE then
-								secondaryValue = GetSquarePrioRaidTargetIndex(guid)
-								if secondaryValue > -2 and not seenRaidMark then
-									highestPrimaryValue = -10 -- reset highestPriorityValue if this is the first raid mark we've seen
-									seenRaidMark = true
-								end
-								primaryValue = UnitHealth(guid) or 0
-							elseif selectedPriority == PRIORITY_HIGHEST_HP_INVERSE_RAID_MARK then
-								secondaryValue = -1 * (GetRaidTargetIndex(guid) or 9)
-								if secondaryValue > -9 and not seenRaidMark then
-									highestPrimaryValue = -10 -- reset highestPriorityValue if this is the first raid mark we've seen
-									seenRaidMark = true
-								end
-								primaryValue = UnitHealth(guid) or 0
-							end
 
-							if primaryValue > highestPrimaryValue then
-								highestPrimaryValue = primaryValue
-								highestSecondaryValue = secondaryValue
-								targetedGuid = guid
-							elseif primaryValue == highestPrimaryValue and secondaryValue > highestSecondaryValue then
-								highestSecondaryValue = secondaryValue
-								targetedGuid = guid
+								if primaryValue > highestPrimaryValue then
+									highestPrimaryValue = primaryValue
+									highestSecondaryValue = secondaryValue
+									targetedGuid = guid
+								elseif primaryValue == highestPrimaryValue and secondaryValue > highestSecondaryValue then
+									highestSecondaryValue = secondaryValue
+									targetedGuid = guid
+								end
 							end
 						end
 					end
@@ -318,7 +321,7 @@ function Cursive:Multicurse(spellName, priority, options)
 	if priority and not priorities[priority] then
 		DEFAULT_CHAT_FRAME:AddMessage(priorityChoices)
 		for choice, description in pairs(priorities) do
-			DEFAULT_CHAT_FRAME:AddMessage("|CFFFFFF00"..choice .. "|R: " .. description)
+			DEFAULT_CHAT_FRAME:AddMessage("|CFFFFFF00" .. choice .. "|R: " .. description)
 		end
 		return
 	end
