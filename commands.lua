@@ -146,6 +146,41 @@ local crowdControlledSpellIds = {
 
 	[710] = { name = L["Banish"], rank = 1, duration = 30 },
 	[18647] = { name = L["Banish"], rank = 2, duration = 30 },
+
+	-- mind control effects
+	[28410] = { name = "Chains of Kel'Thuzad" }, -- we aren't casting these, name doesn't matter
+	[7621] = { name = "Arugal's Curse" },
+	[24261] = { name = "Brain Wash" },
+	[12888] = { name = "Cause Insanity" },
+	[24327] = { name = "Cause Insanity" },
+	[26079] = { name = "Cause Insanity" },
+	[24327] = { name = "Cause Insanity" },
+	[23174] = { name = "Chromatic Mutation" },
+	[25806] = { name = "Creature of Nightmare" },
+	[23298] = { name = "Demonic Doom" },
+	[7645] = { name = "Dominate Mind" },
+	[14515] = { name = "Dominate Mind" },
+	[15859] = { name = "Dominate Mind" },
+	[20604] = { name = "Dominate Mind" },
+	[20740] = { name = "Dominate Mind" },
+	[17405] = { name = "Domination" },
+	[3442] = { name = "Enslave" },
+	[13181] = { name = "Gnomish Mind Control Cap" },
+	[26740] = { name = "Gnomish Mind Control Cap" },
+	[12483] = { name = "Hex of Jammal'an" },
+	[25772] = { name = "Mental Domination" },
+	[7967] = { name = "Naralex's Nightmare" },
+	[19469] = { name = "Poison Mind" },
+	[17244] = { name = "Possess" },
+	[22667] = { name = "Shadow Command" },
+	[20668] = { name = "Sleepwalk" },
+	[785] = { name = "True Fulfillment" },
+	[26195] = { name = "Whisperings of C'Thun" },
+	[26197] = { name = "Whisperings of C'Thun" },
+	[26198] = { name = "Whisperings of C'Thun" },
+	[26258] = { name = "Whisperings of C'Thun" },
+	[26259] = { name = "Whisperings of C'Thun" },
+	[24178] = { name = "Will of Hakkar" },
 }
 
 local function isMobCrowdControlled(guid)
