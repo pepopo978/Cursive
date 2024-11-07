@@ -10,6 +10,9 @@ AURAADDEDSELFHARMFUL = "You are afflicted by %s (1)."
 AURAADDEDSELFHELPFUL = "You gain %s (1)."
 
 Cursive.core = CreateFrame("Frame", "Cursive", UIParent)
+
+Cursive.core.tooltipScan = CreateFrame("GameTooltip", "CursiveTooltipScan", UIParent, "GameTooltipTemplate")
+
 Cursive.core.guids = {}
 
 Cursive.core.add = function(unit)

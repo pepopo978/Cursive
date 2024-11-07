@@ -2,9 +2,13 @@ if not Cursive.superwow then
 	return
 end
 local L = AceLibrary("AceLocale-2.2"):new("Cursive")
+
+local _, playerClassName = UnitClass("player")
+
 local curses = {
 	trackedCurseIds = {},
 	trackedCurseNamesToTextures = {},
+	trackedCurseNameRanksToSpellSlots = {},
 	guids = {},
 	resistSoundGuids = {},
 	expiringSoundGuids = {},
@@ -20,20 +24,40 @@ local resist_test = L["Your (.+) was resisted by (.+)"]
 local lastGuid = nil
 
 function curses:LoadCurses()
+	-- reset dicts
+	curses.trackedCurseIds = {}
+	curses.trackedCurseNamesToTextures = {}
+	curses.trackedCurseNameRanksToSpellSlots = {}
+
 	-- curses to track
-	local _, className = UnitClass("player")
-	if className == "WARLOCK" then
+	if playerClassName == "WARLOCK" then
 		curses.trackedCurseIds = getWarlockSpells()
-	elseif className == "PRIEST" then
+	elseif playerClassName == "PRIEST" then
 		curses.trackedCurseIds = getPriestSpells()
-	elseif className == "MAGE" then
+	elseif playerClassName == "MAGE" then
 		curses.trackedCurseIds = getMageSpells()
-	elseif className == "DRUID" then
+	elseif playerClassName == "DRUID" then
 		curses.trackedCurseIds = getDruidSpells()
-	elseif className == "HUNTER" then
+	elseif playerClassName == "HUNTER" then
 		curses.trackedCurseIds = getHunterSpells()
-	elseif className == "ROGUE" then
+	elseif playerClassName == "ROGUE" then
 		curses.trackedCurseIds = getRogueSpells()
+	end
+
+	-- go through spell slots and
+	local i = 1
+	while true do
+		local spellname, spellrank = GetSpellName(i, BOOKTYPE_SPELL)
+		if not spellname then
+			break
+		end
+
+		if spellrank == "" then
+			spellrank = "Rank 1"
+		end
+
+		curses.trackedCurseNameRanksToSpellSlots[spellname .. spellrank] = i
+		i = i + 1
 	end
 
 	for id, data in pairs(curses.trackedCurseIds) do
@@ -44,6 +68,33 @@ function curses:LoadCurses()
 		-- update trackedCurseIds
 		curses.trackedCurseIds[id].texture = texture
 	end
+end
+
+function curses:GetCurseDuration(curseSpellID)
+	if playerClassName == "WARLOCK" and curses.trackedCurseIds[curseSpellID].rapid_deterioration then
+		-- scan spellbook for duration in case they have haste talent
+		local nameRank = curses.trackedCurseIds[curseSpellID].name .. "Rank " .. curses.trackedCurseIds[curseSpellID].rank
+		local spellSlot = curses.trackedCurseNameRanksToSpellSlots[nameRank]
+
+		if spellSlot then
+			Cursive.core.tooltipScan:SetOwner(Cursive.core.tooltipScan, "ANCHOR_NONE")
+			Cursive.core.tooltipScan:ClearLines()
+			Cursive.core.tooltipScan:SetSpell(spellSlot, BOOKTYPE_SPELL)
+			local numLines = Cursive.core.tooltipScan:NumLines()
+			if numLines and numLines > 0 then
+				-- get the last line
+				local text = getglobal("CursiveTooltipScan" .. "TextLeft" .. numLines):GetText()
+				if text then
+					local _, _, duration = string.find(text, L["curse_duration_format"])
+					if duration then
+						return tonumber(duration)
+					end
+				end
+			end
+		end
+	end
+
+	return curses.trackedCurseIds[curseSpellID].duration
 end
 
 function curses:ScanGuidForCurse(guid, curseSpellID)
@@ -70,6 +121,11 @@ function curses:ScanGuidForCurse(guid, curseSpellID)
 
 	return nil
 end
+
+Cursive:RegisterEvent("LEARNED_SPELL_IN_TAB", function()
+	-- reload curses in case spell slots changed
+	curses:LoadCurses()
+end)
 
 Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, spellID, castDuration)
 	-- immolate will fire both start and cast
@@ -196,7 +252,7 @@ end
 function curses:ApplyCurse(spellID, targetGuid, startTime)
 	local name = curses.trackedCurseIds[spellID].name
 	local rank = curses.trackedCurseIds[spellID].rank
-	local duration = curses.trackedCurseIds[spellID].duration
+	local duration = curses:GetCurseDuration(spellID)
 
 	if not curses.guids[targetGuid] then
 		curses.guids[targetGuid] = {}
