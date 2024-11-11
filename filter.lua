@@ -95,7 +95,7 @@ function Cursive:ShouldDisplayGuid(guid)
 	end
 
 	if Cursive.db.profile.filterraidmark then
-		shouldDisplay = shouldDisplay and filter.range(guid)
+		shouldDisplay = shouldDisplay and filter.icon(guid)
 	end
 
 	return shouldDisplay
