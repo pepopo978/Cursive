@@ -153,12 +153,12 @@ ui.BarUpdate = function()
 		if hp then
 			if hp >= 10000 then
 				hp = math.floor(hp / 1000) / 10 .. "万"
-			-- elseif hp >= 1000 then
-			-- 	hp = math.floor(hp / 100) / 10 .. "k"
+				-- elseif hp >= 1000 then
+				-- 	hp = math.floor(hp / 100) / 10 .. "k"
 			end
 		end
 	else
-	-- convert hp to k if > 1000
+		-- convert hp to k if > 1000
 		if hp then
 			if hp >= 1000000 then
 				hp = math.floor(hp / 100000) / 10 .. "m"
@@ -360,6 +360,28 @@ local function DisplayGuid(guid, row, col)
 	barFrame:Show()
 end
 
+local function HideGuid(guid, time)
+	if ui.barFrames[guid] then
+		ui.barFrames[guid]:Hide()
+		ui.barFrames[guid] = nil
+	end
+
+	local active = UnitExists(guid) and Cursive.filter.alive(guid)
+	if active then
+		local old = GetTime() - time >= 900 -- >= 15 minutes old
+		if old and not UnitIsVisible(guid) then
+			active = false
+		end
+	end
+
+	if not active then
+		-- remove from core
+		Cursive.core.remove(guid)
+		-- remove from curses
+		Cursive.curses:RemoveGuid(guid)
+	end
+end
+
 ui:SetAllPoints()
 ui:SetScript("OnUpdate", function()
 	local config = Cursive.db.profile
@@ -390,42 +412,31 @@ ui:SetScript("OnUpdate", function()
 	local col = 1
 	local maxBarsDisplayed = false
 
-	for guid, time in pairs(Cursive.core.guids) do
-		-- apply filters
-		local shouldDisplay = Cursive:ShouldDisplayGuid(guid)
-		-- display element if filters allow it
-		if shouldDisplay and not maxBarsDisplayed then
-			-- display guid
-			DisplayGuid(guid, row, col)
+	for i = 1, 2 do
+		for guid, time in pairs(Cursive.core.guids) do
+			-- apply filters
+			local shouldDisplay = Cursive:ShouldDisplayGuid(guid)
 
-			-- update row/col
-			row = row + 1
-			if row > config.maxrow then
-				row = 1
-				col = col + 1
-				if col > config.maxcol then
-					maxBarsDisplayed = true
+			local hasIcon = filter.icon(guid)
+
+			if (i == 1 and hasIcon) or (i == 2 and not hasIcon) then
+				-- display element if filters allow it
+				if shouldDisplay and not maxBarsDisplayed then
+					-- display guid
+					DisplayGuid(guid, row, col)
+
+					-- update row/col
+					row = row + 1
+					if row > config.maxrow then
+						row = 1
+						col = col + 1
+						if col > config.maxcol then
+							maxBarsDisplayed = true
+						end
+					end
+				else
+					HideGuid(guid, time)
 				end
-			end
-		else
-			if ui.barFrames[guid] then
-				ui.barFrames[guid]:Hide()
-				ui.barFrames[guid] = nil
-			end
-
-			local active = UnitExists(guid) and Cursive.filter.alive(guid)
-			if active then
-				local old = GetTime() - time >= 900 -- >= 15 minutes old
-				if old and not UnitIsVisible(guid) then
-					active = false
-				end
-			end
-
-			if not active then
-				-- remove from core
-				Cursive.core.remove(guid)
-				-- remove from curses
-				Cursive.curses:RemoveGuid(guid)
 			end
 		end
 	end
