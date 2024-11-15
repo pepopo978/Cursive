@@ -165,7 +165,7 @@ Cursive:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE",
 					if curses:ShouldPlayResistSound(lastGuid) then
 						PlaySoundFile("Interface\\AddOns\\Cursive\\Sounds\\resist.mp3")
 					end
-				elseif spell == "Immolate" and lastGuid then
+				elseif spell == "Conflagrate" and lastGuid then
 					if curses:HasCurse("Immolate", lastGuid) then
 						-- increase duration by 3 sec to undo the deduction due to resist
 						curses.guids[lastGuid]["Immolate"].duration = curses.guids[lastGuid]["Immolate"].duration + 3
