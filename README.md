@@ -83,6 +83,8 @@ EXAMPLE: `/cursive multicurse Corruption|HIGHEST_HP|warnings,resistsound,expirin
 
 ## Important info
 
+If you have my latest nampower, it will use the SpellInRange function from that to provide improved range checking.
+
 All commands will prioritize targets within 28 yards of you first to have a better chance of being in range.
 
 All commands will ignore targets with the following CCs on them:

@@ -247,8 +247,20 @@ local function pickTarget(selectedPriority, spellNameNoRank, checkRange, options
 			if not options["ignoretarget"] or guid ~= currentTargetGuid then
 				-- check if in combat already or player is actively targeting the mob
 				if ignoreInFight or Cursive.filter.infight(guid) or guid == currentTargetGuid then
-					-- prioritize targets within 28 yards first to improve chances of being in range
-					if checkRange == false or CheckInteractDistance(guid, 4) then
+					local passedRangeCheck = false
+					if IsSpellInRange then
+						-- use IsSpellInRange from nampower if available
+						local result = IsSpellInRange(spellNameNoRank, guid)
+						if result == -1 then
+							passedRangeCheck = checkRange == false or CheckInteractDistance(guid, 4) -- fallback to old range check
+						else -- 0 or 1
+							passedRangeCheck = result == 1
+						end
+					else
+						-- prioritize targets within 28 yards first to improve chances of being in range
+						passedRangeCheck = checkRange == false or CheckInteractDistance(guid, 4)
+					end
+					if passedRangeCheck then
 						-- check if the target has the curse
 						if not Cursive.curses:HasCurse(spellNameNoRank, guid, refreshTime) and not isMobCrowdControlled(guid) then
 							local mobHp = UnitHealth(guid)
@@ -302,8 +314,8 @@ local function pickTarget(selectedPriority, spellNameNoRank, checkRange, options
 		end
 	end
 
-	-- run again if no target found ignoring range
-	if not targetedGuid and checkRange == true then
+	-- run again if no target found ignoring range (only if IsSpellInRange is not available)
+	if not targetedGuid and checkRange == true and not IsSpellInRange then
 		targetedGuid = pickTarget(selectedPriority, spellNameNoRank, false, options)
 	end
 
