@@ -126,6 +126,7 @@ L:RegisterTranslations("enUS", function()
 		["Gouge"] = true,
 
 		-- warlock
+		["Conflagrate"] = true,
 		["Corruption"] = true,
 		["Curse of Agony"] = true,
 		["Curse of Doom"] = true,
@@ -267,6 +268,7 @@ L:RegisterTranslations("zhCN", function()
 		["Gouge"] = "凿击",
 
 		-- warlock
+		["Conflagrate"] = "引燃", -- no idea if right
 		["Corruption"] = "腐蚀术",
 		["Curse of Agony"] = "痛苦诅咒",
 		["Curse of Doom"] = "末日诅咒",

@@ -146,9 +146,9 @@ Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, 
 			Cursive:ScheduleEvent("addCurse" .. targetGuid .. curses.trackedCurseIds[spellID].name, curses.ApplyCurse, 0.2, self, spellID, targetGuid, GetTime())
 		elseif curses.conflagrateSpellIds[spellID] then
 			-- check if target has immolate
-			if curses:HasCurse("Immolate", targetGuid) then
+			if curses:HasCurse(L["Immolate"], targetGuid) then
 				-- reduce duration by 3 sec
-				curses.guids[targetGuid]["Immolate"].duration = curses.guids[targetGuid]["Immolate"].duration - 3
+				curses.guids[targetGuid][L["Immolate"]].duration = curses.guids[targetGuid][L["Immolate"]].duration - 3
 			end
 		end
 	end
@@ -165,10 +165,10 @@ Cursive:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE",
 					if curses:ShouldPlayResistSound(lastGuid) then
 						PlaySoundFile("Interface\\AddOns\\Cursive\\Sounds\\resist.mp3")
 					end
-				elseif spell == "Conflagrate" and lastGuid then
-					if curses:HasCurse("Immolate", lastGuid) then
+				elseif spell == L["Conflagrate"] and lastGuid then
+					if curses:HasCurse(L["Immolate"], lastGuid) then
 						-- increase duration by 3 sec to undo the deduction due to resist
-						curses.guids[lastGuid]["Immolate"].duration = curses.guids[lastGuid]["Immolate"].duration + 3
+						curses.guids[lastGuid][L["Immolate"]].duration = curses.guids[lastGuid][L["Immolate"]].duration + 3
 					end
 				end
 			end
