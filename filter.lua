@@ -21,7 +21,12 @@ filter.alive = function(unit)
 end
 
 filter.range = function(unit)
-	return CheckInteractDistance(unit, 4) and true or false
+	if IsSpellInRange then
+		-- 16707 is hex which has 45 yd range
+		return IsSpellInRange(16707, unit) == 1 and true or false
+	else
+		return CheckInteractDistance(unit, 4) and true or false
+	end
 end
 
 filter.icon = function(unit)
