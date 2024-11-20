@@ -167,7 +167,7 @@ L:RegisterTranslations("zhCN", function()
 		["Same as HIGHEST_HP_RAID_MARK but with RAID_MARK_SQUARE mark prio."] = "与HIGHEST_HP_RAID_MARK相同，但是RAID_MARK_SQUARE标记优先.",
 		["Same as HIGHEST_HP_RAID_MARK but with INVERSE_RAID_MARK mark prio."] = "与HIGHEST_HP_RAID_MARK相同，但是INVERSE_RAID_MARK标记优先.",
 		["|cffffcc00Cursive:|cffffaaaa Couldn't find a target to curse."] = "|cffffcc00Cursive:|cffffaaaa 找不到要诅咒的目标.",
-		["curse_duration_format"] = ".*持续([%d.]+)秒.",  -- no idea if this is right
+		["curse_duration_format"] = ".*持续([%d.]+)秒.", -- no idea if this is right
 
 		-- curses
 		["(.+) fades from (.+)"] = "(.+)效果从(.+)身上消失",

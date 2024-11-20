@@ -1,20 +1,20 @@
 local L = AceLibrary("AceLocale-2.2"):new("Cursive")
 function getWarlockSpells()
 	return {
-		[172] = { name = L["Corruption"], rank = 1, duration = 12, rapid_deterioration = true },
-		[6222] = { name = L["Corruption"], rank = 2, duration = 15, rapid_deterioration = true },
-		[6223] = { name = L["Corruption"], rank = 3, duration = 18, rapid_deterioration = true },
-		[7648] = { name = L["Corruption"], rank = 4, duration = 18, rapid_deterioration = true },
-		[11671] = { name = L["Corruption"], rank = 5, duration = 18, rapid_deterioration = true },
-		[11672] = { name = L["Corruption"], rank = 6, duration = 18, rapid_deterioration = true },
-		[25311] = { name = L["Corruption"], rank = 7, duration = 18, rapid_deterioration = true },
+		[172] = { name = L["Corruption"], rank = 1, duration = 12, variable_duration = true },
+		[6222] = { name = L["Corruption"], rank = 2, duration = 15, variable_duration = true },
+		[6223] = { name = L["Corruption"], rank = 3, duration = 18, variable_duration = true },
+		[7648] = { name = L["Corruption"], rank = 4, duration = 18, variable_duration = true },
+		[11671] = { name = L["Corruption"], rank = 5, duration = 18, variable_duration = true },
+		[11672] = { name = L["Corruption"], rank = 6, duration = 18, variable_duration = true },
+		[25311] = { name = L["Corruption"], rank = 7, duration = 18, variable_duration = true },
 
-		[980] = { name = L["Curse of Agony"], rank = 1, duration = 24, rapid_deterioration = true },
-		[1014] = { name = L["Curse of Agony"], rank = 2, duration = 24, rapid_deterioration = true },
-		[6217] = { name = L["Curse of Agony"], rank = 3, duration = 24, rapid_deterioration = true },
-		[11711] = { name = L["Curse of Agony"], rank = 4, duration = 24, rapid_deterioration = true },
-		[11712] = { name = L["Curse of Agony"], rank = 5, duration = 24, rapid_deterioration = true },
-		[11713] = { name = L["Curse of Agony"], rank = 6, duration = 24, rapid_deterioration = true },
+		[980] = { name = L["Curse of Agony"], rank = 1, duration = 24, variable_duration = true },
+		[1014] = { name = L["Curse of Agony"], rank = 2, duration = 24, variable_duration = true },
+		[6217] = { name = L["Curse of Agony"], rank = 3, duration = 24, variable_duration = true },
+		[11711] = { name = L["Curse of Agony"], rank = 4, duration = 24, variable_duration = true },
+		[11712] = { name = L["Curse of Agony"], rank = 5, duration = 24, variable_duration = true },
+		[11713] = { name = L["Curse of Agony"], rank = 6, duration = 24, variable_duration = true },
 
 		[603] = { name = L["Curse of Doom"], rank = 1, duration = 60 },
 
@@ -58,10 +58,10 @@ function getWarlockSpells()
 		[710] = { name = L["Banish"], rank = 1, duration = 20 },
 		[18647] = { name = L["Banish"], rank = 2, duration = 30 },
 
-		[18265] = { name = L["Siphon Life"], rank = 1, duration = 30, rapid_deterioration = true },
-		[18879] = { name = L["Siphon Life"], rank = 2, duration = 30, rapid_deterioration = true },
-		[18880] = { name = L["Siphon Life"], rank = 3, duration = 30, rapid_deterioration = true },
-		[18881] = { name = L["Siphon Life"], rank = 4, duration = 30, rapid_deterioration = true },
+		[18265] = { name = L["Siphon Life"], rank = 1, duration = 30, variable_duration = true },
+		[18879] = { name = L["Siphon Life"], rank = 2, duration = 30, variable_duration = true },
+		[18880] = { name = L["Siphon Life"], rank = 3, duration = 30, variable_duration = true },
+		[18881] = { name = L["Siphon Life"], rank = 4, duration = 30, variable_duration = true },
 
 		[5782] = { name = L["Fear"], rank = 1, duration = 10 },
 		[6213] = { name = L["Fear"], rank = 2, duration = 15 },
