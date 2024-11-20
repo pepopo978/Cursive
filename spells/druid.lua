@@ -68,8 +68,6 @@ function getDruidSpells()
 		[6798] = { name = L["Bash"], rank = 2, duration = 3 },
 		[8983] = { name = L["Bash"], rank = 3, duration = 4 },
 
-		[22570] = { name = L["Mangle"], rank = 1, duration = 5 },  -- duration depends on combo points so not gonna be accurate
-
 		[99] = { name = L["Demoralizing Roar"], rank = 1, duration = 30 },
 		[1735] = { name = L["Demoralizing Roar"], rank = 2, duration = 30 },
 		[9490] = { name = L["Demoralizing Roar"], rank = 3, duration = 30 },

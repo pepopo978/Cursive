@@ -82,7 +82,6 @@ L:RegisterTranslations("enUS", function()
 		["Faerie Fire (Feral)"] = true,
 		["Hibernate"] = true,
 		["Insect Swarm"] = true,
-		["Mangle"] = true,
 		["Moonfire"] = true,
 		["Rake"] = true,
 		["Rip"] = true,
@@ -226,7 +225,6 @@ L:RegisterTranslations("zhCN", function()
 		["Faerie Fire (Feral)"] = "精灵之火（野性形态）",
 		["Hibernate"] = "休眠",
 		["Insect Swarm"] = "虫群",
-		["Mangle"] = "撕碎", -- no idea if right
 		["Moonfire"] = "月火术",
 		["Rake"] = "扫击",
 		["Rip"] = "撕扯",
