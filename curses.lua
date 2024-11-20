@@ -76,28 +76,34 @@ function curses:LoadCurses()
 	end
 end
 
-function curses:GetCurseDuration(curseSpellID)
-	if playerClassName == "WARLOCK" and curses.trackedCurseIds[curseSpellID].rapid_deterioration then
-		-- scan spellbook for duration in case they have haste talent
-		local nameRank = curses.trackedCurseIds[curseSpellID].name .. "Rank " .. curses.trackedCurseIds[curseSpellID].rank
-		local spellSlot = curses.trackedCurseNameRanksToSpellSlots[nameRank]
+function curses:ScanTooltipForDuration(curseSpellID)
+	-- scan spellbook for duration in case they have haste talent
+	local nameRank = curses.trackedCurseIds[curseSpellID].name .. "Rank " .. curses.trackedCurseIds[curseSpellID].rank
+	local spellSlot = curses.trackedCurseNameRanksToSpellSlots[nameRank]
 
-		if spellSlot then
-			Cursive.core.tooltipScan:SetOwner(Cursive.core.tooltipScan, "ANCHOR_NONE")
-			Cursive.core.tooltipScan:ClearLines()
-			Cursive.core.tooltipScan:SetSpell(spellSlot, BOOKTYPE_SPELL)
-			local numLines = Cursive.core.tooltipScan:NumLines()
-			if numLines and numLines > 0 then
-				-- get the last line
-				local text = getglobal("CursiveTooltipScan" .. "TextLeft" .. numLines):GetText()
-				if text then
-					local _, _, duration = string.find(text, L["curse_duration_format"])
-					if duration then
-						return tonumber(duration)
-					end
+	if spellSlot then
+		Cursive.core.tooltipScan:SetOwner(Cursive.core.tooltipScan, "ANCHOR_NONE")
+		Cursive.core.tooltipScan:ClearLines()
+		Cursive.core.tooltipScan:SetSpell(spellSlot, BOOKTYPE_SPELL)
+		local numLines = Cursive.core.tooltipScan:NumLines()
+		if numLines and numLines > 0 then
+			-- get the last line
+			local text = getglobal("CursiveTooltipScan" .. "TextLeft" .. numLines):GetText()
+			if text then
+				local _, _, duration = string.find(text, L["curse_duration_format"])
+				if duration then
+					return tonumber(duration)
 				end
 			end
 		end
+	end
+
+	return curses.trackedCurseIds[curseSpellID].duration
+end
+
+function curses:GetCurseDuration(curseSpellID)
+	if curses.trackedCurseIds[curseSpellID].variable_duration then
+		return curses:ScanTooltipForDuration(curseSpellID)
 	end
 
 	return curses.trackedCurseIds[curseSpellID].duration
