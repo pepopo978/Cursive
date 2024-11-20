@@ -77,7 +77,7 @@ function curses:LoadCurses()
 end
 
 function curses:GetCurseDuration(curseSpellID)
-	if playerClassName == "WARLOCK" and curses.trackedCurseIds[curseSpellID].rapid_deterioration then
+	if (playerClassName == "WARLOCK" and curses.trackedCurseIds[curseSpellID].rapid_deterioration) or playerClassName == "DRUID" then
 		-- scan spellbook for duration in case they have haste talent
 		local nameRank = curses.trackedCurseIds[curseSpellID].name .. "Rank " .. curses.trackedCurseIds[curseSpellID].rank
 		local spellSlot = curses.trackedCurseNameRanksToSpellSlots[nameRank]
