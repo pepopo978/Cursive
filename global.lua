@@ -13,6 +13,10 @@ if not GetPlayerBuffID or not CombatLogAdd or not SpellInfo then
 end
 
 function Cursive:OnEnable()
+	if not Cursive.superwow then
+		return
+	end
+
 	DEFAULT_CHAT_FRAME:AddMessage(L["|cffffcc00Cursive:|cffffaaaa Loaded.  /cursive for commands and minimap icon for options."])
 
 	Cursive.curses:LoadCurses()
