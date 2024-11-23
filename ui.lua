@@ -238,7 +238,7 @@ local function CreateBar(guid)
 
 	-- create health bar
 	local bar = CreateFrame("StatusBar", nil, barFrame)
-	bar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
+	bar:SetStatusBarTexture("Interface\\AddOns\\Cursive\\img\\bar")
 	bar:SetStatusBarColor(1, .8, .2, 1)
 	bar:SetMinMaxValues(0, 100)
 	bar:SetValue(20)
