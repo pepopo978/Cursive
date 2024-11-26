@@ -262,6 +262,12 @@ function curses:HasCurse(spellName, targetGuid, minRemaining)
 			return true
 		end
 	end
+
+	-- check for scheduled event meaning curse is about to be
+	if Cursive:IsEventScheduled("addCurse" .. targetGuid .. spellName) then
+		return true
+	end
+
 	return nil
 end
 
