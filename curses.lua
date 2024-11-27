@@ -16,6 +16,7 @@ local curses = {
 		[18932] = true,
 	},
 	guids = {},
+	pendingCast = {},
 	resistSoundGuids = {},
 	expiringSoundGuids = {},
 	requestedExpiringSoundGuids = {} -- guid added on spellcast, moved to expiringSoundGuids once rendered by ui
@@ -147,11 +148,41 @@ Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, 
 			return
 		end
 
+		-- store pending cast
+		curses.pendingCast = {
+			spellID = spellID,
+			targetGuid = targetGuid,
+			castDuration = castDuration
+		}
+
 		if curses.trackedCurseIds[spellID] then
 			lastGuid = targetGuid
 			Cursive:ScheduleEvent("addCurse" .. targetGuid .. curses.trackedCurseIds[spellID].name, curses.ApplyCurse, 0.2, self, spellID, targetGuid, GetTime())
 		elseif curses.conflagrateSpellIds[spellID] then
 			Cursive:ScheduleEvent("updateCurse" .. targetGuid .. L["Conflagrate"], curses.UpdateCurse, 0.2, self, spellID, targetGuid, GetTime())
+		end
+	elseif event == "START" then
+		if curses.trackedCurseIds[spellID] then
+			local _, guid = UnitExists("player")
+			if casterGuid ~= guid then
+				return
+			end
+
+			-- store pending cast
+			curses.pendingCast = {
+				spellID = spellID,
+				targetGuid = targetGuid,
+				castDuration = castDuration
+			}
+		end
+	elseif event == "FAIL" then
+		if curses.trackedCurseIds[spellID] then
+			local _, guid = UnitExists("player")
+			if casterGuid ~= guid then
+				return
+			end
+			-- clear pending cast
+			curses.pendingCast = {}
 		end
 	end
 end)
@@ -161,6 +192,9 @@ Cursive:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE",
 			-- check for resist
 			local _, _, spell, target = string.find(message, resist_test)
 			if spell and target then
+				-- clear pending cast
+				curses.pendingCast = {}
+
 				if curses.trackedCurseNamesToTextures[spell] and lastGuid then
 					Cursive:CancelScheduledEvent("addCurse" .. lastGuid .. spell)
 					-- check if sound should be played
@@ -263,8 +297,8 @@ function curses:HasCurse(spellName, targetGuid, minRemaining)
 		end
 	end
 
-	-- check for scheduled event meaning curse is about to be
-	if Cursive:IsEventScheduled("addCurse" .. targetGuid .. spellName) then
+	-- check pending cast
+	if curses.pendingCast and curses.pendingCast.targetGuid == targetGuid and curses.trackedCurseIds[curses.pendingCast.spellID].name == spellName then
 		return true
 	end
 
@@ -272,6 +306,9 @@ function curses:HasCurse(spellName, targetGuid, minRemaining)
 end
 
 function curses:ApplyCurse(spellID, targetGuid, startTime)
+	-- clear pending cast
+	curses.pendingCast = {}
+
 	local name = curses.trackedCurseIds[spellID].name
 	local rank = curses.trackedCurseIds[spellID].rank
 	local duration = curses:GetCurseDuration(spellID)
@@ -289,6 +326,9 @@ function curses:ApplyCurse(spellID, targetGuid, startTime)
 end
 
 function curses:UpdateCurse(spellID, targetGuid, startTime)
+	-- clear pending cast
+	curses.pendingCast = {}
+
 	if curses.conflagrateSpellIds[spellID] then
 		-- check if target has immolate
 		if curses:HasCurse(L["Immolate"], targetGuid) then
