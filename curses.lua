@@ -298,7 +298,11 @@ function curses:HasCurse(spellName, targetGuid, minRemaining)
 	end
 
 	-- check pending cast
-	if curses.pendingCast and curses.pendingCast.targetGuid == targetGuid and curses.trackedCurseIds[curses.pendingCast.spellID].name == spellName then
+	if curses.pendingCast and
+			curses.pendingCast.targetGuid == targetGuid and
+			curses.pendingCast.spellID and
+			curses.trackedCurseIds[curses.pendingCast.spellID] and
+			curses.trackedCurseIds[curses.pendingCast.spellID].name == spellName then
 		return true
 	end
 
