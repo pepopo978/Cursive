@@ -12,6 +12,8 @@ local commandOptions = {
 	refreshtime = L["Time threshold at which to allow refreshing a curse.  Default is 0 seconds."],
 	ignoretarget = L["Ignore the current target when choosing target for multicurse.  Does not affect 'curse' command."],
 	name = L["Filter targets by name. Can be a partial match.  If no match is found, the command will do nothing."],
+	ignorespellid = L["Ignore targets with the specified spell id already on them. Useful for ignoring targets that already have a shared debuff."],
+	ignorespelltexture = L["Ignore targets with the specified spell texture already on them. Useful for ignoring targets that already have a shared debuff."],
 }
 
 local commands = {
@@ -59,6 +61,16 @@ local function parseOptions(optionsStr)
 				local _, _, name = string.find(optionsStr, "name=([%w%s]+)")
 				if name then
 					options["name"] = name
+				end
+			elseif option == "ignorespellid" then
+				local _, _, spellId = string.find(optionsStr, "ignorespellid=(%d+)")
+				if spellId then
+					options["ignorespellid"] = tonumber(spellId)
+				end
+			elseif option == "ignorespelltexture" then
+				local _, _, texture = string.find(optionsStr, "ignorespelltexture=([%w_]+)")
+				if texture then
+					options["ignorespelltexture"] = texture
 				end
 			elseif string.find(optionsStr, option) then
 				options[option] = true
@@ -231,6 +243,87 @@ local function GetSquarePrioRaidTargetIndex(guid)
 	return index or -2
 end
 
+
+local function hasSpellId(guid, ignoreSpellId)
+	for i = 1, 16 do
+		local texture, stacks, spellSchool, spellId = UnitDebuff(guid, i);
+		if not spellId then
+			break
+		end
+		if spellId == ignoreSpellId then
+			if options["warnings"] then
+				DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
+			end
+			return true
+		end
+	end
+
+	for i = 1, 32 do
+		local texture, stacks, spellId = UnitBuff(guid, i);
+		if not spellId then
+			break
+		end
+		if spellId == ignoreSpellId then
+			if options["warnings"] then
+				DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
+			end
+			return true
+		end
+	end
+
+	return false
+end
+
+local function hasSpellTexture(guid, ignoreTexture)
+	for i = 1, 16 do
+		local texture = UnitDebuff(guid, i);
+		if not texture then
+			break
+		end
+		if texture == ignoreTexture then
+			if options["warnings"] then
+				DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
+			end
+			return true
+		end
+	end
+
+	for i = 1, 32 do
+		local texture = UnitBuff(guid, i);
+		if not texture then
+			break
+		end
+		if texture == ignoreTexture then
+			if options["warnings"] then
+				DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
+			end
+			return true
+		end
+	end
+
+	return false
+end
+
+local function passedOptionFilters(guid, options)
+	if options["name"] then
+		local name = UnitName(guid)
+		if not string.find(name, options["name"]) then
+			return false
+		end
+	end
+	if options["ignorespellid"] then
+		if hasSpellId(guid, options["ignorespellid"]) then
+			return false
+		end
+	end
+	if options["ignorespelltexture"] then
+		if hasSpellTexture(guid, options["ignorespelltexture"]) then
+			return false
+		end
+	end
+	return true
+end
+
 local function pickTarget(selectedPriority, spellNameNoRank, checkRange, options)
 	-- Curse the target that best matches the selected priority
 	local highestPrimaryValue = -10
@@ -253,20 +346,15 @@ local function pickTarget(selectedPriority, spellNameNoRank, checkRange, options
 			if not options["ignoretarget"] or guid ~= currentTargetGuid then
 				-- check if in combat already or player is actively targeting the mob
 				if ignoreInFight or Cursive.filter.infight(guid) or guid == currentTargetGuid then
-					local passedNameCheck = true
-					if options["name"] then
-						local name = UnitName(guid)
-						passedNameCheck = string.find(name, options["name"])
-					end
-
-					if passedNameCheck then
+					if passedOptionFilters(targetedGuid, options) then
 						local passedRangeCheck = false
 						if IsSpellInRange then
 							-- use IsSpellInRange from nampower if available
 							local result = IsSpellInRange(spellNameNoRank, guid)
 							if result == -1 then
 								passedRangeCheck = checkRange == false or CheckInteractDistance(guid, 4) -- fallback to old range check
-							else -- 0 or 1
+							else
+								-- 0 or 1
 								passedRangeCheck = result == 1
 							end
 						else
@@ -363,9 +451,9 @@ function Cursive:Curse(spellName, targetedGuid, options)
 		end
 	end
 
-	if targetedGuid and options["name"] then
-		local name = UnitName(targetedGuid)
-		if not string.find(name, options["name"]) then
+	if targetedGuid then
+		-- check for options
+		if not passedOptionFilters(targetedGuid, options) then
 			if options["warnings"] then
 				DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
 			end
