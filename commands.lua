@@ -280,7 +280,7 @@ local function hasSpellTexture(guid, ignoreTexture)
 		if not texture then
 			break
 		end
-		if texture == ignoreTexture then
+		if string.find(texture, ignoreTexture) then
 			if options["warnings"] then
 				DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
 			end
@@ -293,7 +293,7 @@ local function hasSpellTexture(guid, ignoreTexture)
 		if not texture then
 			break
 		end
-		if texture == ignoreTexture then
+		if string.find(texture, ignoreTexture) then
 			if options["warnings"] then
 				DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
 			end
@@ -346,7 +346,7 @@ local function pickTarget(selectedPriority, spellNameNoRank, checkRange, options
 			if not options["ignoretarget"] or guid ~= currentTargetGuid then
 				-- check if in combat already or player is actively targeting the mob
 				if ignoreInFight or Cursive.filter.infight(guid) or guid == currentTargetGuid then
-					if passedOptionFilters(targetedGuid, options) then
+					if passedOptionFilters(guid, options) then
 						local passedRangeCheck = false
 						if IsSpellInRange then
 							-- use IsSpellInRange from nampower if available

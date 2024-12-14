@@ -80,10 +80,10 @@ All commands can take the following options separated by commas:
 - `refreshtime=<number>` : "Time threshold at which to allow refreshing a curse. Default is 0 seconds.",
 - `name=<str>` : "Filter targets by name. Can be a partial match.  If no match is found, the command will do nothing.",
 - `ignorespellid=<number>` : "Ignore targets with the specified spell id already on them. Useful for ignoring targets that already have a shared debuff.",
-- `ignoretexture=<number>` : "Ignore targets with the specified spell texture already on them. Useful for ignoring targets that already have a shared debuff.",
+- `ignorespelltexture=<number>` : "Ignore targets with the specified spell texture already on them. Useful for ignoring targets that already have a shared debuff.",
 
 EXAMPLE: `/cursive multicurse Corruption|HIGHEST_HP|warnings,resistsound,expiringsound,minhp=10000,refreshtime=2`
-EXAMPLE: `/cursive multicurse Curse of Recklessness|RAID_MARK|name=Touched Warrior,ignoretexture=Spell_Shadow_UnholyStrength,resistsound,expiringsound`
+EXAMPLE: `/cursive multicurse Curse of Recklessness|RAID_MARK|name=Touched Warrior,ignorespelltexture=Spell_Shadow_UnholyStrength,resistsound,expiringsound`
 
 ## Important info
 
