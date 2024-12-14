@@ -78,14 +78,16 @@ All commands can take the following options separated by commas:
 - `ignoretarget` : "Ignore the current target when choosing target for multicurse.  Does not affect 'curse' command.",
 - `minhp=<number>` : "Minimum HP for a target to be considered.",
 - `refreshtime=<number>` : "Time threshold at which to allow refreshing a curse. Default is 0 seconds.",
+- `name=<str>` : "Filter targets by name. Can be a partial match.  If no match is found, the command will do nothing.",
 
 EXAMPLE: `/cursive multicurse Corruption|HIGHEST_HP|warnings,resistsound,expiringsound,minhp=10000,refreshtime=2`
+EXAMPLE: `/cursive multicurse Curse of Recklessness|RAID_MARK|name=Touched Warrior,resistsound,expiringsound`
 
 ## Important info
 
 If you have my latest nampower, it will use the SpellInRange function from that to provide improved range checking.
 
-All commands will prioritize targets within 28 yards of you first to have a better chance of being in range.
+Otherwise, all commands will prioritize targets within 28 yards of you first to have a better chance of being in range.
 
 All commands will ignore targets with the following CCs on them:
 

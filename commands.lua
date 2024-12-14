@@ -11,6 +11,7 @@ local commandOptions = {
 	minhp = L["Minimum HP for a target to be considered.  Example usage minhp=10000. "],
 	refreshtime = L["Time threshold at which to allow refreshing a curse.  Default is 0 seconds."],
 	ignoretarget = L["Ignore the current target when choosing target for multicurse.  Does not affect 'curse' command."],
+	name = L["Filter targets by name. Can be a partial match.  If no match is found, the command will do nothing."],
 }
 
 local commands = {
@@ -53,6 +54,11 @@ local function parseOptions(optionsStr)
 				local _, _, refreshTime = string.find(optionsStr, "refreshtime=(%d+)")
 				if refreshTime then
 					options["refreshtime"] = tonumber(refreshTime)
+				end
+			elseif option == "name" then
+				local _, _, name = string.find(optionsStr, "name=([%w%s]+)")
+				if name then
+					options["name"] = name
 				end
 			elseif string.find(optionsStr, option) then
 				options[option] = true
@@ -247,64 +253,72 @@ local function pickTarget(selectedPriority, spellNameNoRank, checkRange, options
 			if not options["ignoretarget"] or guid ~= currentTargetGuid then
 				-- check if in combat already or player is actively targeting the mob
 				if ignoreInFight or Cursive.filter.infight(guid) or guid == currentTargetGuid then
-					local passedRangeCheck = false
-					if IsSpellInRange then
-						-- use IsSpellInRange from nampower if available
-						local result = IsSpellInRange(spellNameNoRank, guid)
-						if result == -1 then
-							passedRangeCheck = checkRange == false or CheckInteractDistance(guid, 4) -- fallback to old range check
-						else -- 0 or 1
-							passedRangeCheck = result == 1
-						end
-					else
-						-- prioritize targets within 28 yards first to improve chances of being in range
-						passedRangeCheck = checkRange == false or CheckInteractDistance(guid, 4)
+					local passedNameCheck = true
+					if options["name"] then
+						local name = UnitName(guid)
+						passedNameCheck = string.find(name, options["name"])
 					end
-					if passedRangeCheck then
-						-- check if the target has the curse
-						if not Cursive.curses:HasCurse(spellNameNoRank, guid, refreshTime) and not isMobCrowdControlled(guid) then
-							local mobHp = UnitHealth(guid)
-							if not minHp or mobHp >= minHp then
-								local primaryValue = -1
-								local secondaryValue = -1
-								if selectedPriority == PRIORITY_HIGHEST_HP then
-									primaryValue = UnitHealth(guid) or 0
-								elseif selectedPriority == PRIORITY_RAID_MARK then
-									primaryValue = GetRaidTargetIndex(guid) or 0
-								elseif selectedPriority == PRIORITY_RAID_MARK_SQUARE then
-									primaryValue = GetSquarePrioRaidTargetIndex(guid)
-								elseif selectedPriority == PRIORITY_INVERSE_RAID_MARK then
-									primaryValue = -1 * (GetRaidTargetIndex(guid) or 9)
-								elseif selectedPriority == PRIORITY_HIGHEST_HP_RAID_MARK then
-									secondaryValue = GetRaidTargetIndex(guid) or 0
-									if secondaryValue > 0 and not seenRaidMark then
-										highestPrimaryValue = -10 -- reset highestPriorityValue if this is the first raid mark we've seen
-										seenRaidMark = true
-									end
-									primaryValue = UnitHealth(guid) or 0
-								elseif selectedPriority == PRIORITY_HIGHEST_HP_RAID_MARK_SQUARE then
-									secondaryValue = GetSquarePrioRaidTargetIndex(guid)
-									if secondaryValue > -2 and not seenRaidMark then
-										highestPrimaryValue = -10 -- reset highestPriorityValue if this is the first raid mark we've seen
-										seenRaidMark = true
-									end
-									primaryValue = UnitHealth(guid) or 0
-								elseif selectedPriority == PRIORITY_HIGHEST_HP_INVERSE_RAID_MARK then
-									secondaryValue = -1 * (GetRaidTargetIndex(guid) or 9)
-									if secondaryValue > -9 and not seenRaidMark then
-										highestPrimaryValue = -10 -- reset highestPriorityValue if this is the first raid mark we've seen
-										seenRaidMark = true
-									end
-									primaryValue = UnitHealth(guid) or 0
-								end
 
-								if primaryValue > highestPrimaryValue then
-									highestPrimaryValue = primaryValue
-									highestSecondaryValue = secondaryValue
-									targetedGuid = guid
-								elseif primaryValue == highestPrimaryValue and secondaryValue > highestSecondaryValue then
-									highestSecondaryValue = secondaryValue
-									targetedGuid = guid
+					if passedNameCheck then
+						local passedRangeCheck = false
+						if IsSpellInRange then
+							-- use IsSpellInRange from nampower if available
+							local result = IsSpellInRange(spellNameNoRank, guid)
+							if result == -1 then
+								passedRangeCheck = checkRange == false or CheckInteractDistance(guid, 4) -- fallback to old range check
+							else -- 0 or 1
+								passedRangeCheck = result == 1
+							end
+						else
+							-- prioritize targets within 28 yards first to improve chances of being in range
+							passedRangeCheck = checkRange == false or CheckInteractDistance(guid, 4)
+						end
+						if passedRangeCheck then
+							-- check if the target has the curse
+							if not Cursive.curses:HasCurse(spellNameNoRank, guid, refreshTime) and not isMobCrowdControlled(guid) then
+								local mobHp = UnitHealth(guid)
+								if not minHp or mobHp >= minHp then
+									local primaryValue = -1
+									local secondaryValue = -1
+									if selectedPriority == PRIORITY_HIGHEST_HP then
+										primaryValue = UnitHealth(guid) or 0
+									elseif selectedPriority == PRIORITY_RAID_MARK then
+										primaryValue = GetRaidTargetIndex(guid) or 0
+									elseif selectedPriority == PRIORITY_RAID_MARK_SQUARE then
+										primaryValue = GetSquarePrioRaidTargetIndex(guid)
+									elseif selectedPriority == PRIORITY_INVERSE_RAID_MARK then
+										primaryValue = -1 * (GetRaidTargetIndex(guid) or 9)
+									elseif selectedPriority == PRIORITY_HIGHEST_HP_RAID_MARK then
+										secondaryValue = GetRaidTargetIndex(guid) or 0
+										if secondaryValue > 0 and not seenRaidMark then
+											highestPrimaryValue = -10 -- reset highestPriorityValue if this is the first raid mark we've seen
+											seenRaidMark = true
+										end
+										primaryValue = UnitHealth(guid) or 0
+									elseif selectedPriority == PRIORITY_HIGHEST_HP_RAID_MARK_SQUARE then
+										secondaryValue = GetSquarePrioRaidTargetIndex(guid)
+										if secondaryValue > -2 and not seenRaidMark then
+											highestPrimaryValue = -10 -- reset highestPriorityValue if this is the first raid mark we've seen
+											seenRaidMark = true
+										end
+										primaryValue = UnitHealth(guid) or 0
+									elseif selectedPriority == PRIORITY_HIGHEST_HP_INVERSE_RAID_MARK then
+										secondaryValue = -1 * (GetRaidTargetIndex(guid) or 9)
+										if secondaryValue > -9 and not seenRaidMark then
+											highestPrimaryValue = -10 -- reset highestPriorityValue if this is the first raid mark we've seen
+											seenRaidMark = true
+										end
+										primaryValue = UnitHealth(guid) or 0
+									end
+
+									if primaryValue > highestPrimaryValue then
+										highestPrimaryValue = primaryValue
+										highestSecondaryValue = secondaryValue
+										targetedGuid = guid
+									elseif primaryValue == highestPrimaryValue and secondaryValue > highestSecondaryValue then
+										highestSecondaryValue = secondaryValue
+										targetedGuid = guid
+									end
 								end
 							end
 						end
@@ -342,6 +356,16 @@ function Cursive:Curse(spellName, targetedGuid, options)
 		_, targetedGuid = UnitExists(targetedGuid)
 
 		if not targetedGuid then
+			if options["warnings"] then
+				DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
+			end
+			return
+		end
+	end
+
+	if targetedGuid and options["name"] then
+		local name = UnitName(targetedGuid)
+		if not string.find(name, options["name"]) then
 			if options["warnings"] then
 				DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
 			end
