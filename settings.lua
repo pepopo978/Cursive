@@ -15,6 +15,10 @@ Cursive:RegisterDefaults("profile", {
 	clickthrough = false,
 	showbackdrop = false,
 	showtitle = true,
+	showtargetindicator = true,
+	showraidicons = true,
+	showhealthbar = true,
+	showunitname = true,
 
 	scale = 1,
 	healthwidth = 100,
@@ -36,11 +40,63 @@ Cursive:RegisterDefaults("profile", {
 })
 
 local barOptions = {
+	["showtargetindicator"] = {
+		type = "toggle",
+		name = L["Show Targeting Arrow"],
+		desc = L["Show Targeting Arrow"],
+		order = 1,
+		get = function()
+			return Cursive.db.profile.showtargetindicator
+		end,
+		set = function(v)
+			Cursive.db.profile.showtargetindicator = v
+			Cursive.UpdateFramesFromConfig()
+		end,
+	},
+	["showraidicons"] = {
+		type = "toggle",
+		name = L["Show Raid Icons"],
+		desc = L["Show Raid Icons"],
+		order = 10,
+		get = function()
+			return Cursive.db.profile.showraidicons
+		end,
+		set = function(v)
+			Cursive.db.profile.showraidicons = v
+			Cursive.UpdateFramesFromConfig()
+		end,
+	},
+	["showhealthbar"] = {
+		type = "toggle",
+		name = L["Show Health Bar"],
+		desc = L["Show Health Bar"],
+		order = 20,
+		get = function()
+			return Cursive.db.profile.showhealthbar
+		end,
+		set = function(v)
+			Cursive.db.profile.showhealthbar = v
+			Cursive.UpdateFramesFromConfig()
+		end,
+	},
+	["showunitname"] = {
+		type = "toggle",
+		name = L["Show Unit Name"],
+		desc = L["Show Unit Name"],
+		order = 30,
+		get = function()
+			return Cursive.db.profile.showunitname
+		end,
+		set = function(v)
+			Cursive.db.profile.showunitname = v
+			Cursive.UpdateFramesFromConfig()
+		end,
+	},
 	["barwidth"] = {
 		type = "range",
-		name = L["Health Bar Width"],
-		desc = L["Health Bar Width"],
-		order = 10,
+		name = L["Health Bar/Unit Name Width"],
+		desc = L["Health Bar/Unit Name Width"],
+		order = 40,
 		min = 30,
 		max = 150,
 		step = 5,
@@ -56,9 +112,9 @@ local barOptions = {
 	},
 	["barheight"] = {
 		type = "range",
-		name = L["Health Bar Height"],
-		desc = L["Health Bar Height"],
-		order = 20,
+		name = L["Health Bar/Unit Name Height"],
+		desc = L["Health Bar/Unit Name Height"],
+		order = 50,
 		min = 10,
 		max = 30,
 		step = 2,
@@ -76,7 +132,7 @@ local barOptions = {
 		type = "range",
 		name = L["Raid Icon Size"],
 		desc = L["Raid Icon Size"],
-		order = 30,
+		order = 60,
 		min = 10,
 		max = 30,
 		step = 1,
@@ -94,7 +150,7 @@ local barOptions = {
 		type = "range",
 		name = L["Curse Icon Size"],
 		desc = L["Curse Icon Size"],
-		order = 40,
+		order = 70,
 		min = 10,
 		max = 30,
 		step = 1,
@@ -112,7 +168,7 @@ local barOptions = {
 		type = "range",
 		name = L["Spacing"],
 		desc = L["Spacing"],
-		order = 50,
+		order = 80,
 		min = 0,
 		max = 10,
 		step = 1,
@@ -130,7 +186,7 @@ local barOptions = {
 		type = "range",
 		name = L["Text Size"],
 		desc = L["Text Size"],
-		order = 60,
+		order = 90,
 		min = 8,
 		max = 20,
 		step = 1,
@@ -148,7 +204,7 @@ local barOptions = {
 		type = "range",
 		name = L["Scale"],
 		desc = L["Scale"],
-		order = 70,
+		order = 100,
 		min = 0.5,
 		max = 2,
 		step = 0.1,

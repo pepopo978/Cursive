@@ -38,8 +38,12 @@ L:RegisterTranslations("enUS", function()
 
 		-- settings
 		["Cursive"] = true,
-		["Health Bar Width"] = true,
-		["Health Bar Height"] = true,
+		["Show Targeting Arrow"] = true,
+		["Show Raid Icons"] = true,
+		["Show Health Bar"] = true,
+		["Show Unit Name"] = true,
+		["Health Bar/Unit Name Width"] = true,
+		["Health Bar/Unit Name Height"] = true,
 		["Raid Icon Size"] = true,
 		["Curse Icon Size"] = true,
 		["Spacing"] = true,
@@ -188,8 +192,12 @@ L:RegisterTranslations("zhCN", function()
 
 		-- settings
 		["Cursive"] = "Cursive",
-		["Health Bar Width"] = "生命条宽度",
-		["Health Bar Height"] = "生命条高度",
+		["Show Targeting Arrow"] = "显示目标箭头",
+		["Show Raid Icons"] = "显示团队标记",
+		["Show Health Bar"] = "显示生命条",
+		["Show Unit Name"] = "显示单位名称",
+		["Health Bar/Unit Name Width"] = "生命条宽度",
+		["Health Bar/Unit Name Height"] = "生命条高度",
 		["Raid Icon Size"] = "团队标记大小",
 		["Curse Icon Size"] = "诅咒图标大小",
 		["Spacing"] = "间距",
@@ -277,7 +285,7 @@ L:RegisterTranslations("zhCN", function()
 		["Blind"] = "致盲",
 		["Sap"] = "闷棍",
 		["Gouge"] = "凿击",
-		["Expose Armor"] = "破甲",  -- no idea if right
+		["Expose Armor"] = "破甲", -- no idea if right
 		["Garrote"] = "锁喉", -- no idea if right
 		["Deadly Poison"] = "致命毒药", -- no idea if right
 

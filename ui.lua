@@ -23,13 +23,43 @@ ui.rootBarFrame = nil
 ui.targetIndicatorSize = 8
 ui.padding = 2
 
-local function GetBarWidth()
+local function GetBarFirstSectionWidth()
 	local config = Cursive.db.profile
-	return ui.targetIndicatorSize +
-			config.raidiconsize +
-			ui.padding +
-			config.healthwidth +
-			config.maxcurses * (config.curseiconsize + ui.padding)
+
+	local size = 1
+	if config.showraidicons then
+		size = size + config.raidiconsize
+	end
+	if config.showtargetindicator then
+		size = size + ui.targetIndicatorSize
+	end
+	if size > 0 then
+		size = size + ui.padding
+	end
+
+	return size
+end
+
+local function GetBarSecondSectionWidth()
+	local config = Cursive.db.profile
+
+	if config.showhealthbar == false and config.showunitname == false then
+		return 1
+	end
+
+	return config.healthwidth + ui.padding
+end
+
+local function GetBarThirdSectionWidth()
+	local config = Cursive.db.profile
+
+	return config.maxcurses * (config.curseiconsize + ui.padding)
+end
+
+local function GetBarWidth()
+	return GetBarFirstSectionWidth() +
+			GetBarSecondSectionWidth() +
+			GetBarThirdSectionWidth()
 end
 
 local function UpdateRootBarFrame()
@@ -106,12 +136,12 @@ local function CreateRoot()
 	return frame
 end
 
-ui.barFrames = {} -- holds all barFrames for all guids
+ui.unitFrames = {} -- holds all unitFrames for all guids
 
 Cursive.UpdateFramesFromConfig = function()
-	for guid, frame in pairs(ui.barFrames) do
+	for guid, frame in pairs(ui.unitFrames) do
 		frame:Hide()
-		ui.barFrames[guid] = nil
+		ui.unitFrames[guid] = nil
 	end
 
 	if ui.rootBarFrame then
@@ -120,7 +150,9 @@ Cursive.UpdateFramesFromConfig = function()
 end
 
 ui.BarEnter = function()
-	this.bar.border:SetBackdropBorderColor(1, 1, 1, 1)
+	if this.healthBar then
+		this.healthBar.border:SetBackdropBorderColor(1, 1, 1, 1)
+	end
 	this.hover = true
 
 	GameTooltip_SetDefaultAnchor(GameTooltip, this)
@@ -138,65 +170,76 @@ ui.BarUpdate = function()
 		return
 	end
 
-	-- update statusbar values
-	this.bar:SetMinMaxValues(0, UnitHealthMax(this.guid))
-	this.bar:SetValue(UnitHealth(this.guid))
+	-- update statusbar values if it exists
+	if this.healthBar then
+		this.healthBar:SetMinMaxValues(0, UnitHealthMax(this.guid))
+		this.healthBar:SetValue(UnitHealth(this.guid))
 
-	-- update health bar color
-	local hex, r, g, b, a = utils.GetUnitColor(this.guid)
-	this.bar:SetStatusBarColor(r, g, b, a)
+		-- update health bar color
+		local hex, r, g, b, a = utils.GetUnitColor(this.guid)
+		this.healthBar:SetStatusBarColor(r, g, b, a)
+
+		-- update health bar border
+		if this.healthBar.border then
+			if this.hover then
+				this.healthBar.border:SetBackdropBorderColor(1, 1, 1, 1)
+			elseif UnitAffectingCombat(this.guid) then
+				this.healthBar.border:SetBackdropBorderColor(.8, .2, .2, 1)
+			else
+				this.healthBar.border:SetBackdropBorderColor(.2, .2, .2, 1)
+			end
+		end
+	end
 
 	-- update caption text
 	local name = UnitName(this.guid)
-	local hp = UnitHealth(this.guid)
-	if GetLocale() == "zhCN" then
-		if hp then
-			if hp >= 10000 then
-				hp = math.floor(hp / 1000) / 10 .. "万"
-				-- elseif hp >= 1000 then
-				-- 	hp = math.floor(hp / 100) / 10 .. "k"
-			end
-		end
-	else
-		-- convert hp to k if > 1000
-		if hp then
-			if hp >= 1000000 then
-				hp = math.floor(hp / 100000) / 10 .. "m"
-			elseif hp >= 1000 then
-				hp = math.floor(hp / 100) / 10 .. "k"
-			end
-		end
-	end
-
-	if name then
+	if name and this.nameText then
 		this.nameText:SetText(name)
 	end
-	if hp then
-		this.hpText:SetText(hp)
-	end
 
-	-- update health bar border
-	if this.hover then
-		this.bar.border:SetBackdropBorderColor(1, 1, 1, 1)
-	elseif UnitAffectingCombat(this.guid) then
-		this.bar.border:SetBackdropBorderColor(.8, .2, .2, 1)
-	else
-		this.bar.border:SetBackdropBorderColor(.2, .2, .2, 1)
+	if this.hpText then
+		local hp = UnitHealth(this.guid)
+		if GetLocale() == "zhCN" then
+			if hp then
+				if hp >= 10000 then
+					hp = math.floor(hp / 1000) / 10 .. "万"
+					-- elseif hp >= 1000 then
+					-- 	hp = math.floor(hp / 100) / 10 .. "k"
+				end
+			end
+		else
+			-- convert hp to k if > 1000
+			if hp then
+				if hp >= 1000000 then
+					hp = math.floor(hp / 100000) / 10 .. "m"
+				elseif hp >= 1000 then
+					hp = math.floor(hp / 100) / 10 .. "k"
+				end
+			end
+		end
+
+		if hp then
+			this.hpText:SetText(hp)
+		end
 	end
 
 	-- show raid icon if existing
-	if GetRaidTargetIndex(this.guid) and Cursive.filter.alive(this.guid) then
-		SetRaidTargetIconTexture(this.icon, GetRaidTargetIndex(this.guid))
-		this.icon:Show()
-	else
-		this.icon:Hide()
+	if this.icon then
+		if GetRaidTargetIndex(this.guid) and Cursive.filter.alive(this.guid) then
+			SetRaidTargetIconTexture(this.icon, GetRaidTargetIndex(this.guid))
+			this.icon:Show()
+		else
+			this.icon:Hide()
+		end
 	end
 
 	-- update target indicator
-	if UnitIsUnit("target", this.guid) then
-		this.target_left:Show()
-	else
-		this.target_left:Hide()
+	if this.target_left then
+		if UnitIsUnit("target", this.guid) then
+			this.target_left:Show()
+		else
+			this.target_left:Hide()
+		end
 	end
 end
 
@@ -204,88 +247,120 @@ ui.BarClick = function()
 	TargetUnit(this.guid)
 end
 
-local function CreateBar(guid)
-	local barFrame = CreateFrame("Button", nil, ui.rootBarFrame)
-	barFrame.guid = guid
-
-	barFrame:SetScript("OnClick", ui.BarClick)
-	barFrame:SetScript("OnEnter", ui.BarEnter)
-	barFrame:SetScript("OnLeave", ui.BarLeave)
-	barFrame:SetScript("OnUpdate", ui.BarUpdate)
-
+local function CreateBarFirstSection(unitFrame, guid)
 	local config = Cursive.db.profile
-	local width = GetBarWidth()
-	barFrame:SetWidth(width)
-	barFrame:SetHeight(config.height)
+	local firstSection = CreateFrame("Frame", nil, unitFrame)
+	firstSection:SetPoint("LEFT", unitFrame, "LEFT", 0, 0)
+	firstSection:SetWidth(GetBarFirstSectionWidth())
+	firstSection:SetHeight(config.height)
+	unitFrame.firstSection = firstSection
 
 	-- create target indicator
-	local targetLeft = barFrame:CreateTexture(nil, "OVERLAY")
-	targetLeft:SetWidth(ui.targetIndicatorSize)
-	targetLeft:SetHeight(8)
-	targetLeft:SetPoint("LEFT", barFrame, "LEFT", 0, 0)
-	targetLeft:SetTexture("Interface\\AddOns\\Cursive\\img\\target-left")
-	targetLeft:Hide()
-	barFrame.target_left = targetLeft
+	if config.showtargetindicator then
+		local targetLeft = firstSection:CreateTexture(nil, "OVERLAY")
+		targetLeft:SetWidth(ui.targetIndicatorSize)
+		targetLeft:SetHeight(8)
+		targetLeft:SetPoint("LEFT", unitFrame, "LEFT", 0, 0)
+		targetLeft:SetTexture("Interface\\AddOns\\Cursive\\img\\target-left")
+		targetLeft:Hide()
+		unitFrame.target_left = targetLeft
+	end
 
 	-- create raid icon textures
-	local icon = barFrame:CreateTexture(nil, "OVERLAY")
-	icon:SetWidth(config.raidiconsize)
-	icon:SetHeight(config.raidiconsize)
-	icon:SetPoint("LEFT", targetLeft, "RIGHT", 0, 0)
-	icon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
-	icon:Hide()
-	barFrame.icon = icon
+	if config.showraidicons then
+		local icon = firstSection:CreateTexture(nil, "OVERLAY")
+		icon:SetWidth(config.raidiconsize)
+		icon:SetHeight(config.raidiconsize)
+		icon:SetPoint("RIGHT", firstSection, "RIGHT", 0, 0)
+		icon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
+		icon:Hide()
+		unitFrame.icon = icon
+	end
+end
+
+local function CreateBarSecondSection(unitFrame, guid)
+	local config = Cursive.db.profile
+	local secondSection = CreateFrame("Frame", nil, unitFrame)
+	secondSection:SetPoint("LEFT", unitFrame.firstSection, "RIGHT", 0, 0)
+	secondSection:SetWidth(GetBarSecondSectionWidth())
+	secondSection:SetHeight(config.height)
+	unitFrame.secondSection = secondSection
 
 	-- create health bar
-	local bar = CreateFrame("StatusBar", nil, barFrame)
-	bar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
-	bar:SetStatusBarColor(1, .8, .2, 1)
-	bar:SetMinMaxValues(0, 100)
-	bar:SetValue(20)
-	bar:SetPoint("LEFT", icon, "RIGHT", ui.padding, 0)
-	bar:SetWidth(config.healthwidth)
-	bar:SetHeight(config.height)
-	barFrame.bar = bar
+	if config.showhealthbar then
+		local healthBar = CreateFrame("StatusBar", nil, secondSection)
+		healthBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
+		healthBar:SetStatusBarColor(1, .8, .2, 1)
+		healthBar:SetMinMaxValues(0, 100)
+		healthBar:SetValue(20)
+		healthBar:SetPoint("LEFT", secondSection, "LEFT", ui.padding, 0)
+		healthBar:SetWidth(config.healthwidth)
+		healthBar:SetHeight(config.height)
+		unitFrame.healthBar = healthBar
 
-	local hp = bar:CreateFontString(nil, "HIGH", "GameFontWhite")
-	hp:SetPoint("TOPRIGHT", bar, "TOPRIGHT", -2, -2)
-	hp:SetWidth(30)
-	hp:SetHeight(config.height - 4)
-	hp:SetFont(STANDARD_TEXT_FONT, config.textsize, "THINOUTLINE")
-	hp:SetJustifyH("RIGHT")
-	barFrame.hpText = hp
+		local hp = healthBar:CreateFontString(nil, "HIGH", "GameFontWhite")
+		hp:SetPoint("TOPRIGHT", healthBar, "TOPRIGHT", -2, -2)
+		hp:SetWidth(30)
+		hp:SetHeight(config.height - 4)
+		hp:SetFont(STANDARD_TEXT_FONT, config.textsize, "THINOUTLINE")
+		hp:SetJustifyH("RIGHT")
+		unitFrame.hpText = hp
 
-	local name = bar:CreateFontString(nil, "HIGH", "GameFontWhite")
-	name:SetPoint("TOPLEFT", bar, "TOPLEFT", 2, -2)
-	name:SetPoint("BOTTOMRIGHT", hp, "BOTTOMLEFT", 2, 0)
-	name:SetFont(STANDARD_TEXT_FONT, config.textsize, "THINOUTLINE")
-	name:SetJustifyH("LEFT")
-	barFrame.nameText = name
+		if config.showunitname then
+			local name = healthBar:CreateFontString(nil, "HIGH", "GameFontWhite")
+			name:SetPoint("TOPLEFT", healthBar, "TOPLEFT", 2, -2)
+			name:SetPoint("BOTTOMRIGHT", hp, "BOTTOMLEFT", 2, 0)
+			name:SetFont(STANDARD_TEXT_FONT, config.textsize, "THINOUTLINE")
+			name:SetJustifyH("LEFT")
+			unitFrame.nameText = name
+		end
 
-	-- create health bar backdrops
-	if pfUI and pfUI.uf then
-		pfUI.api.CreateBackdrop(bar)
-		bar.border = bar.backdrop
+		-- create health bar backdrops
+		if pfUI and pfUI.uf then
+			pfUI.api.CreateBackdrop(healthBar)
+			healthBar.border = healthBar.backdrop
+		else
+			healthBar:SetBackdrop(ui.background)
+			healthBar:SetBackdropColor(0, 0, 0, 1)
+
+			local border = CreateFrame("Frame", nil, healthBar.bar)
+			border:SetBackdrop(ui.border)
+			border:SetBackdropColor(.2, .2, .2, 1)
+			border:SetPoint("TOPLEFT", healthBar.bar, "TOPLEFT", -2, 2)
+			border:SetPoint("BOTTOMRIGHT", healthBar.bar, "BOTTOMRIGHT", 2, -2)
+			healthBar.border = border
+		end
 	else
-		bar:SetBackdrop(ui.background)
-		bar:SetBackdropColor(0, 0, 0, 1)
-
-		local border = CreateFrame("Frame", nil, bar.bar)
-		border:SetBackdrop(ui.border)
-		border:SetBackdropColor(.2, .2, .2, 1)
-		border:SetPoint("TOPLEFT", bar.bar, "TOPLEFT", -2, 2)
-		border:SetPoint("BOTTOMRIGHT", bar.bar, "BOTTOMRIGHT", 2, -2)
-		bar.border = border
+		if config.showunitname then
+			local name = secondSection:CreateFontString(nil, "HIGH", "GameFontWhite")
+			name:SetPoint("TOPLEFT", secondSection, "TOPLEFT", 2, -2)
+			name:SetPoint("BOTTOMRIGHT", secondSection, "BOTTOMRIGHT", 2, 0)
+			name:SetFont(STANDARD_TEXT_FONT, config.textsize, "THINOUTLINE")
+			name:SetWidth(config.healthwidth)
+			name:SetHeight(config.height - 4)
+			name:SetJustifyH("LEFT")
+			unitFrame.nameText = name
+		end
 	end
+end
+
+local function CreateBarThirdSection(unitFrame, guid)
+	local config = Cursive.db.profile
+
+	local thirdSection = CreateFrame("Frame", nil, unitFrame)
+	thirdSection:SetPoint("LEFT", unitFrame.secondSection, "RIGHT", 0, 0)
+	thirdSection:SetWidth(GetBarThirdSectionWidth())
+	thirdSection:SetHeight(config.height)
+	unitFrame.thirdSection = thirdSection
 
 	-- display up to maxcurses curses
 	for i = 1, config.maxcurses do
-		local curse = barFrame:CreateTexture(nil, "OVERLAY")
+		local curse = thirdSection:CreateTexture(nil, "OVERLAY")
 		curse:SetWidth(config.curseiconsize)
 		curse:SetHeight(config.curseiconsize)
-		curse:SetPoint("LEFT", bar, "RIGHT", i * ui.padding + ((i - 1) * config.curseiconsize), 0)
+		curse:SetPoint("LEFT", thirdSection, "LEFT", i * ui.padding + ((i - 1) * config.curseiconsize), 0)
 
-		curse.timer = barFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+		curse.timer = thirdSection:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 		curse.timer:SetFontObject(GameFontHighlight)
 		curse.timer:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
 		curse.timer:SetTextColor(1, 1, 1)
@@ -293,11 +368,30 @@ local function CreateBar(guid)
 
 		curse.timer:Hide()
 		curse:Hide()
-		barFrame["curse" .. i] = curse
+		unitFrame["curse" .. i] = curse
 	end
+end
 
-	ui.barFrames[guid] = barFrame
-	return barFrame
+local function CreateBar(guid)
+	local unitFrame = CreateFrame("Button", nil, ui.rootBarFrame)
+	unitFrame.guid = guid
+
+	unitFrame:SetScript("OnClick", ui.BarClick)
+	unitFrame:SetScript("OnEnter", ui.BarEnter)
+	unitFrame:SetScript("OnLeave", ui.BarLeave)
+	unitFrame:SetScript("OnUpdate", ui.BarUpdate)
+
+	local config = Cursive.db.profile
+	local width = GetBarWidth()
+	unitFrame:SetWidth(width)
+	unitFrame:SetHeight(config.height)
+
+	CreateBarFirstSection(unitFrame, guid)
+	CreateBarSecondSection(unitFrame, guid)
+	CreateBarThirdSection(unitFrame, guid)
+
+	ui.unitFrames[guid] = unitFrame
+	return unitFrame
 end
 
 local function GetBarCords(row, col)
@@ -308,15 +402,15 @@ local function GetBarCords(row, col)
 end
 
 local function DisplayGuid(guid, row, col)
-	local barFrame = ui.barFrames[guid] or CreateBar(guid)
+	local unitFrame = ui.unitFrames[guid] or CreateBar(guid)
 
 	local x, y = GetBarCords(row, col)
 
 	-- update position if required
-	if not barFrame.pos or barFrame.pos ~= x .. -y then
-		barFrame:ClearAllPoints()
-		barFrame:SetPoint("TOPLEFT", ui.rootBarFrame, "TOPLEFT", x, -y)
-		barFrame.pos = x .. -y
+	if not unitFrame.pos or unitFrame.pos ~= x .. -y then
+		unitFrame:ClearAllPoints()
+		unitFrame:SetPoint("TOPLEFT", ui.rootBarFrame, "TOPLEFT", x, -y)
+		unitFrame.pos = x .. -y
 	end
 
 	-- update curses
@@ -324,7 +418,7 @@ local function DisplayGuid(guid, row, col)
 
 	-- make sure old curses are hidden
 	for i = 1, Cursive.db.profile.maxcurses do
-		local curse = barFrame["curse" .. i]
+		local curse = unitFrame["curse" .. i]
 		curse:Hide()
 		curse.timer:Hide()
 	end
@@ -337,7 +431,7 @@ local function DisplayGuid(guid, row, col)
 			end
 
 			local remaining = Cursive.curses:TimeRemaining(curseData)
-			local curse = barFrame["curse" .. curseNumber]
+			local curse = unitFrame["curse" .. curseNumber]
 			if remaining >= 0 then
 				curse:SetTexture(Cursive.curses.trackedCurseIds[curseData.spellID].texture)
 				-- curse:SetTexCoord(.078, .92, .079, .937) rounded icons
@@ -357,13 +451,13 @@ local function DisplayGuid(guid, row, col)
 		end
 	end
 
-	barFrame:Show()
+	unitFrame:Show()
 end
 
 local function HideGuid(guid, time)
-	if ui.barFrames[guid] then
-		ui.barFrames[guid]:Hide()
-		ui.barFrames[guid] = nil
+	if ui.unitFrames[guid] then
+		ui.unitFrames[guid]:Hide()
+		ui.unitFrames[guid] = nil
 	end
 
 	local active = UnitExists(guid) and Cursive.filter.alive(guid)
