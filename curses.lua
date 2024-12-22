@@ -49,6 +49,8 @@ function curses:LoadCurses()
 		curses.trackedCurseIds = getHunterSpells()
 	elseif playerClassName == "ROGUE" then
 		curses.trackedCurseIds = getRogueSpells()
+	elseif playerClassName == "SHAMAN" then
+		curses.trackedCurseIds = getShamanSpells()
 	end
 
 	-- go through spell slots and

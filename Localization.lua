@@ -136,6 +136,9 @@ L:RegisterTranslations("enUS", function()
 		["Garrote"] = true,
 		["Deadly Poison"] = true,
 
+		-- shaman
+		["Flame Shock"]  = true,
+
 		-- warlock
 		["Conflagrate"] = true,
 		["Corruption"] = true,
@@ -288,6 +291,9 @@ L:RegisterTranslations("zhCN", function()
 		["Expose Armor"] = "破甲", -- no idea if right
 		["Garrote"] = "锁喉", -- no idea if right
 		["Deadly Poison"] = "致命毒药", -- no idea if right
+
+		-- shaman
+		["Flame Shock"]  = "烈焰震击", -- no idea if right
 
 		-- warlock
 		["Conflagrate"] = "引燃", -- no idea if right
