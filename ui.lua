@@ -397,7 +397,8 @@ end
 local function GetBarCords(row, col)
 	local config = Cursive.db.profile
 	local x = (col - 1) * GetBarWidth()
-	local y = row * (config.height + config.spacing) -- don't subtract 1 to account for header
+	-- local y = row * (config.height + config.spacing) -- don't subtract 1 to account for header
+	local y = (10 - row - 1) * (config.height + config.spacing)
 	return x, y
 end
 
