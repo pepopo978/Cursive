@@ -113,7 +113,7 @@ function curses:GetCurseDuration(curseSpellID)
 end
 
 function curses:ScanGuidForCurse(guid, curseSpellID)
-	for i = 1, 16 do
+	for i = 1, 64 do
 		local _, _, _, spellID = UnitDebuff(guid, i)
 		if spellID then
 			if spellID == curseSpellID then
@@ -123,7 +123,7 @@ function curses:ScanGuidForCurse(guid, curseSpellID)
 			break
 		end
 	end
-	for i = 1, 32 do
+	for i = 1, 64 do
 		local _, _, spellID = UnitBuff(guid, i)
 		if spellID then
 			if spellID == curseSpellID then
