@@ -2,6 +2,8 @@ if not Cursive.superwow then
 	return
 end
 
+local L = AceLibrary("AceLocale-2.2"):new("Cursive")
+
 local utils = Cursive.utils
 local filter = Cursive.filter
 
@@ -401,6 +403,38 @@ local function GetBarCords(row, col)
 	return x, y
 end
 
+local function GetSortedCurses(guidCurses)
+	-- Collect keys
+	local curseNames = {}
+	for key in pairs(guidCurses) do
+		table.insert(curseNames, key)
+	end
+
+	if Cursive.db.profile.curseordering == L["Order applied"] then
+		table.sort(curseNames, function(a, b)
+			return guidCurses[a].start < guidCurses[b].start
+		end)
+	elseif Cursive.db.profile.curseordering == L["Expiring soonest -> latest"] then
+		table.sort(curseNames, function(a, b)
+			return Cursive.curses:TimeRemaining(guidCurses[a]) < Cursive.curses:TimeRemaining(guidCurses[b])
+		end)
+	elseif Cursive.db.profile.curseordering == L["Expiring latest -> soonest"] then
+		table.sort(curseNames, function(a, b)
+			return Cursive.curses:TimeRemaining(guidCurses[a]) > Cursive.curses:TimeRemaining(guidCurses[b])
+		end)
+	end
+
+	-- Iterator function
+	local i = 0
+	return function()
+		i = i + 1
+		local key = curseNames[i]
+		if key then
+			return key, guidCurses[key]
+		end
+	end
+end
+
 local function DisplayGuid(guid, row, col)
 	local unitFrame = ui.unitFrames[guid] or CreateBar(guid)
 
@@ -425,7 +459,7 @@ local function DisplayGuid(guid, row, col)
 
 	local guidCurses = Cursive.curses.guids[guid]
 	if guidCurses then
-		for curseName, curseData in pairs(guidCurses) do
+		for curseName, curseData in GetSortedCurses(guidCurses) do
 			if curseNumber > Cursive.db.profile.maxcurses then
 				break
 			end

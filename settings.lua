@@ -31,6 +31,8 @@ Cursive:RegisterDefaults("profile", {
 	maxcol = 1,
 	textsize = 9,
 
+	curseordering = L["Order applied"],
+
 	filterincombat = true,
 	filterhostile = true,
 	filterattackable = true,
@@ -162,6 +164,18 @@ local barOptions = {
 				Cursive.db.profile.curseiconsize = v
 				Cursive.UpdateFramesFromConfig()
 			end
+		end,
+	},
+	["curseordering"] = {
+		type = "text",
+		name = L["Curse Ordering"],
+		desc = L["Curse Ordering"],
+		get = function()
+			return Cursive.db.profile.curseordering
+		end,
+		validate = { L["Order applied"], L["Expiring soonest -> latest"], L["Expiring latest -> soonest"] },
+		set = function(v)
+			Cursive.db.profile.curseordering = v
 		end,
 	},
 	["spacing"] = {
