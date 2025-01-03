@@ -135,6 +135,10 @@ L:RegisterTranslations("enUS", function()
 		["Expose Armor"] = true,
 		["Garrote"] = true,
 		["Deadly Poison"] = true,
+		["Deadly Poison II"] = true,
+		["Deadly Poison III"] = true,
+		["Deadly Poison IV"] = true,
+		["Deadly Poison V"] = true,
 
 		-- shaman
 		["Flame Shock"]  = true,
@@ -288,9 +292,13 @@ L:RegisterTranslations("zhCN", function()
 		["Blind"] = "致盲",
 		["Sap"] = "闷棍",
 		["Gouge"] = "凿击",
-		["Expose Armor"] = "破甲", -- no idea if right
+		["Expose Armor"] = "破甲",  -- no idea if right
 		["Garrote"] = "锁喉", -- no idea if right
 		["Deadly Poison"] = "致命毒药", -- no idea if right
+		["Deadly Poison II"] = "致命毒药 II",
+		["Deadly Poison III"] = "致命毒药 III",
+		["Deadly Poison IV"] = "致命毒药 IV",
+		["Deadly Poison V"] = "致命毒药 V",
 
 		-- shaman
 		["Flame Shock"]  = "烈焰震击", -- no idea if right
