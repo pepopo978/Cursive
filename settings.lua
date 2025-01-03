@@ -31,7 +31,7 @@ Cursive:RegisterDefaults("profile", {
 	maxcol = 1,
 	textsize = 9,
 
-	curseordering = L["Order applied"],
+	curseordering = L["Expiring soonest -> latest"],
 
 	filterincombat = true,
 	filterhostile = true,

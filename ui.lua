@@ -424,7 +424,6 @@ local function GetSortedCurses(guidCurses)
 		end)
 	end
 
-	-- Iterator function
 	local i = 0
 	return function()
 		i = i + 1
