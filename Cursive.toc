@@ -33,6 +33,7 @@ spells\hunter.lua
 spells\mage.lua
 spells\priest.lua
 spells\rogue.lua
+spells\shaman.lua
 spells\warlock.lua
 curses.lua
 filter.lua
