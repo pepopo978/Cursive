@@ -152,18 +152,18 @@ Cursive.UpdateFramesFromConfig = function()
 end
 
 ui.BarEnter = function()
-	if this.healthBar then
-		this.healthBar.border:SetBackdropBorderColor(1, 1, 1, 1)
+	if this.parent.healthBar then
+		this.parent.healthBar.border:SetBackdropBorderColor(1, 1, 1, 1)
 	end
-	this.hover = true
+	this.parent.hover = true
 
 	GameTooltip_SetDefaultAnchor(GameTooltip, this)
-	GameTooltip:SetUnit(this.guid)
+	GameTooltip:SetUnit(this.parent.guid)
 	GameTooltip:Show()
 end
 
 ui.BarLeave = function()
-	this.hover = false
+	this.parent.hover = false
 	GameTooltip:Hide()
 end
 
@@ -246,7 +246,7 @@ ui.BarUpdate = function()
 end
 
 ui.BarClick = function()
-	TargetUnit(this.guid)
+	TargetUnit(this.parent.guid)
 end
 
 local function CreateBarFirstSection(unitFrame, guid)
@@ -255,6 +255,7 @@ local function CreateBarFirstSection(unitFrame, guid)
 	firstSection:SetPoint("LEFT", unitFrame, "LEFT", 0, 0)
 	firstSection:SetWidth(GetBarFirstSectionWidth())
 	firstSection:SetHeight(config.height)
+	firstSection:EnableMouse(false)
 	unitFrame.firstSection = firstSection
 
 	-- create target indicator
@@ -282,11 +283,16 @@ end
 
 local function CreateBarSecondSection(unitFrame, guid)
 	local config = Cursive.db.profile
-	local secondSection = CreateFrame("Frame", nil, unitFrame)
+	local secondSection = CreateFrame("Button", nil, unitFrame)
 	secondSection:SetPoint("LEFT", unitFrame.firstSection, "RIGHT", 0, 0)
 	secondSection:SetWidth(GetBarSecondSectionWidth())
 	secondSection:SetHeight(config.height)
 	unitFrame.secondSection = secondSection
+	secondSection.parent = unitFrame
+
+	secondSection:SetScript("OnClick", ui.BarClick)
+	secondSection:SetScript("OnEnter", ui.BarEnter)
+	secondSection:SetScript("OnLeave", ui.BarLeave)
 
 	-- create health bar
 	if config.showhealthbar then
@@ -353,6 +359,7 @@ local function CreateBarThirdSection(unitFrame, guid)
 	thirdSection:SetPoint("LEFT", unitFrame.secondSection, "RIGHT", 0, 0)
 	thirdSection:SetWidth(GetBarThirdSectionWidth())
 	thirdSection:SetHeight(config.height)
+	thirdSection:EnableMouse(false)
 	unitFrame.thirdSection = thirdSection
 
 	-- display up to maxcurses curses
@@ -375,12 +382,9 @@ local function CreateBarThirdSection(unitFrame, guid)
 end
 
 local function CreateBar(guid)
-	local unitFrame = CreateFrame("Button", nil, ui.rootBarFrame)
+	local unitFrame = CreateFrame("Frame", nil, ui.rootBarFrame)
 	unitFrame.guid = guid
 
-	unitFrame:SetScript("OnClick", ui.BarClick)
-	unitFrame:SetScript("OnEnter", ui.BarEnter)
-	unitFrame:SetScript("OnLeave", ui.BarLeave)
 	unitFrame:SetScript("OnUpdate", ui.BarUpdate)
 
 	local config = Cursive.db.profile
