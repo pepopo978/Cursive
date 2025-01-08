@@ -51,10 +51,6 @@ filter.hostile = function(unit)
 	return UnitIsEnemy("player", unit) and true or false
 end
 
-filter.range = function(unit)
-	return CheckInteractDistance(unit, 4) and true or false
-end
-
 Cursive.filter = filter
 
 function Cursive:ShouldDisplayGuid(guid)
