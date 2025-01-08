@@ -112,58 +112,58 @@ local function handleSlashCommands(msg, editbox)
 end
 
 local crowdControlledSpellIds = {
-	[700] = { name = L["Sleep"], rank = 1, duration = 20 },
-	[1090] = { name = L["Sleep"], rank = 2, duration = 30 },
-	[2937] = { name = L["Sleep"], rank = 3, duration = 40 },
+	[700] = { name = L["sleep"], rank = 1, duration = 20 },
+	[1090] = { name = L["sleep"], rank = 2, duration = 30 },
+	[2937] = { name = L["sleep"], rank = 3, duration = 40 },
 
-	[339] = { name = L["Entangling Roots"], rank = 1, duration = 12 },
-	[1062] = { name = L["Entangling Roots"], rank = 2, duration = 15 },
-	[5195] = { name = L["Entangling Roots"], rank = 3, duration = 18 },
-	[5196] = { name = L["Entangling Roots"], rank = 4, duration = 21 },
-	[9852] = { name = L["Entangling Roots"], rank = 5, duration = 24 },
-	[9853] = { name = L["Entangling Roots"], rank = 6, duration = 27 },
+	[339] = { name = L["entangling roots"], rank = 1, duration = 12 },
+	[1062] = { name = L["entangling roots"], rank = 2, duration = 15 },
+	[5195] = { name = L["entangling roots"], rank = 3, duration = 18 },
+	[5196] = { name = L["entangling roots"], rank = 4, duration = 21 },
+	[9852] = { name = L["entangling roots"], rank = 5, duration = 24 },
+	[9853] = { name = L["entangling roots"], rank = 6, duration = 27 },
 
-	[2637] = { name = L["Hibernate"], rank = 1, duration = 20 },
-	[18657] = { name = L["Hibernate"], rank = 2, duration = 30 },
-	[18658] = { name = L["Hibernate"], rank = 3, duration = 40 },
+	[2637] = { name = L["hibernate"], rank = 1, duration = 20 },
+	[18657] = { name = L["hibernate"], rank = 2, duration = 30 },
+	[18658] = { name = L["hibernate"], rank = 3, duration = 40 },
 
-	[1425] = { name = L["Shackle Undead"], rank = 1, duration = 30 },
-	[9486] = { name = L["Shackle Undead"], rank = 2, duration = 40 },
-	[10956] = { name = L["Shackle Undead"], rank = 3, duration = 50 },
+	[1425] = { name = L["shackle undead"], rank = 1, duration = 30 },
+	[9486] = { name = L["shackle undead"], rank = 2, duration = 40 },
+	[10956] = { name = L["shackle undead"], rank = 3, duration = 50 },
 
 	-- polymorph
-	[118] = { name = L["Polymorph"], rank = L["Rank 1"], duration = 20 },
-	[12824] = { name = L["Polymorph"], rank = L["Rank 2"], duration = 30 },
-	[12825] = { name = L["Polymorph"], rank = L["Rank 3"], duration = 40 },
-	[12826] = { name = L["Polymorph"], rank = L["Rank 4"], duration = 50 },
+	[118] = { name = L["polymorph"], rank = L["Rank 1"], duration = 20 },
+	[12824] = { name = L["polymorph"], rank = L["Rank 2"], duration = 30 },
+	[12825] = { name = L["polymorph"], rank = L["Rank 3"], duration = 40 },
+	[12826] = { name = L["polymorph"], rank = L["Rank 4"], duration = 50 },
 
-	[28270] = { name = L["Polymorph: Cow"], rank = L["Rank 1"], duration = 50 },
-	[28271] = { name = L["Polymorph: Turtle"], rank = L["Rank 1"], duration = 50 },
-	[28272] = { name = L["Polymorph: Pig"], rank = L["Rank 1"], duration = 50 },
+	[28270] = { name = L["polymorph: cow"], rank = L["Rank 1"], duration = 50 },
+	[28271] = { name = L["polymorph: turtle"], rank = L["Rank 1"], duration = 50 },
+	[28272] = { name = L["polymorph: pig"], rank = L["Rank 1"], duration = 50 },
 
 	[2878] = { name = L["Turn Undead"], rank = 1, duration = 10 },
 	[5627] = { name = L["Turn Undead"], rank = 2, duration = 15 },
 	[10326] = { name = L["Turn Undead"], rank = 3, duration = 20 },
 
-	[2094] = { name = L["Blind"], rank = 1, duration = 10 },
-	[21060] = { name = L["Blind"], rank = 1, duration = 10 },
+	[2094] = { name = L["blind"], rank = 1, duration = 10 },
+	[21060] = { name = L["blind"], rank = 1, duration = 10 },
 
-	[6770] = { name = L["Sap"], rank = 1, duration = 25 },
-	[2070] = { name = L["Sap"], rank = 2, duration = 35 },
-	[11297] = { name = L["Sap"], rank = 3, duration = 45 },
+	[6770] = { name = L["sap"], rank = 1, duration = 25 },
+	[2070] = { name = L["sap"], rank = 2, duration = 35 },
+	[11297] = { name = L["sap"], rank = 3, duration = 45 },
 
-	[1776] = { name = L["Gouge"], rank = 1, duration = 4 },
-	[1777] = { name = L["Gouge"], rank = 2, duration = 4 },
-	[8629] = { name = L["Gouge"], rank = 3, duration = 4 },
-	[11285] = { name = L["Gouge"], rank = 4, duration = 4 },
-	[11286] = { name = L["Gouge"], rank = 5, duration = 4 },
+	[1776] = { name = L["gouge"], rank = 1, duration = 4 },
+	[1777] = { name = L["gouge"], rank = 2, duration = 4 },
+	[8629] = { name = L["gouge"], rank = 3, duration = 4 },
+	[11285] = { name = L["gouge"], rank = 4, duration = 4 },
+	[11286] = { name = L["gouge"], rank = 5, duration = 4 },
 
-	[3355] = { name = L["Freezing Trap"], rank = 1, duration = 10 },
-	[14308] = { name = L["Freezing Trap"], rank = 2, duration = 15 },
-	[14309] = { name = L["Freezing Trap"], rank = 3, duration = 20 },
+	[3355] = { name = L["freezing trap"], rank = 1, duration = 10 },
+	[14308] = { name = L["freezing trap"], rank = 2, duration = 15 },
+	[14309] = { name = L["freezing trap"], rank = 3, duration = 20 },
 
-	[710] = { name = L["Banish"], rank = 1, duration = 30 },
-	[18647] = { name = L["Banish"], rank = 2, duration = 30 },
+	[710] = { name = L["banish"], rank = 1, duration = 30 },
+	[18647] = { name = L["banish"], rank = 2, duration = 30 },
 
 	-- mind control effects
 	[28410] = { name = "Chains of Kel'Thuzad" }, -- we aren't casting these, name doesn't matter
@@ -183,15 +183,15 @@ local crowdControlledSpellIds = {
 	[20740] = { name = "Dominate Mind" },
 	[17405] = { name = "Domination" },
 	[3442] = { name = "Enslave" },
-	[13181] = { name = "Gnomish Mind Control Cap" },
-	[26740] = { name = "Gnomish Mind Control Cap" },
+	[13181] = { name = "Gnomish mind control Cap" },
+	[26740] = { name = "Gnomish mind control Cap" },
 	[12483] = { name = "Hex of Jammal'an" },
 	[25772] = { name = "Mental Domination" },
 	[7967] = { name = "Naralex's Nightmare" },
 	[19469] = { name = "Poison Mind" },
 	[17244] = { name = "Possess" },
 	[22667] = { name = "Shadow Command" },
-	[20668] = { name = "Sleepwalk" },
+	[20668] = { name = "sleepwalk" },
 	[785] = { name = "True Fulfillment" },
 	[26195] = { name = "Whisperings of C'Thun" },
 	[26197] = { name = "Whisperings of C'Thun" },
@@ -462,10 +462,10 @@ function Cursive:Curse(spellName, targetedGuid, options)
 	end
 
 	-- remove (Rank x) from spellName if it exists
-	local spellNameNoRank = string.gsub(spellName, "%(.+%)", "")
+	local spellNameNoRank =  string.lower(string.gsub(spellName, "%(.+%)", ""))
 
 	if targetedGuid and not Cursive.curses:HasCurse(spellNameNoRank, targetedGuid, options["refreshtime"]) and not isMobCrowdControlled(targetedGuid) then
-		castSpellWithOptions(spellName, spellNameNoRank, targetedGuid, options)
+		castSpellWithOptions(string.lower(spellName),spellNameNoRank, targetedGuid, options)
 	elseif options["warnings"] then
 		DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
 	end
@@ -488,12 +488,12 @@ function Cursive:Multicurse(spellName, priority, options)
 	local selectedPriority = priority or PRIORITY_HIGHEST_HP
 
 	-- remove (Rank x) from spellName if it exists
-	local spellNameNoRank = string.gsub(spellName, "%(.+%)", "")
+	local spellNameNoRank = string.lower(string.gsub(spellName, "%(.+%)", ""))
 
 	local targetedGuid = pickTarget(selectedPriority, spellNameNoRank, true, options)
 
 	if targetedGuid then
-		castSpellWithOptions(spellName, spellNameNoRank, targetedGuid, options)
+		castSpellWithOptions(string.lower(spellName), spellNameNoRank, targetedGuid, options)
 	elseif options["warnings"] then
 		DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
 	end

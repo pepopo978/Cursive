@@ -23,8 +23,6 @@ local curses = {
 }
 
 -- combat events for curses
-local afflict_test = "^(.+) is afflicted by (.+) %((%d+)%)" -- for stacks 2-5 will be "Fire Vulnerability (2)".
-local gains_test = "^(.+) gains (.+) %((%d+)%)" -- for stacks 2-5 will be "Fire Vulnerability (2)".
 local fades_test = L["(.+) fades from (.+)"]
 local resist_test = L["Your (.+) was resisted by (.+)"]
 
@@ -65,7 +63,7 @@ function curses:LoadCurses()
 			spellrank = "Rank 1"
 		end
 
-		curses.trackedCurseNameRanksToSpellSlots[spellname .. spellrank] = i
+		curses.trackedCurseNameRanksToSpellSlots[string.lower(spellname) .. spellrank] = i
 		i = i + 1
 	end
 
@@ -161,7 +159,7 @@ Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, 
 			lastGuid = targetGuid
 			Cursive:ScheduleEvent("addCurse" .. targetGuid .. curses.trackedCurseIds[spellID].name, curses.ApplyCurse, 0.2, self, spellID, targetGuid, GetTime())
 		elseif curses.conflagrateSpellIds[spellID] then
-			Cursive:ScheduleEvent("updateCurse" .. targetGuid .. L["Conflagrate"], curses.UpdateCurse, 0.2, self, spellID, targetGuid, GetTime())
+			Cursive:ScheduleEvent("updateCurse" .. targetGuid .. L["conflagrate"], curses.UpdateCurse, 0.2, self, spellID, targetGuid, GetTime())
 		end
 	elseif event == "START" then
 		if curses.trackedCurseIds[spellID] then
@@ -192,19 +190,21 @@ end)
 Cursive:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE",
 		function(message)
 			-- check for resist
-			local _, _, spell, target = string.find(message, resist_test)
-			if spell and target then
+			local _, _, spellName, target = string.find(message, resist_test)
+			if spellName and target then
+				spellName = string.lower(spellName)
+
 				-- clear pending cast
 				curses.pendingCast = {}
 
-				if curses.trackedCurseNamesToTextures[spell] and lastGuid then
-					Cursive:CancelScheduledEvent("addCurse" .. lastGuid .. spell)
+				if curses.trackedCurseNamesToTextures[spellName] and lastGuid then
+					Cursive:CancelScheduledEvent("addCurse" .. lastGuid .. spellName)
 					-- check if sound should be played
 					if curses:ShouldPlayResistSound(lastGuid) then
 						PlaySoundFile("Interface\\AddOns\\Cursive\\Sounds\\resist.mp3")
 					end
-				elseif spell == L["Conflagrate"] and lastGuid then
-					Cursive:CancelScheduledEvent("updateCurse" .. lastGuid .. spell)
+				elseif spellName == L["conflagrate"] and lastGuid then
+					Cursive:CancelScheduledEvent("updateCurse" .. lastGuid .. spellName)
 				end
 			end
 		end
@@ -212,13 +212,14 @@ Cursive:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE",
 
 Cursive:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER", function(message)
 	-- check if spell that faded is relevant
-	local _, _, spell, target = string.find(message, fades_test)
-	if spell and target then
-		if curses.trackedCurseNamesToTextures[spell] then
+	local _, _, spellName, target = string.find(message, fades_test)
+	if spellName and target then
+		spellName = string.lower(spellName)
+		if curses.trackedCurseNamesToTextures[spellName] then
 			-- loop through targets with active curses
 			for guid, data in pairs(curses.guids) do
 				for curseName, curseData in pairs(data) do
-					if curseName == spell then
+					if curseName == spellName then
 						-- see if target still has that curse
 						if not curses:ScanGuidForCurse(guid, curseData.spellID) then
 							-- remove curse
@@ -337,9 +338,9 @@ function curses:UpdateCurse(spellID, targetGuid, startTime)
 
 	if curses.conflagrateSpellIds[spellID] then
 		-- check if target has immolate
-		if curses:HasCurse(L["Immolate"], targetGuid) then
+		if curses:HasCurse(L["immolate"], targetGuid) then
 			-- reduce duration by 3 sec
-			curses.guids[targetGuid][L["Immolate"]].duration = curses.guids[targetGuid][L["Immolate"]].duration - 3
+			curses.guids[targetGuid][L["immolate"]].duration = curses.guids[targetGuid][L["immolate"]].duration - 3
 		end
 	end
 end
