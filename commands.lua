@@ -11,6 +11,7 @@ local commandOptions = {
 	minhp = L["Minimum HP for a target to be considered.  Example usage minhp=10000. "],
 	refreshtime = L["Time threshold at which to allow refreshing a curse.  Default is 0 seconds."],
 	ignoretarget = L["Ignore the current target when choosing target for multicurse.  Does not affect 'curse' command."],
+	playeronly = L["Only choose players and ignore npcs when choosing target for multicurse.  Does not affect 'curse' command."],
 	name = L["Filter targets by name. Can be a partial match.  If no match is found, the command will do nothing."],
 	ignorespellid = L["Ignore targets with the specified spell id already on them. Useful for ignoring targets that already have a shared debuff."],
 	ignorespelltexture = L["Ignore targets with the specified spell texture already on them. Useful for ignoring targets that already have a shared debuff."],
@@ -320,6 +321,9 @@ local function passedOptionFilters(guid, options)
 		if hasSpellTexture(guid, options["ignorespelltexture"]) then
 			return false
 		end
+	end
+	if options["playeronly"] and not UnitIsPlayer(guid) then
+		return false
 	end
 	return true
 end

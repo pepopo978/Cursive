@@ -76,6 +76,7 @@ All commands can take the following options separated by commas:
 - `allowooc` : "Allow out of combat targets to be multicursed. Would only consider using this solo to avoid potentially
   griefing raids/dungeons by pulling unintended mobs.",
 - `ignoretarget` : "Ignore the current target when choosing target for multicurse.  Does not affect 'curse' command.",
+- `playeronly` : "Only choose players and ignore npcs when choosing target for multicurse.  Does not affect 'curse' command.",
 - `minhp=<number>` : "Minimum HP for a target to be considered.",
 - `refreshtime=<number>` : "Time threshold at which to allow refreshing a curse. Default is 0 seconds.",
 - `name=<str>` : "Filter targets by name. Can be a partial match.  If no match is found, the command will do nothing.",
