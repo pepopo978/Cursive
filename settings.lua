@@ -32,6 +32,7 @@ Cursive:RegisterDefaults("profile", {
 	textsize = 9,
 
 	curseordering = L["Expiring soonest -> latest"],
+	curseshowdecimals = false,
 
 	filterincombat = true,
 	filterhostile = true,
@@ -170,12 +171,26 @@ local barOptions = {
 		type = "text",
 		name = L["Curse Ordering"],
 		desc = L["Curse Ordering"],
+		order = 72,
 		get = function()
 			return Cursive.db.profile.curseordering
 		end,
 		validate = { L["Order applied"], L["Expiring soonest -> latest"], L["Expiring latest -> soonest"] },
 		set = function(v)
 			Cursive.db.profile.curseordering = v
+		end,
+	},
+	["curseshowdecimals"] = {
+		type = "toggle",
+		name = L["Decimal Duration"],
+		desc = L["Decimal Duration Desc"],
+		order = 74,
+		get = function()
+			return Cursive.db.profile.curseshowdecimals
+		end,
+		set = function(v)
+			Cursive.db.profile.curseshowdecimals = v
+			Cursive.UpdateFramesFromConfig()
 		end,
 	},
 	["spacing"] = {

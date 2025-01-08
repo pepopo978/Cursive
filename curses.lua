@@ -320,7 +320,15 @@ function curses:TimeRemaining(curseData)
 		dhReduction = curses:GetDarkHarvestReduction(curseData)
 	end
 
-	return math.ceil(curseData.duration - (GetTime() - curseData.start) - dhReduction)
+	local remaining = curseData.duration - (GetTime() - curseData.start) - dhReduction
+	if Cursive.db.profile.curseshowdecimals and remaining < 10 then
+		-- round to 1 decimal point
+		remaining = math.floor(remaining * 10) / 10
+	else
+		remaining = math.ceil(remaining)
+	end
+
+	return remaining
 end
 
 function curses:EnableResistSound(guid)
