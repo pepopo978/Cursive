@@ -130,7 +130,7 @@ L:RegisterTranslations("enUS", function()
 		["holy fire"] = true,
 
 		-- Paladin
-		["Turn Undead"] = true,
+		["turn undead"] = true,
 
 		-- rogue
 		["blind"] = true,
@@ -158,6 +158,7 @@ L:RegisterTranslations("enUS", function()
 		["curse of tongues"] = true,
 		["curse of weakness"] = true,
 		["curse of exhaustion"] = true,
+		["dark harvest"] = true,
 		["immolate"] = true,
 		["death coil"] = true,
 		["banish"] = true,
@@ -294,7 +295,7 @@ L:RegisterTranslations("zhCN", function()
 		["holy fire"] = "神圣之火",
 
 		-- Paladin
-		["Turn Undead"] = "超度亡灵",
+		["turn undead"] = "超度亡灵",
 
 		-- rogue
 		["blind"] = "致盲",
@@ -322,6 +323,7 @@ L:RegisterTranslations("zhCN", function()
 		["curse of tongues"] = "语言诅咒",
 		["curse of weakness"] = "虚弱诅咒",
 		["curse of exhaustion"] = "疲劳诅咒",
+		["dark harvest"] = "黑暗收割",
 		["immolate"] = "献祭",
 		["death coil"] = "死亡缠绕",
 		["banish"] = "放逐",

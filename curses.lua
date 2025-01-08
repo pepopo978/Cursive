@@ -15,7 +15,14 @@ local curses = {
 		[18931] = true,
 		[18932] = true,
 	},
+	darkHarvestSpellIds = {
+		[52550] = true,
+		[52551] = true,
+		[52552] = true,
+	},
+	darkHarvestData = {},
 	guids = {},
+	isChanneling = false,
 	pendingCast = {},
 	resistSoundGuids = {},
 	expiringSoundGuids = {},
@@ -103,7 +110,7 @@ function curses:ScanTooltipForDuration(curseSpellID)
 end
 
 function curses:GetCurseDuration(curseSpellID)
-	if curses.trackedCurseIds[curseSpellID].variable_duration then
+	if curses.trackedCurseIds[curseSpellID].variableDuration then
 		return curses:ScanTooltipForDuration(curseSpellID)
 	end
 
@@ -139,6 +146,17 @@ Cursive:RegisterEvent("LEARNED_SPELL_IN_TAB", function()
 	-- reload curses in case spell slots changed
 	curses:LoadCurses()
 end)
+
+local function StopChanneling()
+	curses.isChanneling = false
+end
+
+Cursive:RegisterEvent("SPELLCAST_CHANNEL_START", function()
+	curses.isChanneling = true
+end);
+Cursive:RegisterEvent("SPELLCAST_CHANNEL_STOP", StopChanneling);
+Cursive:RegisterEvent("SPELLCAST_INTERRUPTED", StopChanneling);
+Cursive:RegisterEvent("SPELLCAST_FAILED", StopChanneling);
 
 Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, spellID, castDuration)
 	-- immolate will fire both start and cast
@@ -183,6 +201,21 @@ Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, 
 			end
 			-- clear pending cast
 			curses.pendingCast = {}
+		end
+	elseif event == "CHANNEL" then
+		-- dark harvest
+		if curses.darkHarvestSpellIds[spellID] then
+			local _, guid = UnitExists("player")
+			if casterGuid ~= guid then
+				return
+			end
+
+			curses.darkHarvestData = {
+				spellID = spellID,
+				targetGuid = targetGuid,
+				castDuration = curses:ScanTooltipForDuration(spellID),
+				start = GetTime()
+			}
 		end
 	end
 end)
@@ -233,8 +266,61 @@ Cursive:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER", function(message)
 end
 )
 
+function curses:GetLastTickTime(curseData)
+	local ticks = curses.trackedCurseIds[curseData.spellID].numTicks
+	if not ticks then
+		return GetTime()
+	end
+
+	local tickTime = curseData.duration / ticks
+	local currentTime = GetTime() + tickTime * .2 -- dh won't apply to previous tick if within 20% of tick time
+
+	return math.floor((currentTime - curseData.start) / tickTime) * tickTime + curseData.start
+end
+
+function curses:TrackDarkHarvest(curseData)
+	if curses.darkHarvestData["targetGuid"] and curses.darkHarvestData["targetGuid"] == curseData["targetGuid"] then
+		local dhActive = false
+		-- check if still channeling
+		if curses.isChanneling then
+			local dhTimeRemaining = curses.darkHarvestData.castDuration - (GetTime() - curses.darkHarvestData.start)
+			-- check if dh still active based on cast duration
+			if dhTimeRemaining > 0 then
+				dhActive = true
+				-- dh is active
+				if not curseData["dhStartTime"] then
+					curseData["dhStartTime"] = curses:GetLastTickTime(curseData) -- dh will reduce full tick duration
+				end
+			end
+		end
+		if curseData["dhStartTime"] and dhActive == false and not curseData["dhEndTime"] then
+			-- if dh no longer active, store end time if not already stored
+			curseData["dhEndTime"] = GetTime()
+		end
+	end
+end
+
+function curses:GetDarkHarvestReduction(curseData)
+	if curseData["dhStartTime"] then
+		local endTime = curseData["dhEndTime"] or GetTime()
+		local dhActiveTime = endTime - curseData["dhStartTime"]
+		if dhActiveTime > 0 then
+			return dhActiveTime * .2 -- 20% reduction
+		end
+	end
+	return 0
+end
+
 function curses:TimeRemaining(curseData)
-	return math.ceil(curseData.duration - (GetTime() - curseData.start))
+	local dhReduction = 0
+
+	if curses.trackedCurseIds[curseData.spellID].darkHarvest then
+		curses:TrackDarkHarvest(curseData)
+
+		dhReduction = curses:GetDarkHarvestReduction(curseData)
+	end
+
+	return math.ceil(curseData.duration - (GetTime() - curseData.start) - dhReduction)
 end
 
 function curses:EnableResistSound(guid)
@@ -329,6 +415,7 @@ function curses:ApplyCurse(spellID, targetGuid, startTime)
 		duration = duration,
 		start = startTime,
 		spellID = spellID,
+		targetGuid = targetGuid
 	}
 end
 
