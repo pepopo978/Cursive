@@ -130,7 +130,7 @@ L:RegisterTranslations("enUS", function()
 		["holy fire"] = true,
 
 		-- Paladin
-		["Turn Undead"] = true,
+		["turn undead"] = true,
 
 		-- rogue
 		["blind"] = true,
@@ -294,7 +294,7 @@ L:RegisterTranslations("zhCN", function()
 		["holy fire"] = "神圣之火",
 
 		-- Paladin
-		["Turn Undead"] = "超度亡灵",
+		["turn undead"] = "超度亡灵",
 
 		-- rogue
 		["blind"] = "致盲",

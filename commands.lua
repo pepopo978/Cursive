@@ -141,9 +141,9 @@ local crowdControlledSpellIds = {
 	[28271] = { name = L["polymorph: turtle"], rank = L["Rank 1"], duration = 50 },
 	[28272] = { name = L["polymorph: pig"], rank = L["Rank 1"], duration = 50 },
 
-	[2878] = { name = L["Turn Undead"], rank = 1, duration = 10 },
-	[5627] = { name = L["Turn Undead"], rank = 2, duration = 15 },
-	[10326] = { name = L["Turn Undead"], rank = 3, duration = 20 },
+	[2878] = { name = L["turn undead"], rank = 1, duration = 10 },
+	[5627] = { name = L["turn undead"], rank = 2, duration = 15 },
+	[10326] = { name = L["turn undead"], rank = 3, duration = 20 },
 
 	[2094] = { name = L["blind"], rank = 1, duration = 10 },
 	[21060] = { name = L["blind"], rank = 1, duration = 10 },
