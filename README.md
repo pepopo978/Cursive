@@ -25,7 +25,7 @@ so that it doesn't block your clicks when it's not displaying mobs.
 
 `/cursive curse <spellName:str>|<guid?:str>|<options?:comma separated str>`: Casts spell if not already on target/guid
 
-EXAMPLE: `/cursive curse corruption|target` will attempt to cast corruption on your target if it's not already on them
+EXAMPLE: `/cursive curse Corruption|target` will attempt to cast Corruption on your target if it's not already on them
 and they aren't cc'ed.
 
 ### Multicurse
@@ -33,7 +33,7 @@ and they aren't cc'ed.
 `/cursive multicurse <spellName:str>|<priority?:str>|<options?:comma separated str>`: Picks target based on priority and
 casts spell if not already on target and they aren't cc'ed.
 
-EXAMPLE: `/cursive multicurse corruption|HIGHEST_HP` will attempt to cast corruption picking the target with the highest
+EXAMPLE: `/cursive multicurse Corruption|HIGHEST_HP` will attempt to cast Corruption picking the target with the highest
 HP that doesn't already have it and will warn you if it does nothing.
 
 ## Priority Options
@@ -82,8 +82,8 @@ All commands can take the following options separated by commas:
 - `ignorespellid=<number>` : "Ignore targets with the specified spell id already on them. Useful for ignoring targets that already have a shared debuff.",
 - `ignorespelltexture=<number>` : "Ignore targets with the specified spell texture already on them. Useful for ignoring targets that already have a shared debuff.",
 
-EXAMPLE: `/cursive multicurse corruption|HIGHEST_HP|warnings,resistsound,expiringsound,minhp=10000,refreshtime=2`
-EXAMPLE: `/cursive multicurse curse of recklessness|RAID_MARK|name=Touched Warrior,ignorespelltexture=Spell_Shadow_UnholyStrength,resistsound,expiringsound`
+EXAMPLE: `/cursive multicurse Corruption|HIGHEST_HP|warnings,resistsound,expiringsound,minhp=10000,refreshtime=2`
+EXAMPLE: `/cursive multicurse Curse of Recklessness|RAID_MARK|name=Touched Warrior,ignorespelltexture=Spell_Shadow_UnholyStrength,resistsound,expiringsound`
 
 ## Important info
 
@@ -93,16 +93,16 @@ Otherwise, all commands will prioritize targets within 28 yards of you first to 
 
 All commands will ignore targets with the following CCs on them:
 
-- sleep
-- entangling roots
-- shackle undead
-- polymorph
+- Sleep
+- Entangling Roots
+- Shackle Undead
+- Polymorph
 - Turn Undead
-- blind
-- sap
-- gouge
-- freezing trap
-- banish
+- Blind
+- Sap
+- Gouge
+- Freezing Trap
+- Banish
 
 Multicurse will only ever target enemies that are already in combat (except if you target a mob directly first) to
 prevent pulling things you didn't intend like marked patrols.

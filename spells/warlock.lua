@@ -1,20 +1,29 @@
 local L = AceLibrary("AceLocale-2.2"):new("Cursive")
 function getWarlockSpells()
 	return {
-		[172] = { name = L["corruption"], rank = 1, duration = 12, variable_duration = true },
-		[6222] = { name = L["corruption"], rank = 2, duration = 15, variable_duration = true },
-		[6223] = { name = L["corruption"], rank = 3, duration = 18, variable_duration = true },
-		[7648] = { name = L["corruption"], rank = 4, duration = 18, variable_duration = true },
-		[11671] = { name = L["corruption"], rank = 5, duration = 18, variable_duration = true },
-		[11672] = { name = L["corruption"], rank = 6, duration = 18, variable_duration = true },
-		[25311] = { name = L["corruption"], rank = 7, duration = 18, variable_duration = true },
+		[172] = { name = L["corruption"], rank = 1, duration = 12, variableDuration = true, darkHarvest = true, numTicks=4},
+		[6222] = { name = L["corruption"], rank = 2, duration = 15, variableDuration = true, darkHarvest = true, numTicks=5 },
+		[6223] = { name = L["corruption"], rank = 3, duration = 18, variableDuration = true, darkHarvest = true, numTicks=6 },
+		[7648] = { name = L["corruption"], rank = 4, duration = 18, variableDuration = true, darkHarvest = true, numTicks=6 },
+		[11671] = { name = L["corruption"], rank = 5, duration = 18, variableDuration = true, darkHarvest = true, numTicks=6 },
+		[11672] = { name = L["corruption"], rank = 6, duration = 18, variableDuration = true, darkHarvest = true, numTicks=6 },
+		[25311] = { name = L["corruption"], rank = 7, duration = 18, variableDuration = true, darkHarvest = true, numTicks=6 },
 
-		[980] = { name = L["curse of agony"], rank = 1, duration = 24, variable_duration = true },
-		[1014] = { name = L["curse of agony"], rank = 2, duration = 24, variable_duration = true },
-		[6217] = { name = L["curse of agony"], rank = 3, duration = 24, variable_duration = true },
-		[11711] = { name = L["curse of agony"], rank = 4, duration = 24, variable_duration = true },
-		[11712] = { name = L["curse of agony"], rank = 5, duration = 24, variable_duration = true },
-		[11713] = { name = L["curse of agony"], rank = 6, duration = 24, variable_duration = true },
+		[980] = { name = L["curse of agony"], rank = 1, duration = 24, variableDuration = true, darkHarvest = true, numTicks=12 },
+		[1014] = { name = L["curse of agony"], rank = 2, duration = 24, variableDuration = true, darkHarvest = true, numTicks=12 },
+		[6217] = { name = L["curse of agony"], rank = 3, duration = 24, variableDuration = true, darkHarvest = true, numTicks=12 },
+		[11711] = { name = L["curse of agony"], rank = 4, duration = 24, variableDuration = true, darkHarvest = true, numTicks=12 },
+		[11712] = { name = L["curse of agony"], rank = 5, duration = 24, variableDuration = true, darkHarvest = true, numTicks=12 },
+		[11713] = { name = L["curse of agony"], rank = 6, duration = 24, variableDuration = true, darkHarvest = true, numTicks=12 },
+
+		[18265] = { name = L["siphon life"], rank = 1, duration = 30, variableDuration = true, darkHarvest = true, numTicks=10 },
+		[18879] = { name = L["siphon life"], rank = 2, duration = 30, variableDuration = true, darkHarvest = true, numTicks=10 },
+		[18880] = { name = L["siphon life"], rank = 3, duration = 30, variableDuration = true, darkHarvest = true, numTicks=10 },
+		[18881] = { name = L["siphon life"], rank = 4, duration = 30, variableDuration = true, darkHarvest = true, numTicks=10 },
+
+		[52550] = { name = L["dark harvest"], rank = 1, duration = 8, variableDuration = true },
+		[52551] = { name = L["dark harvest"], rank = 2, duration = 8, variableDuration = true },
+		[52552] = { name = L["dark harvest"], rank = 3, duration = 8, variableDuration = true },
 
 		[603] = { name = L["curse of doom"], rank = 1, duration = 60 },
 
@@ -57,11 +66,6 @@ function getWarlockSpells()
 
 		[710] = { name = L["banish"], rank = 1, duration = 20 },
 		[18647] = { name = L["banish"], rank = 2, duration = 30 },
-
-		[18265] = { name = L["siphon life"], rank = 1, duration = 30, variable_duration = true },
-		[18879] = { name = L["siphon life"], rank = 2, duration = 30, variable_duration = true },
-		[18880] = { name = L["siphon life"], rank = 3, duration = 30, variable_duration = true },
-		[18881] = { name = L["siphon life"], rank = 4, duration = 30, variable_duration = true },
 
 		[5782] = { name = L["fear"], rank = 1, duration = 10 },
 		[6213] = { name = L["fear"], rank = 2, duration = 15 },
