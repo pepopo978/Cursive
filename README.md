@@ -84,6 +84,7 @@ All commands can take the following options separated by commas:
 - `ignorespelltexture=<number>` : "Ignore targets with the specified spell texture already on them. Useful for ignoring targets that already have a shared debuff.",
 
 EXAMPLE: `/cursive multicurse Corruption|HIGHEST_HP|warnings,resistsound,expiringsound,minhp=10000,refreshtime=2`
+
 EXAMPLE: `/cursive multicurse Curse of Recklessness|RAID_MARK|name=Touched Warrior,ignorespelltexture=Spell_Shadow_UnholyStrength,resistsound,expiringsound`
 
 ## Important info
