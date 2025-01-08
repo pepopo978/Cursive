@@ -266,7 +266,7 @@ local mobFilters = {
 		type = "toggle",
 		name = L["Hostile"],
 		desc = L["Hostile"],
-		order = 2,
+		order = 11,
 		get = function()
 			return Cursive.db.profile.filterhostile
 		end,
@@ -278,7 +278,7 @@ local mobFilters = {
 		type = "toggle",
 		name = L["Attackable"],
 		desc = L["Attackable"],
-		order = 3,
+		order = 22,
 		get = function()
 			return Cursive.db.profile.filterattackable
 		end,
@@ -286,11 +286,23 @@ local mobFilters = {
 			Cursive.db.profile.filterattackable = v
 		end,
 	},
+	["player"] = {
+		type = "toggle",
+		name = L["Player"],
+		desc = L["Player Desc"],
+		order = 33,
+		get = function()
+			return Cursive.db.profile.filterplayer
+		end,
+		set = function(v)
+			Cursive.db.profile.filterplayer = v
+		end,
+	},
 	["range"] = {
 		type = "toggle",
 		name = IsSpellInRange and L["Within 45 Range"] or L["Within 28 Range"],
 		desc = IsSpellInRange and L["Within 45 Range"] or L["Within 28 Range"],
-		order = 4,
+		order = 44,
 		get = function()
 			return Cursive.db.profile.filterrange
 		end,
@@ -302,7 +314,7 @@ local mobFilters = {
 		type = "toggle",
 		name = L["Has Raid Mark"],
 		desc = L["Has Raid Mark"],
-		order = 5,
+		order = 55,
 		get = function()
 			return Cursive.db.profile.filterraidmark
 		end,
@@ -314,7 +326,7 @@ local mobFilters = {
 		type = "toggle",
 		name = L["Has Curse"],
 		desc = L["Only show units you have cursed"],
-		order = 6,
+		order = 66,
 		get = function()
 			return Cursive.db.profile.filterhascurse
 		end,
