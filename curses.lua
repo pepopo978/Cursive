@@ -205,6 +205,11 @@ Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, 
 	elseif event == "CHANNEL" then
 		-- dark harvest
 		if curses.darkHarvestSpellIds[spellID] then
+			local _, guid = UnitExists("player")
+			if casterGuid ~= guid then
+				return
+			end
+
 			curses.darkHarvestData = {
 				spellID = spellID,
 				targetGuid = targetGuid,
