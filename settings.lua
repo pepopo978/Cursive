@@ -25,7 +25,7 @@ Cursive:RegisterDefaults("profile", {
 	height = 16,
 	raidiconsize = 16,
 	curseiconsize = 16,
-	maxcurses = 3,
+	maxcurses = 5,
 	spacing = 4,
 	maxrow = 10,
 	maxcol = 1,
