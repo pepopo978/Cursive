@@ -10,6 +10,7 @@ local commandOptions = {
 	allowooc = L["Allow out of combat targets to be multicursed.  Would only consider using this solo to avoid potentially griefing raids/dungeons by pulling unintended mobs."],
 	minhp = L["Minimum HP for a target to be considered.  Example usage minhp=10000. "],
 	refreshtime = L["Time threshold at which to allow refreshing a curse.  Default is 0 seconds."],
+	priotarget = L["Always prioritize current target when choosing target for multicurse.  Does not affect 'curse' command."],
 	ignoretarget = L["Ignore the current target when choosing target for multicurse.  Does not affect 'curse' command."],
 	playeronly = L["Only choose players and ignore npcs when choosing target for multicurse.  Does not affect 'curse' command."],
 	name = L["Filter targets by name. Can be a partial match.  If no match is found, the command will do nothing."],
@@ -244,7 +245,6 @@ local function GetSquarePrioRaidTargetIndex(guid)
 	return index or -2
 end
 
-
 local function hasSpellId(guid, ignoreSpellId)
 	for i = 1, 16 do
 		local texture, stacks, spellSchool, spellId = UnitDebuff(guid, i);
@@ -372,7 +372,10 @@ local function pickTarget(selectedPriority, spellNameNoRank, checkRange, options
 								if not minHp or mobHp >= minHp then
 									local primaryValue = -1
 									local secondaryValue = -1
-									if selectedPriority == PRIORITY_HIGHEST_HP then
+									if options["priotarget"] and guid == currentTargetGuid then
+										seenRaidMark = true
+										primaryValue = 999999999999 -- should be bigger than any mob hp
+									elseif selectedPriority == PRIORITY_HIGHEST_HP then
 										primaryValue = UnitHealth(guid) or 0
 									elseif selectedPriority == PRIORITY_RAID_MARK then
 										primaryValue = GetRaidTargetIndex(guid) or 0
@@ -466,10 +469,10 @@ function Cursive:Curse(spellName, targetedGuid, options)
 	end
 
 	-- remove (Rank x) from spellName if it exists
-	local spellNameNoRank =  string.lower(string.gsub(spellName, "%(.+%)", ""))
+	local spellNameNoRank = string.lower(string.gsub(spellName, "%(.+%)", ""))
 
 	if targetedGuid and not Cursive.curses:HasCurse(spellNameNoRank, targetedGuid, options["refreshtime"]) and not isMobCrowdControlled(targetedGuid) then
-		castSpellWithOptions(string.lower(spellName),spellNameNoRank, targetedGuid, options)
+		castSpellWithOptions(string.lower(spellName), spellNameNoRank, targetedGuid, options)
 	elseif options["warnings"] then
 		DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
 	end
