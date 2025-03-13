@@ -42,6 +42,9 @@ HP that doesn't already have it and will warn you if it does nothing.
 
 EXAMPLE: `/cursive target Icicles|HIGHEST_HP` will target the enemy with the highest HP in range of the spell Icicles.
 
+can also do it only if you don't have a target already:
+`/run if not UnitName("target") then SlashCmdList.CURSIVE("target Icicles|HIGHEST_HP") end`
+
 ## Priority Options
 
 - HIGHEST_HP - Target highest HP enemy without a curse first.
