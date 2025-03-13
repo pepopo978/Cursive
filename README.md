@@ -36,6 +36,12 @@ casts spell if not already on target and they aren't cc'ed.
 EXAMPLE: `/cursive multicurse Corruption|HIGHEST_HP` will attempt to cast Corruption picking the target with the highest
 HP that doesn't already have it and will warn you if it does nothing.
 
+### Target
+
+`/cursive target <spellName:str>|<priority?:str>|<options?:comma separated str>`: Targets unit based on priority if spell in range and not already on target
+
+EXAMPLE: `/cursive target Icicles|HIGHEST_HP` will target the enemy with the highest HP in range of the spell Icicles.
+
 ## Priority Options
 
 - HIGHEST_HP - Target highest HP enemy without a curse first.
