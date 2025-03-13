@@ -21,6 +21,7 @@ local commandOptions = {
 local commands = {
 	["curse"] = L["/cursive curse <spellName:str>|<guid?:str>|<options?:List<str>>: Casts spell if not already on target/guid"],
 	["multicurse"] = L["/cursive multicurse <spellName:str>|<priority?:str>|<options?:List<str>>: Picks target based on priority and casts spell if not already on target"],
+	["target"] = L["/cursive target <spellName:str>|<priority?:str>|<options?:List<str>>: Targets unit based on priority if spell in range and not already on target"],
 }
 
 local PRIORITY_HIGHEST_HP = "HIGHEST_HP"
@@ -110,6 +111,10 @@ local function handleSlashCommands(msg, editbox)
 		local spellName, priority, optionsStr = Cursive.utils.strsplit("|", args)
 		local options = parseOptions(optionsStr)
 		Cursive:Multicurse(spellName, priority, options)
+	elseif command == "target" then
+		local spellName, priority, optionsStr = Cursive.utils.strsplit("|", args)
+		local options = parseOptions(optionsStr)
+		Cursive:Target(spellName, priority, options)
 	end
 end
 
@@ -478,7 +483,7 @@ function Cursive:Curse(spellName, targetedGuid, options)
 	end
 end
 
-function Cursive:Multicurse(spellName, priority, options)
+local function getSpellTarget(spellName, priority, options)
 	if not spellName then
 		DEFAULT_CHAT_FRAME:AddMessage(commands["multicurse"])
 		return
@@ -497,12 +502,23 @@ function Cursive:Multicurse(spellName, priority, options)
 	-- remove (Rank x) from spellName if it exists
 	local spellNameNoRank = string.lower(string.gsub(spellName, "%(.+%)", ""))
 
-	local targetedGuid = pickTarget(selectedPriority, spellNameNoRank, true, options)
+	return pickTarget(selectedPriority, spellNameNoRank, true, options)
+end
 
+function Cursive:Multicurse(spellName, priority, options)
+	local targetedGuid = getSpellTarget(spellName, priority, options)
 	if targetedGuid then
+		local spellNameNoRank = string.lower(string.gsub(spellName, "%(.+%)", ""))
 		castSpellWithOptions(string.lower(spellName), spellNameNoRank, targetedGuid, options)
 	elseif options["warnings"] then
 		DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
+	end
+end
+
+function Cursive:Target(spellName, priority, options)
+	local targetedGuid = getSpellTarget(spellName, priority, options)
+	if targetedGuid then
+		TargetUnit(targetedGuid)
 	end
 end
 
