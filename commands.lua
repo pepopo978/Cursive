@@ -449,7 +449,7 @@ end
 function Cursive:Curse(spellName, targetedGuid, options)
 	if not spellName or not targetedGuid then
 		DEFAULT_CHAT_FRAME:AddMessage(commands["curse"])
-		return
+		return false
 	end
 
 	if targetedGuid and string.sub(targetedGuid, 1, 2) ~= "0x" then
@@ -459,7 +459,7 @@ function Cursive:Curse(spellName, targetedGuid, options)
 			if options["warnings"] then
 				DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
 			end
-			return
+			return false
 		end
 	end
 
@@ -469,7 +469,7 @@ function Cursive:Curse(spellName, targetedGuid, options)
 			if options["warnings"] then
 				DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
 			end
-			return
+			return false
 		end
 	end
 
@@ -478,9 +478,12 @@ function Cursive:Curse(spellName, targetedGuid, options)
 
 	if targetedGuid and not Cursive.curses:HasCurse(spellNameNoRank, targetedGuid, options["refreshtime"]) and not isMobCrowdControlled(targetedGuid) then
 		castSpellWithOptions(string.lower(spellName), spellNameNoRank, targetedGuid, options)
+		return true
 	elseif options["warnings"] then
 		DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
 	end
+
+	return false
 end
 
 local function getSpellTarget(spellName, priority, options)
@@ -510,16 +513,20 @@ function Cursive:Multicurse(spellName, priority, options)
 	if targetedGuid then
 		local spellNameNoRank = string.lower(string.gsub(spellName, "%(.+%)", ""))
 		castSpellWithOptions(string.lower(spellName), spellNameNoRank, targetedGuid, options)
+		return true
 	elseif options["warnings"] then
 		DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
 	end
+	return false
 end
 
 function Cursive:Target(spellName, priority, options)
 	local targetedGuid = getSpellTarget(spellName, priority, options)
 	if targetedGuid then
 		TargetUnit(targetedGuid)
+		return true
 	end
+	return false
 end
 
 SLASH_CURSIVE1 = "/cursive" --creating the slash command
