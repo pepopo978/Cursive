@@ -305,7 +305,7 @@ function curses:GetDarkHarvestReduction(curseData)
 		local endTime = curseData["dhEndTime"] or GetTime()
 		local dhActiveTime = endTime - curseData["dhStartTime"]
 		if dhActiveTime > 0 then
-			return dhActiveTime * .2 -- 20% reduction
+			return dhActiveTime * .3 -- 30% reduction
 		end
 	end
 	return 0
