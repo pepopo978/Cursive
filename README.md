@@ -48,6 +48,7 @@ can also do it only if you don't have a target already:
 ## Priority Options
 
 - HIGHEST_HP - Target highest HP enemy without a curse first.
+- LOWEST_HP - Target lowest HP enemy without a curse first.
 - RAID_MARK - Target largest raid mark enemy without a curse first. Priority is as follows:
     - Skull = 8 (1st priority)
     - Cross = 7
