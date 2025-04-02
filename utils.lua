@@ -175,4 +175,8 @@ utils.GetLevelString = function(unitstr)
   return level
 end
 
+utils.GetSpellNameNoRank = function(spellName)
+  	return string.lower(string.gsub(spellName, "%([rR]ank %d%)", ""))
+end
+
 Cursive.utils = utils

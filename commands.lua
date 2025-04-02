@@ -485,7 +485,7 @@ function Cursive:Curse(spellName, targetedGuid, options)
 	end
 
 	-- remove (Rank x) from spellName if it exists
-	local spellNameNoRank = string.lower(string.gsub(spellName, "%(.+%)", ""))
+	local spellNameNoRank = Cursive.utils.GetSpellNameNoRank(spellName)
 
 	if targetedGuid and not Cursive.curses:HasCurse(spellNameNoRank, targetedGuid, options["refreshtime"]) and not isMobCrowdControlled(targetedGuid) then
 		castSpellWithOptions(string.lower(spellName), spellNameNoRank, targetedGuid, options)
@@ -514,7 +514,7 @@ local function getSpellTarget(spellName, priority, options)
 	local selectedPriority = priority or PRIORITY_HIGHEST_HP
 
 	-- remove (Rank x) from spellName if it exists
-	local spellNameNoRank = string.lower(string.gsub(spellName, "%(.+%)", ""))
+	local spellNameNoRank = Cursive.utils.GetSpellNameNoRank(spellName)
 
 	return pickTarget(selectedPriority, spellNameNoRank, true, options)
 end
@@ -522,7 +522,7 @@ end
 function Cursive:Multicurse(spellName, priority, options)
 	local targetedGuid = getSpellTarget(spellName, priority, options)
 	if targetedGuid then
-		local spellNameNoRank = string.lower(string.gsub(spellName, "%(.+%)", ""))
+		local spellNameNoRank = Cursive.utils.GetSpellNameNoRank(spellName)
 		castSpellWithOptions(string.lower(spellName), spellNameNoRank, targetedGuid, options)
 		return true
 	elseif options["warnings"] then
