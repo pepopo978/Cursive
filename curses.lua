@@ -67,7 +67,7 @@ function curses:LoadCurses()
 		end
 
 		if spellrank == "" then
-			spellrank = "Rank 1"
+			spellrank = L["Rank 1"]
 		end
 
 		curses.trackedCurseNameRanksToSpellSlots[string.lower(spellname) .. spellrank] = i
@@ -86,7 +86,7 @@ end
 
 function curses:ScanTooltipForDuration(curseSpellID)
 	-- scan spellbook for duration in case they have haste talent
-	local nameRank = curses.trackedCurseIds[curseSpellID].name .. "Rank " .. curses.trackedCurseIds[curseSpellID].rank
+	local nameRank = curses.trackedCurseIds[curseSpellID].name .. L["Rank"] .. " " .. curses.trackedCurseIds[curseSpellID].rank
 	local spellSlot = curses.trackedCurseNameRanksToSpellSlots[nameRank]
 
 	if spellSlot then
