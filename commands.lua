@@ -419,9 +419,11 @@ local function pickTarget(selectedPriority, spellNameNoRank, checkRange, options
 										primaryValue = UnitHealth(guid) or 0
 									end
 
-									if selectedPriority == PRIORITY_LOWEST_HP and primaryValue < highestPrimaryValue then
-										highestPrimaryValue = primaryValue
-										targetedGuid = guid
+									if selectedPriority == PRIORITY_LOWEST_HP then
+										if primaryValue < highestPrimaryValue then
+											highestPrimaryValue = primaryValue
+											targetedGuid = guid
+										end
 									elseif primaryValue > highestPrimaryValue then
 										highestPrimaryValue = primaryValue
 										highestSecondaryValue = secondaryValue

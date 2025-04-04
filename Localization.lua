@@ -36,7 +36,9 @@ L:RegisterTranslations("enUS", function()
 		["Your (.+) was resisted by (.+)"] = true,
 		["Your (.+) missed (.+)"] = true,
 		["Your (.+) is parried by (.+)"] = true,
-		["Your (.+) fails. (.+) is immune"] = true,
+		["Your (.+) fail.+\. (.+) is immune"] = true,
+		["Your (.+) was blocked by (.+)"] = true,
+		["Your (.+) was dodged by (.+)"] = true,
 
 		-- global
 		["|cffffcc00Cursive:|cffffaaaa Couldn't detect SuperWoW."] = true,
@@ -222,9 +224,11 @@ L:RegisterTranslations("zhCN", function()
 		-- curses
 		["(.+) fades from (.+)"] = "(.+)效果从(.+)身上消失",
 		["Your (.+) was resisted by (.+)"] = "你的(.+)被(.+)抵抗了",
-		["Your (.+) missed (.+)"] = "你的(.+)未命中(.+)",
-		["Your (.+) is parried by (.+)"] =  "你的(.+)被(.+)招架",
-		["Your (.+) fails. (.+) is immune"] = "你的(.+)失败，(.+)免疫",
+		["Your (.+) is parried by (.+)"] = "你的(.+)被(.+)招架了",
+		["Your (.+) missed (.+)"] = "你的(.+)没有击中(.+)",
+		["Your (.+) was dodged by (.+)"] = "你的(.+)被(.+)躲闪过去了",
+		["Your (.+) was blocked by (.+)"] = "你的(.+)被(.+)格挡了",
+		["Your (.+) fail.+\. (.+) is immune"] = "你的(.+)施放失败。(.+)对此免疫",
 
 		-- global
 		["|cffffcc00Cursive:|cffffaaaa Couldn't detect SuperWoW."] = "|cffffcc00Cursive:|cffffaaaa 无法检测到SuperWoW.",
