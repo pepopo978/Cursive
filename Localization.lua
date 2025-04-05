@@ -93,7 +93,9 @@ L:RegisterTranslations("enUS", function()
 		["Order applied"] = true,
 		["Expiring soonest -> latest"] = true,
 		["Expiring latest -> soonest"] = true,
-
+		["Not ignored"] = true,
+		["Ignored Mobs List (Enter to save)"] = true,
+		["Comma separated list of strings to ignore if found in the unit name"] = true,
 
 		-- spells
 		["Rank"] = true,
@@ -279,6 +281,9 @@ L:RegisterTranslations("zhCN", function()
 		["Order applied"] = "应用顺序",
 		["Expiring soonest -> latest"] = "即将到期->最新",
 		["Expiring latest -> soonest"] = "最新->即将到期",
+		["Not ignored"] = "不被忽略",
+		["Ignored Mobs List (Enter to save)"] = "忽略的怪物列表（回车保存）",
+		["Comma separated list of strings to ignore if found in the unit name"] = "如果在单位名称中找到，则忽略的字符串列表，用半角逗号分隔",
 
 		-- spells
 		["Rank"] = "等级",

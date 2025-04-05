@@ -2,7 +2,8 @@ if not Cursive.superwow then
 	return
 end
 
-local filter = {}
+local filter = {
+}
 
 filter.attackable = function(unit)
 	return UnitCanAttack("player", unit) and true or false
@@ -49,6 +50,23 @@ end
 
 filter.hostile = function(unit)
 	return UnitIsEnemy("player", unit) and true or false
+end
+
+filter.notignored = function(unit)
+	if not Cursive.db.profile.ignorelist or table.getn(Cursive.db.profile.ignorelist) == 0 then
+		return true
+	end
+
+	local unitName = UnitName(unit)
+	if not unitName then
+		return true
+	end
+	for _, str in ipairs(Cursive.db.profile.ignorelist) do
+		if string.find(string.lower(unitName), string.lower(str)) then
+			return false
+		end
+	end
+	return true
 end
 
 Cursive.filter = filter
@@ -105,6 +123,10 @@ function Cursive:ShouldDisplayGuid(guid)
 
 	if Cursive.db.profile.filterplayer then
 		shouldDisplay = shouldDisplay and filter.player(guid)
+	end
+
+	if Cursive.db.profile.filterignored then
+		shouldDisplay = shouldDisplay and filter.notignored(guid)
 	end
 
 	return shouldDisplay

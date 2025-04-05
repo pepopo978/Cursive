@@ -524,7 +524,7 @@ ui:SetScript("OnUpdate", function()
 	if (this.tick or 1) > GetTime() then
 		return
 	else
-		this.tick = GetTime() + .1
+		this.tick = GetTime() + 0.1
 	end
 
 	if not ui.rootBarFrame then
@@ -543,14 +543,38 @@ ui:SetScript("OnUpdate", function()
 	local col = 1
 	local maxBarsDisplayed = false
 
-	for i = 1, 2 do
+	local totalMaxHp = 0
+	local numDisplayed = 0
+
+	local averageMaxHp = 0
+
+	local consideredGuids = {};
+
+	local _, currentTargetGuid = UnitExists("target")
+
+	for i = 1, 3 do
+		if i == 2 then
+			-- calculate average max hp
+			if numDisplayed > 0 then
+				averageMaxHp = math.floor(totalMaxHp / numDisplayed)
+			end
+		end
+
 		for guid, time in pairs(Cursive.core.guids) do
 			-- apply filters
 			local shouldDisplay = Cursive:ShouldDisplayGuid(guid)
 
-			local hasIcon = filter.icon(guid)
+			local hasIcon = filter.icon(guid) or currentTargetGuid == guid
 
-			if (i == 1 and hasIcon) or (i == 2 and not hasIcon) then
+			if (i == 1 and shouldDisplay) then
+				totalMaxHp = totalMaxHp + UnitHealthMax(guid)
+				numDisplayed = numDisplayed + 1
+			end
+
+			if (i == 1 and hasIcon) or
+					(i == 2 and not hasIcon and UnitHealthMax(guid) >= averageMaxHp) or
+					(i == 3 and not consideredGuids[guid]) then
+				consideredGuids[guid] = true
 				-- display element if filters allow it
 				if shouldDisplay and not maxBarsDisplayed then
 					-- display guid

@@ -124,3 +124,10 @@ All commands will ignore targets with the following CCs on them:
 
 Multicurse will only ever target enemies that are already in combat (except if you target a mob directly first) to
 prevent pulling things you didn't intend like marked patrols.
+
+Mobs with raid marks or your current target will be displayed first.
+
+Mobs will higher max hp will be displayed first before lower max hp mobs. The way this works to improve performance is that it just calculates the average max hp of active mobs and displays anything over the average first.
+
+You can ignore mobs based on their unit name using the ignored mob list filter.  It is comma separated and you need to press enter to get it to save.  For example can do:
+`whelp,scarab` to ignore all mobs with those strings in their name.
