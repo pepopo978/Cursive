@@ -20,6 +20,29 @@ local curses = {
 		[52551] = true,
 		[52552] = true,
 	},
+	whitelistedDebuffIDs = {
+		[710] = { name = L["banish"], rank = 1, duration = 20 },
+		[18647] = { name = L["banish"], rank = 2, duration = 30 },
+		[6770] = { name = L["sap"], rank = 1, duration = 25 },
+		[2070] = { name = L["sap"], rank = 2, duration = 35 },
+		[11297] = { name = L["sap"], rank = 3, duration = 45 },
+		[1425] = { name = L["shackle undead"], rank = 1, duration = 30 },
+		[9486] = { name = L["shackle undead"], rank = 2, duration = 40 },
+		[10956] = { name = L["shackle undead"], rank = 3, duration = 50 },
+		[118] = { name = L["polymorph"], rank = 1, duration = 20 },
+		[12824] = { name = L["polymorph"], rank = 2, duration = 30 },
+		[12825] = { name = L["polymorph"], rank = 3, duration = 40 },
+		[12826] = { name = L["polymorph"], rank = 4, duration = 50 },
+		[28270] = { name = L["polymorph: cow"], rank = 1, duration = 50 },
+		[28271] = { name = L["polymorph: turtle"], rank =1, duration = 50 },
+		[28272] = { name = L["polymorph: pig"], rank = 1, duration = 50 },
+		[700] = { name = L["sleep"], rank = 1, duration = 20 },
+		[1090] = { name = L["sleep"], rank = 2, duration = 30 },
+		[2937] = { name = L["sleep"], rank = 3, duration = 40 },
+		[2637] = { name = L["hibernate"], rank = 1, duration = 20 },
+		[18657] = { name = L["hibernate"], rank = 2, duration = 30 },
+		[18658] = { name = L["hibernate"], rank = 3, duration = 40 },
+	},
 	darkHarvestData = {},
 	guids = {},
 	isChanneling = false,
@@ -61,6 +84,16 @@ function curses:LoadCurses()
 		curses.trackedCurseIds = getRogueSpells()
 	elseif playerClassName == "SHAMAN" then
 		curses.trackedCurseIds = getShamanSpells()
+	end
+	
+	for id, data in pairs(curses.whitelistedDebuffIDs or {}) do
+		if not curses.trackedCurseIds[id] then
+			curses.trackedCurseIds[id] = {
+				name = data.name,
+				rank = data.rank,
+				duration = data.duration or 0
+			}
+		end
 	end
 
 	-- go through spell slots and
@@ -164,10 +197,11 @@ Cursive:RegisterEvent("SPELLCAST_INTERRUPTED", StopChanneling);
 Cursive:RegisterEvent("SPELLCAST_FAILED", StopChanneling);
 
 Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, spellID, castDuration)
+	--print("SpellID: ", spellID)
 	-- immolate will fire both start and cast
 	if event == "CAST" then
 		local _, guid = UnitExists("player")
-		if casterGuid ~= guid then
+		if casterGuid ~= guid and not curses.whitelistedDebuffIDs[spellID] then
 			return
 		end
 
@@ -187,7 +221,7 @@ Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, 
 	elseif event == "START" then
 		if curses.trackedCurseIds[spellID] then
 			local _, guid = UnitExists("player")
-			if casterGuid ~= guid then
+			if casterGuid ~= guid and not curses.whitelistedDebuffIDs[spellID] then
 				return
 			end
 
@@ -201,7 +235,7 @@ Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, 
 	elseif event == "FAIL" then
 		if curses.trackedCurseIds[spellID] then
 			local _, guid = UnitExists("player")
-			if casterGuid ~= guid then
+			if casterGuid ~= guid and not curses.whitelistedDebuffIDs[spellID] then
 				return
 			end
 			-- clear pending cast
@@ -211,7 +245,7 @@ Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, 
 		-- dark harvest
 		if curses.darkHarvestSpellIds[spellID] then
 			local _, guid = UnitExists("player")
-			if casterGuid ~= guid then
+			if casterGuid ~= guid and not curses.whitelistedDebuffIDs[spellID] then
 				return
 			end
 
