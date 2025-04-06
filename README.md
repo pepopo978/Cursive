@@ -1,6 +1,6 @@
 This fork allows to track an extra limited list of debuffs on Cursive frames from a whitelist defined in curses.lua, like follows:
 
-	`whitelistedDebuffIDs = {
+	whitelistedDebuffIDs = {
 		[710] = { name = L["banish"], rank = 1, duration = 20 },
 		[18647] = { name = L["banish"], rank = 2, duration = 30 },
 		[6770] = { name = L["sap"], rank = 1, duration = 25 },
@@ -22,7 +22,7 @@ This fork allows to track an extra limited list of debuffs on Cursive frames fro
 		[2637] = { name = L["hibernate"], rank = 1, duration = 20 },
 		[18657] = { name = L["hibernate"], rank = 2, duration = 30 },
 		[18658] = { name = L["hibernate"], rank = 3, duration = 40 },
-	},`
+	}
 	
 The debuffs from the whitelist can now also be tracked if they are owned by other players.
 
