@@ -20,6 +20,8 @@ Cursive:RegisterDefaults("profile", {
 	showhealthbar = true,
 	showunitname = true,
 
+	alwaysshowcurrenttarget = true,
+
 	scale = 1,
 	healthwidth = 100,
 	height = 16,
@@ -109,6 +111,18 @@ local barOptions = {
 		set = function(v)
 			Cursive.db.profile.showunitname = v
 			Cursive.UpdateFramesFromConfig()
+		end,
+	},
+	["alwaysshowcurrenttarget"] = {
+		type = "toggle",
+		name = "Always Show Current Target",
+		desc = "Always show current target at the bottom of the mob list if it is not already shown",
+		order = 32,
+		get = function()
+			return Cursive.db.profile.alwaysshowcurrenttarget
+		end,
+		set = function(v)
+			Cursive.db.profile.alwaysshowcurrenttarget = v
 		end,
 	},
 	["barwidth"] = {
