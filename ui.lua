@@ -25,6 +25,11 @@ ui.rootBarFrame = nil
 ui.targetIndicatorSize = 8
 ui.padding = 2
 
+ui.row = 1
+ui.col = 1
+ui.maxBarsDisplayed = false
+ui.numDisplayed = 0
+
 local function GetBarFirstSectionWidth()
 	local config = Cursive.db.profile
 
@@ -442,21 +447,21 @@ local function GetSortedCurses(guidCurses)
 	end
 end
 
-local function DisplayGuid(guid, row, col)
-	if not ui.unitFrames[col] then
-		ui.unitFrames[col] = {}
+local function DisplayGuid(guid)
+	if not ui.unitFrames[ui.col] then
+		ui.unitFrames[ui.col] = {}
 	end
 
 	local unitFrame
-	if ui.unitFrames[col][row] then
-		unitFrame = ui.unitFrames[col][row]
+	if ui.unitFrames[ui.col][ui.row] then
+		unitFrame = ui.unitFrames[ui.col][ui.row]
 		unitFrame.guid = guid
 	else
-		unitFrame = CreateBar(row, col, guid)
-		ui.unitFrames[col][row] = unitFrame
+		unitFrame = CreateBar(ui.row, ui.col, guid)
+		ui.unitFrames[ui.col][ui.row] = unitFrame
 	end
 
-	local x, y = GetBarCords(row, col)
+	local x, y = GetBarCords(ui.row, ui.col)
 
 	-- update position if required
 	if not unitFrame.pos or unitFrame.pos ~= x .. -y then
@@ -504,22 +509,19 @@ local function DisplayGuid(guid, row, col)
 	end
 
 	unitFrame:Show()
+	ui.numDisplayed = ui.numDisplayed + 1
 
 	local config = Cursive.db.profile
 
-	local maxBarsDisplayed = false
-
 	-- update row/col
-	row = row + 1
-	if row > config.maxrow then
-		row = 1
-		col = col + 1
-		if col > config.maxcol then
-			maxBarsDisplayed = true
+	ui.row = ui.row + 1
+	if ui.row > config.maxrow then
+		ui.row = 1
+		ui.col = ui.col + 1
+		if ui.col > config.maxcol then
+			ui.maxBarsDisplayed = true
 		end
 	end
-
-	return row, col, maxBarsDisplayed
 end
 
 local function CheckForCleanup(guid, time)
@@ -562,12 +564,14 @@ ui:SetScript("OnUpdate", function()
 		return
 	end
 
+	-- reset display data
+	ui.row = 1
+	ui.col = 1
+	ui.maxBarsDisplayed = false
+	ui.numDisplayed = 0
+
 	-- run through all guids and fill with bars
 	local title_size = 12 + config.spacing
-
-	local row = 1
-	local col = 1
-	local maxBarsDisplayed = false
 
 	local topMaxHp = 0
 	local secondMaxHp = 0
@@ -578,7 +582,6 @@ ui:SetScript("OnUpdate", function()
 	local thirdMaxGuid = 0
 
 	local numDisplayable = 0
-	local numDisplayed = 0
 
 	local averageMaxHp = 0
 
@@ -593,12 +596,11 @@ ui:SetScript("OnUpdate", function()
 		if guid then
 			if Cursive:ShouldDisplayGuid(guid) then
 				numDisplayable = numDisplayable + 1
-				numDisplayed = numDisplayed + 1
 
 				-- display guid
 				displayedGuids[guid] = true
-				row, col, maxBarsDisplayed = DisplayGuid(guid, row, col)
-				if maxBarsDisplayed then
+				DisplayGuid(guid)
+				if ui.maxBarsDisplayed then
 					break
 				end
 			else
@@ -646,36 +648,33 @@ ui:SetScript("OnUpdate", function()
 	end
 
 	-- top max hp
-	if not maxBarsDisplayed and numDisplayable > numDisplayed and not displayedGuids[topMaxGuid] then
+	if not ui.maxBarsDisplayed and numDisplayable > ui.numDisplayed and not displayedGuids[topMaxGuid] then
 		displayedGuids[topMaxGuid] = true
-		row, col, maxBarsDisplayed = DisplayGuid(topMaxGuid, row, col)
-		numDisplayed = numDisplayed + 1
+		DisplayGuid(topMaxGuid)
 	end
 
 	-- second max hp
-	if not maxBarsDisplayed and numDisplayable > numDisplayed and not displayedGuids[secondMaxGuid] then
+	if not ui.maxBarsDisplayed and numDisplayable > ui.numDisplayed and not displayedGuids[secondMaxGuid] then
 		displayedGuids[secondMaxGuid] = true
-		row, col, maxBarsDisplayed = DisplayGuid(secondMaxGuid, row, col)
-		numDisplayed = numDisplayed + 1
+		DisplayGuid(secondMaxGuid)
 	end
 
 	-- third max hp
-	if not maxBarsDisplayed and numDisplayable > numDisplayed and not displayedGuids[thirdMaxGuid] then
+	if not ui.maxBarsDisplayed and numDisplayable > ui.numDisplayed and not displayedGuids[thirdMaxGuid] then
 		displayedGuids[thirdMaxGuid] = true
-		row, col, maxBarsDisplayed = DisplayGuid(thirdMaxGuid, row, col)
-		numDisplayed = numDisplayed + 1
+
+		DisplayGuid(thirdMaxGuid)
 	end
 
 	-- fill in remaining slots
 	for guid, time in pairs(Cursive.core.guids) do
-		if maxBarsDisplayed or numDisplayable == numDisplayed then
+		if ui.maxBarsDisplayed or numDisplayable <= ui.numDisplayed then
 			break
 		end
 
 		if not displayedGuids[guid] and shouldDisplayGuids[guid] then
 			displayedGuids[guid] = true
-			row, col, maxBarsDisplayed = DisplayGuid(guid, row, col)
-			numDisplayed = numDisplayed + 1
+			DisplayGuid(guid)
 		end
 	end
 
@@ -692,9 +691,11 @@ ui:SetScript("OnUpdate", function()
 	-- hide any remaining unit frames
 	for col, rows in pairs(ui.unitFrames) do
 		for row, unitFrame in pairs(rows) do
-			if unitFrame then
+			if unitFrame:IsShown() then
 				if not displayedGuids[unitFrame.guid] then
 					unitFrame:Hide()
+				else
+					displayedGuids[unitFrame.guid] = nil -- avoid displaying duplicate rows
 				end
 			end
 		end
