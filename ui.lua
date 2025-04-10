@@ -692,8 +692,10 @@ ui:SetScript("OnUpdate", function()
 	-- hide any remaining unit frames
 	for col, rows in pairs(ui.unitFrames) do
 		for row, unitFrame in pairs(rows) do
-			if unitFrame and not displayedGuids[unitFrame.guid] then
-				unitFrame:Hide()
+			if unitFrame then
+				if not displayedGuids[unitFrame.guid] then
+					unitFrame:Hide()
+				end
 			end
 		end
 	end
