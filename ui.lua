@@ -171,7 +171,8 @@ ui.BarLeave = function()
 end
 
 ui.BarUpdate = function()
-	if not this.guid then
+	if not this.guid or this.guid == 0 then
+		this:Hide()
 		return
 	end
 
