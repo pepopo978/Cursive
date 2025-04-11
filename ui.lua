@@ -685,7 +685,9 @@ ui:SetScript("OnUpdate", function()
 			Cursive.db.profile.alwaysshowcurrenttarget then
 		-- replace the last displayed guid with the current target
 		displayedGuids[currentTargetGuid] = true
-		DisplayGuid(currentTargetGuid, config.maxrow, config.maxcol)
+		ui.col = config.maxcol
+		ui.row = config.maxrow
+		DisplayGuid(currentTargetGuid)
 	end
 
 	-- hide any remaining unit frames
