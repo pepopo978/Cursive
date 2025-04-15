@@ -183,6 +183,9 @@ L:RegisterTranslations("enUS", function()
 		["banish"] = true,
 		["siphon life"] = true,
 		["fear"] = true,
+
+		-- warrior
+		["rend"] = true,
 	}
 end)
 
@@ -371,5 +374,8 @@ L:RegisterTranslations("zhCN", function()
 		["banish"] = "放逐",
 		["siphon life"] = "生命虹吸",
 		["fear"] = "恐惧",
+
+		-- warrior
+		["rend"] = '撕裂', -- no idea if right
 	}
 end)
