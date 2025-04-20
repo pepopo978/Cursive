@@ -328,6 +328,18 @@ local mobFilters = {
 			Cursive.db.profile.filterplayer = v
 		end,
 	},
+	["notplayer"] = {
+		type = "toggle",
+		name = L["Not Player"],
+		desc = L["Not Player Desc"],
+		order = 33,
+		get = function()
+			return Cursive.db.profile.filternotplayer
+		end,
+		set = function(v)
+			Cursive.db.profile.filternotplayer = v
+		end,
+	},
 	["range"] = {
 		type = "toggle",
 		name = IsSpellInRange and L["Within 45 Range"] or L["Within 28 Range"],
