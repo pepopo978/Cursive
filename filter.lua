@@ -13,6 +13,10 @@ filter.player = function(unit)
 	return UnitIsPlayer(unit) and true or false
 end
 
+filter.notplayer = function(unit)
+	return not UnitIsPlayer(unit) and true or false
+end
+
 filter.infight = function(unit)
 	return UnitAffectingCombat(unit) and true or false
 end
@@ -123,6 +127,10 @@ function Cursive:ShouldDisplayGuid(guid)
 
 	if Cursive.db.profile.filterplayer then
 		shouldDisplay = shouldDisplay and filter.player(guid)
+	end
+
+	if Cursive.db.profile.filternotplayer then
+		shouldDisplay = shouldDisplay and filter.notplayer(guid)
 	end
 
 	if Cursive.db.profile.filterignored then

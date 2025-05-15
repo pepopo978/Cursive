@@ -35,6 +35,7 @@ spells\priest.lua
 spells\rogue.lua
 spells\shaman.lua
 spells\warlock.lua
+spells\warrior.lua
 curses.lua
 filter.lua
 ui.lua

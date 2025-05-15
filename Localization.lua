@@ -61,6 +61,8 @@ L:RegisterTranslations("enUS", function()
 		["In Combat"] = true,
 		["Player"] = true,
 		["Player Desc"] = "Only show player units",
+		["Not Player"] = true,
+		["Not Player Desc"] = "Only show NON player units",
 		["Hostile"] = true,
 		["Attackable"] = true,
 		["Within 28 Range"] = true,
@@ -183,6 +185,9 @@ L:RegisterTranslations("enUS", function()
 		["banish"] = true,
 		["siphon life"] = true,
 		["fear"] = true,
+
+		-- warrior
+		["rend"] = true,
 	}
 end)
 
@@ -252,6 +257,8 @@ L:RegisterTranslations("zhCN", function()
 		["In Combat"] = "战斗中",
 		["Player"] = "玩家",
 		["Player Desc"] = "只显示玩家单位",
+		["Not Player"] = "非玩家",
+		["Not Player Desc"] = "只显示非玩家单位",
 		["Hostile"] = "敌对",
 		["Attackable"] = "可攻击",
 		["Within 28 Range"] = "在28范围内",
@@ -371,5 +378,8 @@ L:RegisterTranslations("zhCN", function()
 		["banish"] = "放逐",
 		["siphon life"] = "生命虹吸",
 		["fear"] = "恐惧",
+
+		-- warrior
+		["rend"] = '撕裂', -- no idea if right
 	}
 end)
