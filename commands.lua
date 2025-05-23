@@ -259,9 +259,6 @@ local function hasSpellId(guid, ignoreSpellId)
 			break
 		end
 		if spellId == ignoreSpellId then
-			if options["warnings"] then
-				DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
-			end
 			return true
 		end
 	end
@@ -272,9 +269,6 @@ local function hasSpellId(guid, ignoreSpellId)
 			break
 		end
 		if spellId == ignoreSpellId then
-			if options["warnings"] then
-				DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
-			end
 			return true
 		end
 	end
@@ -289,9 +283,6 @@ local function hasSpellTexture(guid, ignoreTexture)
 			break
 		end
 		if string.find(texture, ignoreTexture) then
-			if options["warnings"] then
-				DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
-			end
 			return true
 		end
 	end
@@ -302,9 +293,6 @@ local function hasSpellTexture(guid, ignoreTexture)
 			break
 		end
 		if string.find(texture, ignoreTexture) then
-			if options["warnings"] then
-				DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
-			end
 			return true
 		end
 	end
