@@ -19,6 +19,7 @@ Cursive:RegisterDefaults("profile", {
 	showraidicons = true,
 	showhealthbar = true,
 	showunitname = true,
+	showunithp = false,
 
 	alwaysshowcurrenttarget = true,
 
@@ -110,6 +111,19 @@ local barOptions = {
 		end,
 		set = function(v)
 			Cursive.db.profile.showunitname = v
+			Cursive.UpdateFramesFromConfig()
+		end,
+	},
+	["showunithp"] = {
+		type = "toggle",
+		name = L["Show Unit HP"],
+		desc = L["Show Unit HP"],
+		order = 31,
+		get = function()
+			return Cursive.db.profile.showunithp
+		end,
+		set = function(v)
+			Cursive.db.profile.showunithp = v
 			Cursive.UpdateFramesFromConfig()
 		end,
 	},

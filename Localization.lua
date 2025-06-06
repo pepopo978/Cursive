@@ -51,6 +51,7 @@ L:RegisterTranslations("enUS", function()
 		["Show Raid Icons"] = true,
 		["Show Health Bar"] = true,
 		["Show Unit Name"] = true,
+		["Show Unit HP"] = true,
 		["Health Bar/Unit Name Width"] = true,
 		["Health Bar/Unit Name Height"] = true,
 		["Raid Icon Size"] = true,

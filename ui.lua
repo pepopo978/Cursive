@@ -315,18 +315,24 @@ local function CreateBarSecondSection(unitFrame, guid)
 		healthBar:SetHeight(config.height)
 		unitFrame.healthBar = healthBar
 
-		local hp = healthBar:CreateFontString(nil, "HIGH", "GameFontWhite")
-		hp:SetPoint("TOPRIGHT", healthBar, "TOPRIGHT", -2, -2)
-		hp:SetWidth(30)
-		hp:SetHeight(config.height - 4)
-		hp:SetFont(STANDARD_TEXT_FONT, config.textsize, "THINOUTLINE")
-		hp:SetJustifyH("RIGHT")
-		unitFrame.hpText = hp
+		if config.showunithp then
+			local hp = healthBar:CreateFontString(nil, "HIGH", "GameFontWhite")
+			hp:SetPoint("TOPRIGHT", healthBar, "TOPRIGHT", -2, -2)
+			hp:SetWidth(30)
+			hp:SetHeight(config.height - 4)
+			hp:SetFont(STANDARD_TEXT_FONT, config.textsize, "THINOUTLINE")
+			hp:SetJustifyH("RIGHT")
+			unitFrame.hpText = hp
+		end
 
 		if config.showunitname then
 			local name = healthBar:CreateFontString(nil, "HIGH", "GameFontWhite")
 			name:SetPoint("TOPLEFT", healthBar, "TOPLEFT", 2, -2)
-			name:SetPoint("BOTTOMRIGHT", hp, "BOTTOMLEFT", 2, 0)
+			if config.showhp then
+				name:SetPoint("BOTTOMRIGHT", hp, "BOTTOMLEFT", 2, 0)
+			else
+				name:SetPoint("BOTTOMRIGHT", healthBar, "BOTTOMRIGHT", -2, 0)
+			end
 			name:SetFont(STANDARD_TEXT_FONT, config.textsize, "THINOUTLINE")
 			name:SetJustifyH("LEFT")
 			unitFrame.nameText = name
