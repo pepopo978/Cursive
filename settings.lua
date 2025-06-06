@@ -20,6 +20,8 @@ Cursive:RegisterDefaults("profile", {
 	showhealthbar = true,
 	showunitname = true,
 
+	alwaysshowcurrenttarget = true,
+
 	scale = 1,
 	healthwidth = 100,
 	height = 16,
@@ -44,6 +46,19 @@ Cursive:RegisterDefaults("profile", {
 
 	ignorelist = {},
 })
+
+local function splitString(str, delimiter)
+	local result = {}
+	local from = 1
+	local delim_from, delim_to = string.find(str, delimiter, from)
+	while delim_from do
+		table.insert(result, string.sub(str, from, delim_from - 1))
+		from = delim_to + 1
+		delim_from, delim_to = string.find(str, delimiter, from)
+	end
+	table.insert(result, string.sub(str, from))
+	return result
+end
 
 local barOptions = {
 	["showtargetindicator"] = {
@@ -96,6 +111,18 @@ local barOptions = {
 		set = function(v)
 			Cursive.db.profile.showunitname = v
 			Cursive.UpdateFramesFromConfig()
+		end,
+	},
+	["alwaysshowcurrenttarget"] = {
+		type = "toggle",
+		name = "Always Show Current Target",
+		desc = "Always show current target at the bottom of the mob list if it is not already shown",
+		order = 32,
+		get = function()
+			return Cursive.db.profile.alwaysshowcurrenttarget
+		end,
+		set = function(v)
+			Cursive.db.profile.alwaysshowcurrenttarget = v
 		end,
 	},
 	["barwidth"] = {
@@ -301,6 +328,18 @@ local mobFilters = {
 			Cursive.db.profile.filterplayer = v
 		end,
 	},
+	["notplayer"] = {
+		type = "toggle",
+		name = L["Not Player"],
+		desc = L["Not Player Desc"],
+		order = 33,
+		get = function()
+			return Cursive.db.profile.filternotplayer
+		end,
+		set = function(v)
+			Cursive.db.profile.filternotplayer = v
+		end,
+	},
 	["range"] = {
 		type = "toggle",
 		name = IsSpellInRange and L["Within 45 Range"] or L["Within 28 Range"],
@@ -365,7 +404,7 @@ local mobFilters = {
 			if not v or v == "" then
 				Cursive.db.profile.ignorelist = {}
 			else
-				Cursive.db.profile.ignorelist = string.split(v, ",");
+				Cursive.db.profile.ignorelist = splitString(v, ",");
 			end
 		end,
 	},

@@ -27,14 +27,14 @@ function getPriestSpells()
 		[19284] = { name = L["hex of weakness"], rank = 5, duration = 120 },
 		[19285] = { name = L["hex of weakness"], rank = 6, duration = 120 },
 
-		[589] = { name = L["shadow word: pain"], rank = 1, duration = 24 },  -- assume they have talent
-		[594] = { name = L["shadow word: pain"], rank = 2, duration = 24 },
-		[970] = { name = L["shadow word: pain"], rank = 3, duration = 24 },
-		[992] = { name = L["shadow word: pain"], rank = 4, duration = 24 },
-		[2767] = { name = L["shadow word: pain"], rank = 5, duration = 24 },
-		[10892] = { name = L["shadow word: pain"], rank = 6, duration = 24 },
-		[10893] = { name = L["shadow word: pain"], rank = 7, duration = 24 },
-		[10894] = { name = L["shadow word: pain"], rank = 8, duration = 24 },
+		[589] = { name = L["shadow word: pain"], rank = 1, duration = 24, variableDuration = true }, -- assume they have talent
+		[594] = { name = L["shadow word: pain"], rank = 2, duration = 24, variableDuration = true },
+		[970] = { name = L["shadow word: pain"], rank = 3, duration = 24, variableDuration = true },
+		[992] = { name = L["shadow word: pain"], rank = 4, duration = 24, variableDuration = true },
+		[2767] = { name = L["shadow word: pain"], rank = 5, duration = 24, variableDuration = true },
+		[10892] = { name = L["shadow word: pain"], rank = 6, duration = 24, variableDuration = true },
+		[10893] = { name = L["shadow word: pain"], rank = 7, duration = 24, variableDuration = true },
+		[10894] = { name = L["shadow word: pain"], rank = 8, duration = 24, variableDuration = true },
 
 		[15286] = { name = L["vampiric embrace"], rank = 1, duration = 60 },
 

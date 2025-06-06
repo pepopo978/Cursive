@@ -88,6 +88,8 @@ function curses:LoadCurses()
 		curses.trackedCurseIds = getRogueSpells()
 	elseif playerClassName == "SHAMAN" then
 		curses.trackedCurseIds = getShamanSpells()
+	elseif playerClassName == "WARRIOR" then
+		curses.trackedCurseIds = getWarriorSpells()
 	end
 	
 	for id, data in pairs(curses.whitelistedDebuffIDs or {}) do
