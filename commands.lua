@@ -208,6 +208,30 @@ local crowdControlledSpellIds = {
 	[26258] = { name = "Whisperings of C'Thun" },
 	[26259] = { name = "Whisperings of C'Thun" },
 	[24178] = { name = "Will of Hakkar" },
+
+	-- immunity effects
+	[642] = { name = "Divine Shield" },
+	[1020] = { name = "Divine Shield" },
+	[13874] = { name = "Divine Shield" },
+	[5573] = { name = "Divine Protection" },
+	[13007] = { name = "Divine Protection" },
+	[6356] = { name = "Spell Immunity" },
+	[6724] = { name = "Light of Elune" },
+	[7121] = { name = "Anti-Magic Shield" },
+	[19645] = { name = "Anti-Magic Shield" },
+	[24021] = { name = "Anti-Magic Shield" },
+	[8361] = { name = "Purity" },
+	[8611] = { name = "Phase Shift" },
+	[45713] = { name = "Phase Shift" },
+	[9438] = { name = "Arcane Bubble" },
+	[11958] = { name = "Ice Block" },
+	[12843] = { name = "Mordresh's Shield" },
+	[21892] = { name = "Arcane Protection" },
+	[51096] = { name = "Worgen Dimension" },
+	[51228] = { name = "Invulnerability" },
+	[52010] = { name = "Pending Detonation" },
+	[53225] = { name = "Ward of Vorgendor" },
+	[57644] = { name = "Veil of Vorgendor" },
 }
 
 local function isMobCrowdControlled(guid)
