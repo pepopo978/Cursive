@@ -164,6 +164,7 @@ L:RegisterTranslations("enUS", function()
 		["deadly poison III"] = true,
 		["deadly poison IV"] = true,
 		["deadly poison V"] = true,
+		["hemorrhage"] = true,
 
 		-- shaman
 		["flame shock"] = true,
@@ -357,6 +358,7 @@ L:RegisterTranslations("zhCN", function()
 		["deadly poison III"] = "致命毒药 III",
 		["deadly poison IV"] = "致命毒药 IV",
 		["deadly poison V"] = "致命毒药 V",
+		["hemorrhage"] = "出血", -- no idea if right
 
 		-- shaman
 		["flame shock"] = "烈焰震击", -- no idea if right
