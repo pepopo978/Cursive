@@ -561,7 +561,7 @@ Cursive.cmdtable = {
 				end
 			end,
 		},
-		["sharedcfaeriefire"] = {
+		["sharedFaerieFire"] = {
 			type = "toggle",
 			name = L["Shared Faerie Fire"],
 			desc = L["This will show other player's Faerie Fires as well as your own"],
