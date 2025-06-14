@@ -165,12 +165,35 @@ Cursive:RegisterEvent("SPELLCAST_CHANNEL_STOP", StopChanneling);
 Cursive:RegisterEvent("SPELLCAST_INTERRUPTED", StopChanneling);
 Cursive:RegisterEvent("SPELLCAST_FAILED", StopChanneling);
 
+
+local FaerieFire = {
+	[770] = true, --r1 
+	[778] = true, --r2
+	[9749] = true, --r3
+	[9907] = true, --r4
+
+	[16855] = true, --bear r1
+	[17387] = true, --bear r2
+	[17388] = true, --bear r3
+	[17389] = true, --bear r4
+
+	[16857] = true, --cat r1
+	[17390] = true, --cat r2
+	[17391] = true, --cat r3
+	[17392] = true, --cat r4
+}
+
 Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, spellID, castDuration)
 	-- immolate will fire both start and cast
 	if event == "CAST" then
 		local _, guid = UnitExists("player")
 		if casterGuid ~= guid then
-			return
+			if Cursive.db.profile.sharedFaerieFire and FaerieFire[spellID] then
+				lastGuid = targetGuid
+				Cursive:ScheduleEvent("addCurse" .. targetGuid .. curses.trackedCurseIds[spellID].name, curses.ApplyCurse, 0.2, self, spellID, targetGuid, GetTime())
+			else
+				return
+			end
 		end
 
 		-- store pending cast

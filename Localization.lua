@@ -98,6 +98,8 @@ L:RegisterTranslations("enUS", function()
 		["Not ignored"] = true,
 		["Ignored Mobs List (Enter to save)"] = true,
 		["Comma separated list of strings to ignore if found in the unit name"] = true,
+		["Shared Faerie Fire"] = true,
+		["This will show other player's Faerie Fires as well as your own"] = true,
 
 		-- spells
 		["Rank"] = true,

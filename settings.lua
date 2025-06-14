@@ -19,6 +19,7 @@ Cursive:RegisterDefaults("profile", {
 	showraidicons = true,
 	showhealthbar = true,
 	showunitname = true,
+	sharedFaerieFire = false,
 
 	alwaysshowcurrenttarget = true,
 
@@ -558,6 +559,19 @@ Cursive.cmdtable = {
 					Cursive.db.profile.maxcol = v
 					Cursive.UpdateFramesFromConfig()
 				end
+			end,
+		},
+		["sharedFaerieFire"] = {
+			type = "toggle",
+			name = L["Shared Faerie Fire"],
+			desc = L["This will show other player's Faerie Fires as well as your own"],
+			order = 10,
+			get = function()
+				return Cursive.db.profile.sharedFaerieFire
+			end,
+			set = function(v)
+				Cursive.db.profile.sharedFaerieFire = v
+				Cursive.UpdateFramesFromConfig()
 			end,
 		},
 	}
