@@ -103,6 +103,12 @@ EXAMPLE: `/cursive multicurse Corruption|HIGHEST_HP|warnings,resistsound,expirin
 EXAMPLE:
 `/cursive multicurse Curse of Recklessness|RAID_MARK|name=Touched Warrior,ignorespelltexture=Spell_Shadow_UnholyStrength,resistsound,expiringsound`
 
+## Shared Debuffs
+
+Shared debuffs applied by other players will appear greyed out on targets.
+
+Currently only Faerie Fire is supported as I felt it warranted special handling.  It works by looking for other players casting faerie fire and then checking if the mob has the debuff, so if someone refreshes faerie fire and gets resisted it will incorrectly restart the timer.  However, it should still correctly remove faerie fire if it falls off that target.  I didn't want to impact performance to handle this edge case.
+
 ## Important info
 
 If you have my latest nampower, it will use the SpellInRange function from that to provide improved range checking.
@@ -133,3 +139,4 @@ There is an option "always show current target" that will display your current t
 
 You can ignore mobs based on their unit name using the ignored mob list filter.  It is comma separated and you need to press enter to get it to save.  For example can do:
 `whelp,scarab` to ignore all mobs with those strings in their name.
+
