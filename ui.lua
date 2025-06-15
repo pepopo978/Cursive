@@ -416,6 +416,30 @@ local function GetBarCords(row, col)
 	return x, y
 end
 
+local function hasAnySpellId(guid, spellIds)
+	for i = 1, 16 do
+		local texture, stacks, spellSchool, spellId = UnitDebuff(guid, i);
+		if not spellId then
+			break
+		end
+		if spellIds[spellId] then
+			return spellId
+		end
+	end
+
+	for i = 1, 32 do
+		local texture, stacks, spellId = UnitBuff(guid, i);
+		if not spellId then
+			break
+		end
+		if spellIds[spellId] then
+			return spellId
+		end
+	end
+
+	return nil
+end
+
 local function GetSortedCurses(guidCurses)
 	-- Collect keys
 	local curseNames = {}
@@ -470,6 +494,20 @@ local function DisplayGuid(guid)
 		unitFrame.pos = x .. -y
 	end
 
+	-- check for shared debuffs
+	for sharedDebuffKey, guids in pairs(Cursive.curses.sharedDebuffGuids) do
+		if guids[guid] then
+			local sharedDebuffSpellIds = Cursive.curses.sharedDebuffs[sharedDebuffKey]
+			local spellId = hasAnySpellId(guid, sharedDebuffSpellIds)
+			if spellId ~= nil then
+				-- add curse to curses
+				Cursive.curses:ApplySharedCurse(sharedDebuffKey, spellId, guid, GetTime())
+				-- remove guid
+				Cursive.curses.sharedDebuffGuids[sharedDebuffKey][guid] = nil
+			end
+		end
+	end
+
 	-- update curses
 	local curseNumber = 1
 
@@ -491,6 +529,13 @@ local function DisplayGuid(guid)
 			local curse = unitFrame["curse" .. curseNumber]
 			if remaining >= 0 then
 				curse:SetTexture(Cursive.curses.trackedCurseIds[curseData.spellID].texture)
+
+				if curseData["currentPlayer"] == false then
+					curse:SetDesaturated(true); -- desaturate if not applied by current player
+				else
+					curse:SetDesaturated(false); -- saturate if applied by current player
+				end
+
 				-- curse:SetTexCoord(.078, .92, .079, .937) rounded icons
 				curse.timer:SetText(remaining)
 				curse.timer:Show()

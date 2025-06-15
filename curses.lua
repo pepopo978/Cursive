@@ -26,7 +26,14 @@ local curses = {
 	pendingCast = {},
 	resistSoundGuids = {},
 	expiringSoundGuids = {},
-	requestedExpiringSoundGuids = {} -- guid added on spellcast, moved to expiringSoundGuids once rendered by ui
+	requestedExpiringSoundGuids = {}, -- guid added on spellcast, moved to expiringSoundGuids once rendered by ui
+
+	sharedDebuffs = {
+		faeriefire = {},
+	},
+	sharedDebuffGuids = {
+		faeriefire = {}, -- used for scanning for shared debuffs like faerie fire
+	}, -- used for scanning for shared debuffs like faerie fire
 }
 
 -- combat events for curses
@@ -46,24 +53,37 @@ function curses:LoadCurses()
 	curses.trackedCurseNamesToTextures = {}
 	curses.trackedCurseNameRanksToSpellSlots = {}
 
+	curses.isWarlock = playerClassName == "WARLOCK"
+	curses.isPriest = playerClassName == "PRIEST"
+	curses.isMage = playerClassName == "MAGE"
+	curses.isDruid = playerClassName == "DRUID"
+	curses.isHunter = playerClassName == "HUNTER"
+	curses.isRogue = playerClassName == "ROGUE"
+	curses.isShaman = playerClassName == "SHAMAN"
+	curses.isWarrior = playerClassName == "WARRIOR"
+
+
 	-- curses to track
-	if playerClassName == "WARLOCK" then
+	if curses.isWarlock then
 		curses.trackedCurseIds = getWarlockSpells()
-	elseif playerClassName == "PRIEST" then
+	elseif curses.isPriest then
 		curses.trackedCurseIds = getPriestSpells()
-	elseif playerClassName == "MAGE" then
+	elseif curses.isMage then
 		curses.trackedCurseIds = getMageSpells()
-	elseif playerClassName == "DRUID" then
+	elseif curses.isDruid then
 		curses.trackedCurseIds = getDruidSpells()
-	elseif playerClassName == "HUNTER" then
+	elseif curses.isHunter then
 		curses.trackedCurseIds = getHunterSpells()
-	elseif playerClassName == "ROGUE" then
+	elseif curses.isRogue then
 		curses.trackedCurseIds = getRogueSpells()
-	elseif playerClassName == "SHAMAN" then
+	elseif curses.isShaman then
 		curses.trackedCurseIds = getShamanSpells()
-	elseif playerClassName == "WARRIOR" then
+	elseif curses.isWarrior then
 		curses.trackedCurseIds = getWarriorSpells()
 	end
+
+	-- load shared debuffs
+	curses.sharedDebuffs = getSharedDebuffs()
 
 	-- go through spell slots and
 	local i = 1
@@ -165,35 +185,17 @@ Cursive:RegisterEvent("SPELLCAST_CHANNEL_STOP", StopChanneling);
 Cursive:RegisterEvent("SPELLCAST_INTERRUPTED", StopChanneling);
 Cursive:RegisterEvent("SPELLCAST_FAILED", StopChanneling);
 
-
-local FaerieFire = {
-	[770] = true, --r1 
-	[778] = true, --r2
-	[9749] = true, --r3
-	[9907] = true, --r4
-
-	[16855] = true, --bear r1
-	[17387] = true, --bear r2
-	[17388] = true, --bear r3
-	[17389] = true, --bear r4
-
-	[16857] = true, --cat r1
-	[17390] = true, --cat r2
-	[17391] = true, --cat r3
-	[17392] = true, --cat r4
-}
-
 Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, spellID, castDuration)
 	-- immolate will fire both start and cast
 	if event == "CAST" then
 		local _, guid = UnitExists("player")
 		if casterGuid ~= guid then
-			if Cursive.db.profile.sharedFaerieFire and FaerieFire[spellID] then
-				lastGuid = targetGuid
-				Cursive:ScheduleEvent("addCurse" .. targetGuid .. curses.trackedCurseIds[spellID].name, curses.ApplyCurse, 0.2, self, spellID, targetGuid, GetTime())
-			else
-				return
+			-- check for faeriefire
+			if Cursive.db.profile.shareddebuffs.faeriefire and curses.sharedDebuffs.faeriefire[spellID] then
+				curses.sharedDebuffGuids.faeriefire[targetGuid] = GetTime()
 			end
+
+			return
 		end
 
 		-- store pending cast
@@ -441,6 +443,12 @@ function curses:HasCurse(spellName, targetGuid, minRemaining)
 		minRemaining = 0 -- default to 0
 	end
 
+	-- handle faerie fire special case
+	if curses.isDruid and string.find(spellName, L["faerie fire"]) then
+		-- remove (feral) or (bear) from spell name
+		spellName = L["faerie fire"]
+	end
+
 	if curses.guids[targetGuid] and curses.guids[targetGuid][spellName] then
 		local remaining = Cursive.curses:TimeRemaining(curses.guids[targetGuid][spellName])
 		if remaining > minRemaining then
@@ -460,6 +468,27 @@ function curses:HasCurse(spellName, targetGuid, minRemaining)
 	return nil
 end
 
+-- Apply shared curse from another player
+function curses:ApplySharedCurse(sharedDebuffKey, spellID, targetGuid, startTime)
+	local name = curses.sharedDebuffs[sharedDebuffKey][spellID].name
+	local rank = curses.sharedDebuffs[sharedDebuffKey][spellID].rank
+	local duration = curses.sharedDebuffs[sharedDebuffKey][spellID].duration
+
+	if not curses.guids[targetGuid] then
+		curses.guids[targetGuid] = {}
+	end
+
+	curses.guids[targetGuid][name] = {
+		rank = rank,
+		duration = duration,
+		start = startTime,
+		spellID = spellID,
+		targetGuid = targetGuid,
+		currentPlayer = false,
+	}
+end
+
+-- Apply curse from player
 function curses:ApplyCurse(spellID, targetGuid, startTime)
 	-- clear pending cast
 	curses.pendingCast = {}
@@ -477,7 +506,8 @@ function curses:ApplyCurse(spellID, targetGuid, startTime)
 		duration = duration,
 		start = startTime,
 		spellID = spellID,
-		targetGuid = targetGuid
+		targetGuid = targetGuid,
+		currentPlayer = true,
 	}
 end
 

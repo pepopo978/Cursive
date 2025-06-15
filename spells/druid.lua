@@ -17,15 +17,15 @@ function getDruidSpells()
 		[9749] = { name = L["faerie fire"], rank = 3, duration = 40 },
 		[9907] = { name = L["faerie fire"], rank = 4, duration = 40 },
 
-		[16855] = { name = L["faerie fire (bear)()"], rank = 1, duration = 40 },
-		[17387] = { name = L["faerie fire (bear)()"], rank = 2, duration = 40 },
-		[17388] = { name = L["faerie fire (bear)()"], rank = 3, duration = 40 },
-		[17389] = { name = L["faerie fire (bear)()"], rank = 4, duration = 40 },
+		[16855] = { name = L["faerie fire"], rank = 1, duration = 40 }, -- use faerie fire instead of (bear) version so they block each other
+		[17387] = { name = L["faerie fire"], rank = 2, duration = 40 },
+		[17388] = { name = L["faerie fire"], rank = 3, duration = 40 },
+		[17389] = { name = L["faerie fire"], rank = 4, duration = 40 },
 
-		[16857] = { name = L["faerie fire (feral)()"], rank = 1, duration = 40 },
-		[17390] = { name = L["faerie fire (feral)()"], rank = 2, duration = 40 },
-		[17391] = { name = L["faerie fire (feral)()"], rank = 3, duration = 40 },
-		[17392] = { name = L["faerie fire (feral)()"], rank = 4, duration = 40 },
+		[16857] = { name = L["faerie fire"], rank = 1, duration = 40 }, -- use faerie fire instead of (feral) version so they block each other
+		[17390] = { name = L["faerie fire"], rank = 2, duration = 40 },
+		[17391] = { name = L["faerie fire"], rank = 3, duration = 40 },
+		[17392] = { name = L["faerie fire"], rank = 4, duration = 40 },
 
 		[2637] = { name = L["hibernate"], rank = 1, duration = 20 },
 		[18657] = { name = L["hibernate"], rank = 2, duration = 30 },

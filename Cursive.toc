@@ -28,6 +28,7 @@ global.lua
 utils.lua
 settings.lua
 core.lua
+spells\shared_debuffs.lua
 spells\druid.lua
 spells\hunter.lua
 spells\mage.lua

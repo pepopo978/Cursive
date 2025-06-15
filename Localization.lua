@@ -30,6 +30,7 @@ L:RegisterTranslations("enUS", function()
 		["Same as HIGHEST_HP_RAID_MARK but with INVERSE_RAID_MARK mark prio."] = true,
 		["|cffffcc00Cursive:|cffffaaaa Couldn't find a target to curse."] = true,
 		["curse_duration_format"] = ".*over ([%d.]+) sec.",
+		["Shared Debuffs"] = true,
 
 		-- curses
 		["(.+) fades from (.+)"] = true,
@@ -99,7 +100,7 @@ L:RegisterTranslations("enUS", function()
 		["Ignored Mobs List (Enter to save)"] = true,
 		["Comma separated list of strings to ignore if found in the unit name"] = true,
 		["Shared Faerie Fire"] = true,
-		["This will show other player's Faerie Fires as well as your own"] = true,
+		["This will show other player's Faerie Fires and avoid trying to cast Faerie Fire on those mobs"] = true,
 
 		-- spells
 		["Rank"] = true,
@@ -230,6 +231,7 @@ L:RegisterTranslations("zhCN", function()
 		-- 虫群：敌人被飞虫围绕，攻击命中率降低2%，在18秒内受到总计99点自然伤害。
 		-- 月火术：灼烧敌人，对其造成40到48点伤害，并在18秒内造成额外的120点奥术伤害。
 		["curse_duration_format"] = "(%d+%.?%d*)秒",
+		["Shared Debuffs"] = "共享debuff",
 
 		-- curses
 		["(.+) fades from (.+)"] = "(.+)效果从(.+)身上消失",
@@ -294,6 +296,8 @@ L:RegisterTranslations("zhCN", function()
 		["Not ignored"] = "不被忽略",
 		["Ignored Mobs List (Enter to save)"] = "忽略的怪物列表（回车保存）",
 		["Comma separated list of strings to ignore if found in the unit name"] = "如果在单位名称中找到，则忽略的字符串列表，用半角逗号分隔",
+		["Shared Faerie Fire"] = "共享精灵之火",
+		["This will show other player's Faerie Fires and avoid trying to cast Faerie Fire on those mobs"] = "这将显示其他玩家的精灵之火，并避免尝试在这些怪物上施放精灵之火",
 
 		-- spells
 		["Rank"] = "等级",
