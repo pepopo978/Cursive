@@ -583,6 +583,13 @@ local function CheckForCleanup(guid, time)
 		Cursive.core.remove(guid)
 		-- remove from curses
 		Cursive.curses:RemoveGuid(guid)
+
+		-- remove from sharedDebuffGuids
+		for sharedDebuffKey, guids in pairs(Cursive.curses.sharedDebuffGuids) do
+			if guids[guid] then
+				Cursive.curses.sharedDebuffGuids[sharedDebuffKey][guid] = nil
+			end
+		end
 	end
 end
 
