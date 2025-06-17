@@ -45,6 +45,10 @@ EXAMPLE: `/cursive target Icicles|HIGHEST_HP` will target the enemy with the hig
 can also do it only if you don't have a target already:
 `/run if not UnitName("target") then SlashCmdList.CURSIVE("target Icicles|HIGHEST_HP") end`
 
+`/cursive gettarget <spellName:str>|<priority?:str>|<options?:comma separated str>`: Returns guid of the unit that would be targeted based on priority and options.
+
+EXAMPLE: `/cursive gettarget Corruption|HIGHEST_HP` will return guid of the enemy with the highest HP in range of the spell Corruption that doesn't already have Corruption.
+
 ## Priority Options
 
 - HIGHEST_HP - Target highest HP enemy without a curse first.

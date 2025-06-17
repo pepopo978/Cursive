@@ -89,7 +89,7 @@ end
 local function handleSlashCommands(msg, editbox)
 	if not msg or msg == "" then
 		DEFAULT_CHAT_FRAME:AddMessage(curseCommands)
-		for command, description in pairs(commands) do
+		for _, description in pairs(commands) do
 			DEFAULT_CHAT_FRAME:AddMessage(description)
 		end
 		DEFAULT_CHAT_FRAME:AddMessage(priorityChoices)
@@ -117,6 +117,16 @@ local function handleSlashCommands(msg, editbox)
 		local spellName, priority, optionsStr = Cursive.utils.strsplit("|", args)
 		local options = parseOptions(optionsStr)
 		Cursive:Target(spellName, priority, options)
+	elseif command == "gettarget" then
+		local spellName, optionsStr = Cursive.utils.strsplit("|", args)
+		local options = parseOptions(optionsStr)
+		Cursive:GetSpellTarget(spellName, options)
+	else
+		DEFAULT_CHAT_FRAME:AddMessage(L["|cffffcc00Cursive:|cffffaaaa Unknown command."])
+		DEFAULT_CHAT_FRAME:AddMessage(curseCommands)
+		for _, description in pairs(commands) do
+			DEFAULT_CHAT_FRAME:AddMessage(description)
+		end
 	end
 end
 
@@ -499,10 +509,10 @@ function Cursive:Curse(spellName, targetedGuid, options)
 	end
 
 	-- remove (Rank x) from spellName if it exists
-	local spellNameNoRank = Cursive.utils.GetSpellNameNoRank(spellName)
+	local lowercaseSpellNameNoRank = Cursive.utils.GetLowercaseSpellNameNoRank(spellName)
 
-	if targetedGuid and not Cursive.curses:HasCurse(spellNameNoRank, targetedGuid, options["refreshtime"]) and not isMobCrowdControlled(targetedGuid) then
-		castSpellWithOptions(string.lower(spellName), spellNameNoRank, targetedGuid, options)
+	if targetedGuid and not Cursive.curses:HasCurse(lowercaseSpellNameNoRank, targetedGuid, options["refreshtime"]) and not isMobCrowdControlled(targetedGuid) then
+		castSpellWithOptions(string.lower(spellName), lowercaseSpellNameNoRank, targetedGuid, options)
 		return true
 	elseif options["warnings"] then
 		DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
@@ -528,7 +538,7 @@ local function getSpellTarget(spellName, priority, options)
 	local selectedPriority = priority or PRIORITY_HIGHEST_HP
 
 	-- remove (Rank x) from spellName if it exists
-	local spellNameNoRank = Cursive.utils.GetSpellNameNoRank(spellName)
+	local spellNameNoRank = Cursive.utils.GetLowercaseSpellNameNoRank(spellName)
 
 	return pickTarget(selectedPriority, spellNameNoRank, true, options)
 end
@@ -536,13 +546,17 @@ end
 function Cursive:Multicurse(spellName, priority, options)
 	local targetedGuid = getSpellTarget(spellName, priority, options)
 	if targetedGuid then
-		local spellNameNoRank = Cursive.utils.GetSpellNameNoRank(spellName)
+		local spellNameNoRank = Cursive.utils.GetLowercaseSpellNameNoRank(spellName)
 		castSpellWithOptions(string.lower(spellName), spellNameNoRank, targetedGuid, options)
 		return true
 	elseif options["warnings"] then
 		DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
 	end
 	return false
+end
+
+function Cursive:GetTarget(spellName, priority, options)
+	return getSpellTarget(spellName, priority, options)
 end
 
 function Cursive:Target(spellName, priority, options)

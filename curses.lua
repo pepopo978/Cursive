@@ -438,19 +438,19 @@ function curses:HasAnyCurse(guid)
 	return nil
 end
 
-function curses:HasCurse(spellName, targetGuid, minRemaining)
+function curses:HasCurse(lowercaseSpellNameNoRank, targetGuid, minRemaining)
 	if not minRemaining then
 		minRemaining = 0 -- default to 0
 	end
 
 	-- handle faerie fire special case
-	if curses.isDruid and string.find(spellName, L["faerie fire"]) then
+	if curses.isDruid and string.find(lowercaseSpellNameNoRank, L["faerie fire"]) then
 		-- remove (feral) or (bear) from spell name
-		spellName = L["faerie fire"]
+		lowercaseSpellNameNoRank = L["faerie fire"]
 	end
 
-	if curses.guids[targetGuid] and curses.guids[targetGuid][spellName] then
-		local remaining = Cursive.curses:TimeRemaining(curses.guids[targetGuid][spellName])
+	if curses.guids[targetGuid] and curses.guids[targetGuid][lowercaseSpellNameNoRank] then
+		local remaining = Cursive.curses:TimeRemaining(curses.guids[targetGuid][lowercaseSpellNameNoRank])
 		if remaining > minRemaining then
 			return true
 		end
@@ -461,7 +461,7 @@ function curses:HasCurse(spellName, targetGuid, minRemaining)
 			curses.pendingCast.targetGuid == targetGuid and
 			curses.pendingCast.spellID and
 			curses.trackedCurseIds[curses.pendingCast.spellID] and
-			curses.trackedCurseIds[curses.pendingCast.spellID].name == spellName then
+			curses.trackedCurseIds[curses.pendingCast.spellID].name == lowercaseSpellNameNoRank then
 		return true
 	end
 
