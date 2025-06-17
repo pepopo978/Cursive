@@ -31,6 +31,8 @@ L:RegisterTranslations("enUS", function()
 		["|cffffcc00Cursive:|cffffaaaa Couldn't find a target to curse."] = true,
 		["curse_duration_format"] = ".*over ([%d.]+) sec.",
 		["Shared Debuffs"] = true,
+		["|cffffcc00Cursive:|cffffaaaa Unknown command."] = true,
+		["/cursive gettarget <spellName:str>|<options?:List<str>>: Gets the guid of what cursive would target for the spell based on priority and options without casting anything."] = true,
 
 		-- curses
 		["(.+) fades from (.+)"] = true,
@@ -232,6 +234,8 @@ L:RegisterTranslations("zhCN", function()
 		-- 月火术：灼烧敌人，对其造成40到48点伤害，并在18秒内造成额外的120点奥术伤害。
 		["curse_duration_format"] = "(%d+%.?%d*)秒",
 		["Shared Debuffs"] = "共享debuff",
+		["|cffffcc00Cursive:|cffffaaaa Unknown command."] = "|cffffcc00Cursive:|cffffaaaa 未知命令.",
+		["/cursive gettarget <spellName:str>|<options?:List<str>>: Gets the guid of what cursive would target for the spell based on priority and options without casting anything."] = "/cursive gettarget <法术名称>|<选项列表,用半角逗号分隔>: 获取cursive根据优先级和选项选择的目标ID，不会施放任何法术.",
 
 		-- curses
 		["(.+) fades from (.+)"] = "(.+)效果从(.+)身上消失",
