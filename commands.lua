@@ -22,7 +22,6 @@ local commands = {
 	["curse"] = L["/cursive curse <spellName:str>|<guid?:str>|<options?:List<str>>: Casts spell if not already on target/guid"],
 	["multicurse"] = L["/cursive multicurse <spellName:str>|<priority?:str>|<options?:List<str>>: Picks target based on priority and casts spell if not already on target"],
 	["target"] = L["/cursive target <spellName:str>|<priority?:str>|<options?:List<str>>: Targets unit based on priority if spell in range and not already on target"],
-	["gettarget"] = L["/cursive gettarget <spellName:str>|<options?:List<str>>: Gets the guid of what cursive would target for the spell based on priority and options without casting anything."],
 }
 
 local PRIORITY_HIGHEST_HP = "HIGHEST_HP"
@@ -118,10 +117,6 @@ local function handleSlashCommands(msg, editbox)
 		local spellName, priority, optionsStr = Cursive.utils.strsplit("|", args)
 		local options = parseOptions(optionsStr)
 		Cursive:Target(spellName, priority, options)
-	elseif command == "gettarget" then
-		local spellName, optionsStr = Cursive.utils.strsplit("|", args)
-		local options = parseOptions(optionsStr)
-		Cursive:GetSpellTarget(spellName, options)
 	else
 		DEFAULT_CHAT_FRAME:AddMessage(L["|cffffcc00Cursive:|cffffaaaa Unknown command."])
 		DEFAULT_CHAT_FRAME:AddMessage(curseCommands)
