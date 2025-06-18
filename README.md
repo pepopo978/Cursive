@@ -108,6 +108,27 @@ EXAMPLE: `/cursive multicurse Corruption|HIGHEST_HP|warnings,resistsound,expirin
 EXAMPLE:
 `/cursive multicurse Curse of Recklessness|RAID_MARK|name=Touched Warrior,ignorespelltexture=Spell_Shadow_UnholyStrength,resistsound,expiringsound`
 
+## Macro examples
+
+You can just put multiple commands in a macro like this
+```
+/cursive curse Curse of Recklessness|target|refreshtime=1
+/cursive curse Corruption|target|refreshtime=3
+/cursive curse Siphon Life|target|refreshtime=1
+```
+but the game won't always execute them in the order you want
+
+if you want more control of the order you can do something like
+```
+/script if not Cursive:Curse("Curse of Recklessness", "target", {refreshtime=1}) then if not Cursive:Curse("Corruption", "target", {refreshtime=3}) then Cursive:Curse("Siphon Life", "target", {refreshtime=1}) end end
+```
+This also works for Multicurse:
+```
+/script if not Cursive:Multicurse("Curse of Recklessness", "HIGHEST_HP", {refreshtime=1}) then if not Cursive:Multicurse("Corruption", "HIGHEST_HP", {refreshtime=3}) then Cursive:Multicurse("Siphon Life", "HIGHEST_HP", {refreshtime=1}) end end
+```
+
+All cursive commands will return true only if it attempted to cast or it found a target.
+
 ## Shared Debuffs
 
 Shared debuffs applied by other players will appear greyed out on targets.
