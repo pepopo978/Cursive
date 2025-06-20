@@ -438,6 +438,17 @@ function curses:HasAnyCurse(guid)
 	return nil
 end
 
+function curses:GetCurseData(spellName, guid)
+	-- convert to lowercase and remove rank
+	local lowercaseSpellNameNoRank = Cursive.utils.GetLowercaseSpellNameNoRank(spellName)
+
+	if curses.guids[guid] and curses.guids[guid][lowercaseSpellNameNoRank] then
+		return curses.guids[guid][lowercaseSpellNameNoRank]
+	end
+
+	return nil
+end
+
 function curses:HasCurse(lowercaseSpellNameNoRank, targetGuid, minRemaining)
 	if not minRemaining then
 		minRemaining = 0 -- default to 0

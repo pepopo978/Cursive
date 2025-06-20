@@ -135,6 +135,18 @@ Shared debuffs applied by other players will appear greyed out on targets.
 
 Currently only Faerie Fire is supported as I felt it warranted special handling.  It works by looking for other players casting faerie fire and then checking if the mob has the debuff, so if someone refreshes faerie fire and gets resisted it will incorrectly restart the timer.  However, it should still correctly remove faerie fire if it falls off that target.  I didn't want to impact performance to handle this edge case.
 
+## Accessing curse data in other addons
+
+Cursive data can be accessed in other addons 
+
+You can get raw curse data using 
+`Cursive.curses:GetCurseData(spellName, guid)`
+
+Here's an example that gets the time left on Corruption on the current target:
+```
+/run _, guid = UnitExists("target"); local data = Cursive.curses:GetCurseData("Corruption", guid); print(Cursive.curses:TimeRemaining(data))
+```
+
 ## Important info
 
 If you have my latest nampower, it will use the SpellInRange function from that to provide improved range checking.
