@@ -391,31 +391,31 @@ function curses:EnableResistSound(guid)
 	curses.resistSoundGuids[guid] = true
 end
 
-function curses:EnableExpiringSound(spellNameNoRank, guid)
-	if curses.requestedExpiringSoundGuids[guid] and curses.requestedExpiringSoundGuids[guid][spellNameNoRank] then
-		curses.requestedExpiringSoundGuids[guid][spellNameNoRank] = nil
+function curses:EnableExpiringSound(lowercaseSpellNameNoRank, guid)
+	if curses.requestedExpiringSoundGuids[guid] and curses.requestedExpiringSoundGuids[guid][lowercaseSpellNameNoRank] then
+		curses.requestedExpiringSoundGuids[guid][lowercaseSpellNameNoRank] = nil
 	end
 
 	if not curses.expiringSoundGuids[guid] then
 		curses.expiringSoundGuids[guid] = {}
 	end
-	curses.expiringSoundGuids[guid][spellNameNoRank] = true
+	curses.expiringSoundGuids[guid][lowercaseSpellNameNoRank] = true
 end
 
-function curses:RequestExpiringSound(spellNameNoRank, guid)
+function curses:RequestExpiringSound(lowercaseSpellNameNoRank, guid)
 	if not curses.requestedExpiringSoundGuids[guid] then
 		curses.requestedExpiringSoundGuids[guid] = {}
 	end
-	curses.requestedExpiringSoundGuids[guid][spellNameNoRank] = true
+	curses.requestedExpiringSoundGuids[guid][lowercaseSpellNameNoRank] = true
 end
 
-function curses:HasRequestedExpiringSound(spellNameNoRank, guid)
-	return curses.requestedExpiringSoundGuids[guid] and curses.requestedExpiringSoundGuids[guid][spellNameNoRank]
+function curses:HasRequestedExpiringSound(lowercaseSpellNameNoRank, guid)
+	return curses.requestedExpiringSoundGuids[guid] and curses.requestedExpiringSoundGuids[guid][lowercaseSpellNameNoRank]
 end
 
-function curses:ShouldPlayExpiringSound(spellNameNoRank, guid)
-	if curses.expiringSoundGuids[guid] and curses.expiringSoundGuids[guid][spellNameNoRank] then
-		curses.expiringSoundGuids[guid][spellNameNoRank] = nil -- remove entry to avoid playing sound multiple times
+function curses:ShouldPlayExpiringSound(lowercaseSpellNameNoRank, guid)
+	if curses.expiringSoundGuids[guid] and curses.expiringSoundGuids[guid][lowercaseSpellNameNoRank] then
+		curses.expiringSoundGuids[guid][lowercaseSpellNameNoRank] = nil -- remove entry to avoid playing sound multiple times
 		return true
 	end
 

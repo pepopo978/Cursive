@@ -181,6 +181,12 @@ ui.BarUpdate = function()
 		return
 	end
 
+	if (this.tick or 1) > GetTime() then
+		return
+	else
+		this.tick = GetTime() + 0.05
+	end
+
 	-- update statusbar values if it exists
 	if this.healthBar then
 		this.healthBar:SetMinMaxValues(0, UnitHealthMax(this.guid))

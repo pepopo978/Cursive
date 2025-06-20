@@ -353,7 +353,7 @@ local function passedOptionFilters(guid, options)
 	return true
 end
 
-local function pickTarget(selectedPriority, spellNameNoRank, checkRange, options)
+local function pickTarget(selectedPriority, lowercaseSpellNameNoRank, checkRange, options)
 	-- Curse the target that best matches the selected priority
 	local highestPrimaryValue = -10
 	local highestSecondaryValue = -10
@@ -383,7 +383,7 @@ local function pickTarget(selectedPriority, spellNameNoRank, checkRange, options
 						local passedRangeCheck = false
 						if IsSpellInRange then
 							-- use IsSpellInRange from nampower if available
-							local result = IsSpellInRange(spellNameNoRank, guid)
+							local result = IsSpellInRange(lowercaseSpellNameNoRank, guid)
 							if result == -1 then
 								passedRangeCheck = checkRange == false or CheckInteractDistance(guid, 4) -- fallback to old range check
 							else
@@ -396,7 +396,7 @@ local function pickTarget(selectedPriority, spellNameNoRank, checkRange, options
 						end
 						if passedRangeCheck then
 							-- check if the target has the curse
-							if not Cursive.curses:HasCurse(spellNameNoRank, guid, refreshTime) and not isMobCrowdControlled(guid) then
+							if not Cursive.curses:HasCurse(lowercaseSpellNameNoRank, guid, refreshTime) and not isMobCrowdControlled(guid) then
 								local mobHp = UnitHealth(guid)
 								if not minHp or mobHp >= minHp then
 									local primaryValue = -1
@@ -461,18 +461,18 @@ local function pickTarget(selectedPriority, spellNameNoRank, checkRange, options
 
 	-- run again if no target found ignoring range (only if IsSpellInRange is not available)
 	if not targetedGuid and checkRange == true and not IsSpellInRange then
-		targetedGuid = pickTarget(selectedPriority, spellNameNoRank, false, options)
+		targetedGuid = pickTarget(selectedPriority, lowercaseSpellNameNoRank, false, options)
 	end
 
 	return targetedGuid
 end
 
-local function castSpellWithOptions(spellName, spellNameNoRank, targetedGuid, options)
+local function castSpellWithOptions(spellName, lowercaseSpellNameNoRank, targetedGuid, options)
 	if options["resistsound"] then
 		Cursive.curses:EnableResistSound(targetedGuid)
 	end
 	if options["expiringsound"] then
-		Cursive.curses:RequestExpiringSound(spellNameNoRank, targetedGuid)
+		Cursive.curses:RequestExpiringSound(lowercaseSpellNameNoRank, targetedGuid)
 	end
 	CastSpellByName(spellName, targetedGuid)
 end
@@ -534,16 +534,16 @@ local function getSpellTarget(spellName, priority, options)
 	local selectedPriority = priority or PRIORITY_HIGHEST_HP
 
 	-- remove (Rank x) from spellName if it exists
-	local spellNameNoRank = Cursive.utils.GetLowercaseSpellNameNoRank(spellName)
+	local lowercaseSpellNameNoRank = Cursive.utils.GetLowercaseSpellNameNoRank(spellName)
 
-	return pickTarget(selectedPriority, spellNameNoRank, true, options)
+	return pickTarget(selectedPriority, lowercaseSpellNameNoRank, true, options)
 end
 
 function Cursive:Multicurse(spellName, priority, options)
 	local targetedGuid = getSpellTarget(spellName, priority, options)
 	if targetedGuid then
-		local spellNameNoRank = Cursive.utils.GetLowercaseSpellNameNoRank(spellName)
-		castSpellWithOptions(string.lower(spellName), spellNameNoRank, targetedGuid, options)
+		local lowercaseSpellNameNoRank = Cursive.utils.GetLowercaseSpellNameNoRank(spellName)
+		castSpellWithOptions(string.lower(spellName), lowercaseSpellNameNoRank, targetedGuid, options)
 		return true
 	elseif options["warnings"] then
 		DEFAULT_CHAT_FRAME:AddMessage(curseNoTarget)
