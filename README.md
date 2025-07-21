@@ -26,4 +26,3 @@ This fork allows to track an extra limited list of debuffs on Cursive frames fro
 	
 The debuffs from the whitelist can now also be tracked if they are owned by other players.
 
-Limited testing has been done at the moment.

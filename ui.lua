@@ -7,7 +7,7 @@ local L = AceLibrary("AceLocale-2.2"):new("Cursive")
 local utils = Cursive.utils
 local filter = Cursive.filter
 
-local ui = CreateFrame("Frame", nil, UIParent)
+local ui = CreateFrame("Frame", "CursiveUI", UIParent)
 
 ui.border = {
 	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -181,6 +181,12 @@ ui.BarUpdate = function()
 		return
 	end
 
+	if (this.tick or 1) > GetTime() then
+		return
+	else
+		this.tick = GetTime() + 0.05
+	end
+
 	-- update statusbar values if it exists
 	if this.healthBar then
 		this.healthBar:SetMinMaxValues(0, UnitHealthMax(this.guid))
@@ -260,7 +266,7 @@ end
 
 local function CreateBarFirstSection(unitFrame, guid)
 	local config = Cursive.db.profile
-	local firstSection = CreateFrame("Frame", nil, unitFrame)
+	local firstSection = CreateFrame("Frame", "Cursive1stSection", unitFrame)
 	firstSection:SetPoint("LEFT", unitFrame, "LEFT", 0, 0)
 	firstSection:SetWidth(GetBarFirstSectionWidth())
 	firstSection:SetHeight(config.height)
@@ -292,7 +298,7 @@ end
 
 local function CreateBarSecondSection(unitFrame, guid)
 	local config = Cursive.db.profile
-	local secondSection = CreateFrame("Button", nil, unitFrame)
+	local secondSection = CreateFrame("Button", "Cursive2ndSection", unitFrame)
 	secondSection:SetPoint("LEFT", unitFrame.firstSection, "RIGHT", 0, 0)
 	secondSection:SetWidth(GetBarSecondSectionWidth())
 	secondSection:SetHeight(config.height)
@@ -305,7 +311,7 @@ local function CreateBarSecondSection(unitFrame, guid)
 
 	-- create health bar
 	if config.showhealthbar then
-		local healthBar = CreateFrame("StatusBar", nil, secondSection)
+		local healthBar = CreateFrame("StatusBar", "CursiveHealthBar", secondSection)
 		healthBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 		healthBar:SetStatusBarColor(1, .8, .2, 1)
 		healthBar:SetMinMaxValues(0, 100)
@@ -346,7 +352,7 @@ local function CreateBarSecondSection(unitFrame, guid)
 			healthBar:SetBackdrop(ui.background)
 			healthBar:SetBackdropColor(0, 0, 0, 1)
 
-			local border = CreateFrame("Frame", nil, healthBar.bar)
+			local border = CreateFrame("Frame", "CursiveBorder", healthBar.bar)
 			border:SetBackdrop(ui.border)
 			border:SetBackdropColor(.2, .2, .2, 1)
 			border:SetPoint("TOPLEFT", healthBar.bar, "TOPLEFT", -2, 2)
@@ -370,7 +376,7 @@ end
 local function CreateBarThirdSection(unitFrame, guid)
 	local config = Cursive.db.profile
 
-	local thirdSection = CreateFrame("Frame", nil, unitFrame)
+	local thirdSection = CreateFrame("Frame", "Cursive3rdSection", unitFrame)
 	thirdSection:SetPoint("LEFT", unitFrame.secondSection, "RIGHT", 0, 0)
 	thirdSection:SetWidth(GetBarThirdSectionWidth())
 	thirdSection:SetHeight(config.height)
@@ -397,7 +403,7 @@ local function CreateBarThirdSection(unitFrame, guid)
 end
 
 local function CreateBar(row, col, guid)
-	local unitFrame = CreateFrame("Frame", nil, ui.rootBarFrame)
+	local unitFrame = CreateFrame("Frame", "CursiveUnitFrame", ui.rootBarFrame)
 	unitFrame.guid = guid
 
 	unitFrame:SetScript("OnUpdate", ui.BarUpdate)
@@ -420,6 +426,30 @@ local function GetBarCords(row, col)
 	local x = (col - 1) * GetBarWidth()
 	local y = row * (config.height + config.spacing) -- don't subtract 1 to account for header
 	return x, y
+end
+
+local function hasAnySpellId(guid, spellIds)
+	for i = 1, 16 do
+		local texture, stacks, spellSchool, spellId = UnitDebuff(guid, i);
+		if not spellId then
+			break
+		end
+		if spellIds[spellId] then
+			return spellId
+		end
+	end
+
+	for i = 1, 32 do
+		local texture, stacks, spellId = UnitBuff(guid, i);
+		if not spellId then
+			break
+		end
+		if spellIds[spellId] then
+			return spellId
+		end
+	end
+
+	return nil
 end
 
 local function GetSortedCurses(guidCurses)
@@ -476,6 +506,20 @@ local function DisplayGuid(guid)
 		unitFrame.pos = x .. -y
 	end
 
+	-- check for shared debuffs
+	for sharedDebuffKey, guids in pairs(Cursive.curses.sharedDebuffGuids) do
+		if guids[guid] then
+			local sharedDebuffSpellIds = Cursive.curses.sharedDebuffs[sharedDebuffKey]
+			local spellId = hasAnySpellId(guid, sharedDebuffSpellIds)
+			if spellId ~= nil then
+				-- add curse to curses
+				Cursive.curses:ApplySharedCurse(sharedDebuffKey, spellId, guid, GetTime())
+				-- remove guid
+				Cursive.curses.sharedDebuffGuids[sharedDebuffKey][guid] = nil
+			end
+		end
+	end
+
 	-- update curses
 	local curseNumber = 1
 
@@ -497,6 +541,13 @@ local function DisplayGuid(guid)
 			local curse = unitFrame["curse" .. curseNumber]
 			if remaining >= 0 then
 				curse:SetTexture(Cursive.curses.trackedCurseIds[curseData.spellID].texture)
+
+				if curseData["currentPlayer"] == false then
+					curse:SetDesaturated(true); -- desaturate if not applied by current player
+				else
+					curse:SetDesaturated(false); -- saturate if applied by current player
+				end
+
 				-- curse:SetTexCoord(.078, .92, .079, .937) rounded icons
 				curse.timer:SetText(remaining)
 				curse.timer:Show()
@@ -544,8 +595,19 @@ local function CheckForCleanup(guid, time)
 		Cursive.core.remove(guid)
 		-- remove from curses
 		Cursive.curses:RemoveGuid(guid)
+
+		-- remove from sharedDebuffGuids
+		for sharedDebuffKey, guids in pairs(Cursive.curses.sharedDebuffGuids) do
+			if guids[guid] then
+				Cursive.curses.sharedDebuffGuids[sharedDebuffKey][guid] = nil
+			end
+		end
 	end
 end
+
+
+local shouldDisplayGuids = {};
+local displayedGuids = {};
 
 ui:SetAllPoints()
 ui:SetScript("OnUpdate", function()
@@ -576,6 +638,16 @@ ui:SetScript("OnUpdate", function()
 	ui.maxBarsDisplayed = false
 	ui.numDisplayed = 0
 
+	-- clear shouldDisplayGuids
+	for guid, _ in pairs(shouldDisplayGuids) do
+		shouldDisplayGuids[guid] = nil
+	end
+
+	-- clear displayedGuids
+	for guid, _ in pairs(displayedGuids) do
+		displayedGuids[guid] = nil
+	end
+
 	-- run through all guids and fill with bars
 	local title_size = 12 + config.spacing
 
@@ -590,9 +662,6 @@ ui:SetScript("OnUpdate", function()
 	local numDisplayable = 0
 
 	local averageMaxHp = 0
-
-	local shouldDisplayGuids = {};
-	local displayedGuids = {};
 
 	local _, currentTargetGuid = UnitExists("target")
 
@@ -609,16 +678,16 @@ ui:SetScript("OnUpdate", function()
 				if ui.maxBarsDisplayed then
 					break
 				end
-			else
-				shouldDisplayGuids[guid] = false
 			end
+			-- don't try to display this guid again
+			shouldDisplayGuids[guid] = false
 		end
 	end
 
 	for guid, time in pairs(Cursive.core.guids) do
 		-- calculate shouldDisplay
 		local shouldDisplay = false
-		if not shouldDisplayGuids[guid] then
+		if shouldDisplayGuids[guid] == nil then
 			shouldDisplay = Cursive:ShouldDisplayGuid(guid)
 			shouldDisplayGuids[guid] = shouldDisplay
 
@@ -678,7 +747,7 @@ ui:SetScript("OnUpdate", function()
 			break
 		end
 
-		if not displayedGuids[guid] and shouldDisplayGuids[guid] then
+		if not displayedGuids[guid] and shouldDisplayGuids[guid] == true then
 			displayedGuids[guid] = true
 			DisplayGuid(guid)
 		end

@@ -1,10 +1,10 @@
 ## Interface: 11200
-## Title: [|CFF33AAFFSUPERWOW|R] Cursive
-## Title-zhCN: [|CFF33AAFFSUPERWOW|R] Cursive
+## Title: [|CFF33AAFFSUPERWOW|R] Cursive 1.3.0
+## Title-zhCN: [|CFF33AAFFSUPERWOW|R] Cursive 1.3.0
 ## Author: Pepopo
 ## Notes: Uses SuperWoW GUIDs to show units in combat and track curses
 ## Notes-zhCN: 使用SuperWoW的GUID功能来显示战斗中的单位并监视诅咒等
-## Version: 1.0
+## Version: 1.3.0
 ## SavedVariablesPerCharacter: CursiveDB
 ## X-Embeds: Ace2, FuBarPlugin-2.0, CompostLib, DewDropLib, TabletLib
 
@@ -28,6 +28,7 @@ global.lua
 utils.lua
 settings.lua
 core.lua
+spells\shared_debuffs.lua
 spells\druid.lua
 spells\hunter.lua
 spells\mage.lua

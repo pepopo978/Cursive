@@ -205,7 +205,7 @@ utils.GetLevelString = function(unitstr)
 	return level
 end
 
-utils.GetSpellNameNoRank = function(spellName)
+utils.GetLowercaseSpellNameNoRank = function(spellName)
 	return string.lower(string.gsub(spellName, "%([rR]ank %d%)", ""))
 end
 

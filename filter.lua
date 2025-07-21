@@ -98,44 +98,41 @@ function Cursive:ShouldDisplayGuid(guid)
 		return true
 	end
 
-	-- apply filters
-	local shouldDisplay = true -- default to true
-
-	if Cursive.db.profile.filterincombat then
-		shouldDisplay = shouldDisplay and filter.infight(guid)
+	if Cursive.db.profile.filterincombat and not filter.infight(guid) then
+		return false
 	end
 
-	if Cursive.db.profile.filterhascurse then
-		shouldDisplay = shouldDisplay and filter.hascurse(guid)
+	if Cursive.db.profile.filterhascurse and not filter.hascurse(guid) then
+		return false
 	end
 
-	if Cursive.db.profile.filterhostile then
-		shouldDisplay = shouldDisplay and filter.hostile(guid)
+	if Cursive.db.profile.filterhostile and not filter.hostile(guid) then
+		return false
 	end
 
-	if Cursive.db.profile.filterattackable then
-		shouldDisplay = shouldDisplay and filter.attackable(guid)
+	if Cursive.db.profile.filterattackable and not filter.attackable(guid) then
+		return false
 	end
 
-	if Cursive.db.profile.filterrange then
-		shouldDisplay = shouldDisplay and filter.range(guid)
+	if Cursive.db.profile.filterrange and not filter.range(guid) then
+		return false
 	end
 
-	if Cursive.db.profile.filterraidmark then
-		shouldDisplay = shouldDisplay and filter.icon(guid)
+	if Cursive.db.profile.filterraidmark and not filter.icon(guid) then
+		return false
 	end
 
-	if Cursive.db.profile.filterplayer then
-		shouldDisplay = shouldDisplay and filter.player(guid)
+	if Cursive.db.profile.filterplayer and not filter.player(guid) then
+		return false
 	end
 
-	if Cursive.db.profile.filternotplayer then
-		shouldDisplay = shouldDisplay and filter.notplayer(guid)
+	if Cursive.db.profile.filternotplayer and not filter.notplayer(guid) then
+		return false
 	end
 
-	if Cursive.db.profile.filterignored then
-		shouldDisplay = shouldDisplay and filter.notignored(guid)
+	if Cursive.db.profile.filterignored and not filter.notignored(guid) then
+		return false
 	end
 
-	return shouldDisplay
+	return true
 end

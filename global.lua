@@ -3,7 +3,7 @@ Cursive = AceLibrary("AceAddon-2.0"):new("AceEvent-2.0", "AceDebug-2.0", "AceMod
 Cursive.superwow = true
 
 if not GetPlayerBuffID or not CombatLogAdd or not SpellInfo then
-	local notify = CreateFrame("Frame", nil, UIParent)
+	local notify = CreateFrame("Frame", "CursiveNoSuperwow", UIParent)
 	notify:SetScript("OnUpdate", function()
 		DEFAULT_CHAT_FRAME:AddMessage(L["|cffffcc00Cursive:|cffffaaaa Couldn't detect SuperWoW."])
 		this:Hide()

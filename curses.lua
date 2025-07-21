@@ -53,7 +53,14 @@ local curses = {
 	pendingCast = {},
 	resistSoundGuids = {},
 	expiringSoundGuids = {},
-	requestedExpiringSoundGuids = {} -- guid added on spellcast, moved to expiringSoundGuids once rendered by ui
+	requestedExpiringSoundGuids = {}, -- guid added on spellcast, moved to expiringSoundGuids once rendered by ui
+
+	sharedDebuffs = {
+		faeriefire = {},
+	},
+	sharedDebuffGuids = {
+		faeriefire = {}, -- used for scanning for shared debuffs like faerie fire
+	}, -- used for scanning for shared debuffs like faerie fire
 }
 
 -- combat events for curses
@@ -73,22 +80,32 @@ function curses:LoadCurses()
 	curses.trackedCurseNamesToTextures = {}
 	curses.trackedCurseNameRanksToSpellSlots = {}
 
+	curses.isWarlock = playerClassName == "WARLOCK"
+	curses.isPriest = playerClassName == "PRIEST"
+	curses.isMage = playerClassName == "MAGE"
+	curses.isDruid = playerClassName == "DRUID"
+	curses.isHunter = playerClassName == "HUNTER"
+	curses.isRogue = playerClassName == "ROGUE"
+	curses.isShaman = playerClassName == "SHAMAN"
+	curses.isWarrior = playerClassName == "WARRIOR"
+
+
 	-- curses to track
-	if playerClassName == "WARLOCK" then
+	if curses.isWarlock then
 		curses.trackedCurseIds = getWarlockSpells()
-	elseif playerClassName == "PRIEST" then
+	elseif curses.isPriest then
 		curses.trackedCurseIds = getPriestSpells()
-	elseif playerClassName == "MAGE" then
+	elseif curses.isMage then
 		curses.trackedCurseIds = getMageSpells()
-	elseif playerClassName == "DRUID" then
+	elseif curses.isDruid then
 		curses.trackedCurseIds = getDruidSpells()
-	elseif playerClassName == "HUNTER" then
+	elseif curses.isHunter then
 		curses.trackedCurseIds = getHunterSpells()
-	elseif playerClassName == "ROGUE" then
+	elseif curses.isRogue then
 		curses.trackedCurseIds = getRogueSpells()
-	elseif playerClassName == "SHAMAN" then
+	elseif curses.isShaman then
 		curses.trackedCurseIds = getShamanSpells()
-	elseif playerClassName == "WARRIOR" then
+	elseif curses.isWarrior then
 		curses.trackedCurseIds = getWarriorSpells()
 	end
 	
@@ -101,6 +118,9 @@ function curses:LoadCurses()
 			}
 		end
 	end
+
+	-- load shared debuffs
+	curses.sharedDebuffs = getSharedDebuffs()
 
 	-- go through spell slots and
 	local i = 1
@@ -208,6 +228,10 @@ Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, 
 	if event == "CAST" then
 		local _, guid = UnitExists("player")
 		if casterGuid ~= guid and not curses.whitelistedDebuffIDs[spellID] then
+			-- check for faeriefire
+			if Cursive.db.profile.shareddebuffs.faeriefire and curses.sharedDebuffs.faeriefire[spellID] then
+				curses.sharedDebuffGuids.faeriefire[targetGuid] = GetTime()
+			end
 			return
 		end
 
@@ -404,31 +428,31 @@ function curses:EnableResistSound(guid)
 	curses.resistSoundGuids[guid] = true
 end
 
-function curses:EnableExpiringSound(spellNameNoRank, guid)
-	if curses.requestedExpiringSoundGuids[guid] and curses.requestedExpiringSoundGuids[guid][spellNameNoRank] then
-		curses.requestedExpiringSoundGuids[guid][spellNameNoRank] = nil
+function curses:EnableExpiringSound(lowercaseSpellNameNoRank, guid)
+	if curses.requestedExpiringSoundGuids[guid] and curses.requestedExpiringSoundGuids[guid][lowercaseSpellNameNoRank] then
+		curses.requestedExpiringSoundGuids[guid][lowercaseSpellNameNoRank] = nil
 	end
 
 	if not curses.expiringSoundGuids[guid] then
 		curses.expiringSoundGuids[guid] = {}
 	end
-	curses.expiringSoundGuids[guid][spellNameNoRank] = true
+	curses.expiringSoundGuids[guid][lowercaseSpellNameNoRank] = true
 end
 
-function curses:RequestExpiringSound(spellNameNoRank, guid)
+function curses:RequestExpiringSound(lowercaseSpellNameNoRank, guid)
 	if not curses.requestedExpiringSoundGuids[guid] then
 		curses.requestedExpiringSoundGuids[guid] = {}
 	end
-	curses.requestedExpiringSoundGuids[guid][spellNameNoRank] = true
+	curses.requestedExpiringSoundGuids[guid][lowercaseSpellNameNoRank] = true
 end
 
-function curses:HasRequestedExpiringSound(spellNameNoRank, guid)
-	return curses.requestedExpiringSoundGuids[guid] and curses.requestedExpiringSoundGuids[guid][spellNameNoRank]
+function curses:HasRequestedExpiringSound(lowercaseSpellNameNoRank, guid)
+	return curses.requestedExpiringSoundGuids[guid] and curses.requestedExpiringSoundGuids[guid][lowercaseSpellNameNoRank]
 end
 
-function curses:ShouldPlayExpiringSound(spellNameNoRank, guid)
-	if curses.expiringSoundGuids[guid] and curses.expiringSoundGuids[guid][spellNameNoRank] then
-		curses.expiringSoundGuids[guid][spellNameNoRank] = nil -- remove entry to avoid playing sound multiple times
+function curses:ShouldPlayExpiringSound(lowercaseSpellNameNoRank, guid)
+	if curses.expiringSoundGuids[guid] and curses.expiringSoundGuids[guid][lowercaseSpellNameNoRank] then
+		curses.expiringSoundGuids[guid][lowercaseSpellNameNoRank] = nil -- remove entry to avoid playing sound multiple times
 		return true
 	end
 
@@ -451,13 +475,30 @@ function curses:HasAnyCurse(guid)
 	return nil
 end
 
-function curses:HasCurse(spellName, targetGuid, minRemaining)
+function curses:GetCurseData(spellName, guid)
+	-- convert to lowercase and remove rank
+	local lowercaseSpellNameNoRank = Cursive.utils.GetLowercaseSpellNameNoRank(spellName)
+
+	if curses.guids[guid] and curses.guids[guid][lowercaseSpellNameNoRank] then
+		return curses.guids[guid][lowercaseSpellNameNoRank]
+	end
+
+	return nil
+end
+
+function curses:HasCurse(lowercaseSpellNameNoRank, targetGuid, minRemaining)
 	if not minRemaining then
 		minRemaining = 0 -- default to 0
 	end
 
-	if curses.guids[targetGuid] and curses.guids[targetGuid][spellName] then
-		local remaining = Cursive.curses:TimeRemaining(curses.guids[targetGuid][spellName])
+	-- handle faerie fire special case
+	if curses.isDruid and string.find(lowercaseSpellNameNoRank, L["faerie fire"]) then
+		-- remove (feral) or (bear) from spell name
+		lowercaseSpellNameNoRank = L["faerie fire"]
+	end
+
+	if curses.guids[targetGuid] and curses.guids[targetGuid][lowercaseSpellNameNoRank] then
+		local remaining = Cursive.curses:TimeRemaining(curses.guids[targetGuid][lowercaseSpellNameNoRank])
 		if remaining > minRemaining then
 			return true
 		end
@@ -468,13 +509,34 @@ function curses:HasCurse(spellName, targetGuid, minRemaining)
 			curses.pendingCast.targetGuid == targetGuid and
 			curses.pendingCast.spellID and
 			curses.trackedCurseIds[curses.pendingCast.spellID] and
-			curses.trackedCurseIds[curses.pendingCast.spellID].name == spellName then
+			curses.trackedCurseIds[curses.pendingCast.spellID].name == lowercaseSpellNameNoRank then
 		return true
 	end
 
 	return nil
 end
 
+-- Apply shared curse from another player
+function curses:ApplySharedCurse(sharedDebuffKey, spellID, targetGuid, startTime)
+	local name = curses.sharedDebuffs[sharedDebuffKey][spellID].name
+	local rank = curses.sharedDebuffs[sharedDebuffKey][spellID].rank
+	local duration = curses.sharedDebuffs[sharedDebuffKey][spellID].duration
+
+	if not curses.guids[targetGuid] then
+		curses.guids[targetGuid] = {}
+	end
+
+	curses.guids[targetGuid][name] = {
+		rank = rank,
+		duration = duration,
+		start = startTime,
+		spellID = spellID,
+		targetGuid = targetGuid,
+		currentPlayer = false,
+	}
+end
+
+-- Apply curse from player
 function curses:ApplyCurse(spellID, targetGuid, startTime)
 	-- clear pending cast
 	curses.pendingCast = {}
@@ -492,7 +554,8 @@ function curses:ApplyCurse(spellID, targetGuid, startTime)
 		duration = duration,
 		start = startTime,
 		spellID = spellID,
-		targetGuid = targetGuid
+		targetGuid = targetGuid,
+		currentPlayer = true,
 	}
 end
 
