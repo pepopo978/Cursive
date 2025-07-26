@@ -312,7 +312,7 @@ local function CreateBarSecondSection(unitFrame, guid)
 	-- create health bar
 	if config.showhealthbar then
 		local healthBar = CreateFrame("StatusBar", "CursiveHealthBar", secondSection)
-		healthBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
+		healthBar:SetStatusBarTexture(config.bartexture)
 		healthBar:SetStatusBarColor(1, .8, .2, 1)
 		healthBar:SetMinMaxValues(0, 100)
 		healthBar:SetValue(20)
