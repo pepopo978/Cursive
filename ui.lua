@@ -159,6 +159,11 @@ Cursive.UpdateFramesFromConfig = function()
 	end
 end
 
+Cursive.ResetUnitFrames = function()
+	-- clear cached frames so they are recreated
+	ui.unitFrames = {}
+end
+
 ui.BarEnter = function()
 	if this.parent.healthBar then
 		this.parent.healthBar.border:SetBackdropBorderColor(1, 1, 1, 1)
@@ -598,7 +603,6 @@ local function CheckForCleanup(guid, time)
 		end
 	end
 end
-
 
 local shouldDisplayGuids = {};
 local displayedGuids = {};
