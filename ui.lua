@@ -159,6 +159,11 @@ Cursive.UpdateFramesFromConfig = function()
 	end
 end
 
+Cursive.ResetUnitFrames = function()
+	-- clear cached frames so they are recreated
+	ui.unitFrames = {}
+end
+
 ui.BarEnter = function()
 	if this.parent.healthBar then
 		this.parent.healthBar.border:SetBackdropBorderColor(1, 1, 1, 1)
@@ -312,7 +317,7 @@ local function CreateBarSecondSection(unitFrame, guid)
 	-- create health bar
 	if config.showhealthbar then
 		local healthBar = CreateFrame("StatusBar", "CursiveHealthBar", secondSection)
-		healthBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
+		healthBar:SetStatusBarTexture(config.bartexture)
 		healthBar:SetStatusBarColor(1, .8, .2, 1)
 		healthBar:SetMinMaxValues(0, 100)
 		healthBar:SetValue(20)
@@ -598,7 +603,6 @@ local function CheckForCleanup(guid, time)
 		end
 	end
 end
-
 
 local shouldDisplayGuids = {};
 local displayedGuids = {};

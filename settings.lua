@@ -29,6 +29,8 @@ Cursive:RegisterDefaults("profile", {
 	scale = 1,
 	healthwidth = 100,
 	height = 16,
+	bartexture = "Interface\\TargetingFrame\\UI-StatusBar",
+
 	raidiconsize = 16,
 	curseiconsize = 16,
 	maxcurses = 5,
@@ -162,6 +164,23 @@ local barOptions = {
 			if v ~= Cursive.db.profile.height then
 				Cursive.db.profile.height = v
 				Cursive.UpdateFramesFromConfig()
+			end
+		end,
+	},
+	["bartexture"] = {
+		type = "text",
+		name = L["Health Bar Texture"],
+		desc = L["Health Bar Texture Desc"],
+		order = 55,
+		usage = "Interface\\TargetingFrame\\UI-StatusBar",
+		get = function()
+			return Cursive.db.profile.bartexture
+		end,
+		set = function(v)
+			if v ~= Cursive.db.profile.bartexture then
+				Cursive.db.profile.bartexture = v
+				Cursive.UpdateFramesFromConfig()
+				Cursive.ResetUnitFrames()
 			end
 		end,
 	},
