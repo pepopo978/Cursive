@@ -170,9 +170,9 @@ local barOptions = {
 	["bartexture"] = {
 		type = "text",
 		name = L["Health Bar Texture"],
-		desc = L["Health Bar Texture"],
+		desc = L["Health Bar Texture Desc"],
 		order = 55,
-		usage = "Interface\\AddOns\\pfUI\\img\\bar_tukui",
+		usage = "Interface\\TargetingFrame\\UI-StatusBar",
 		get = function()
 			return Cursive.db.profile.bartexture
 		end,
@@ -180,6 +180,7 @@ local barOptions = {
 			if v ~= Cursive.db.profile.bartexture then
 				Cursive.db.profile.bartexture = v
 				Cursive.UpdateFramesFromConfig()
+				Cursive.ResetUnitFrames()
 			end
 		end,
 	},
