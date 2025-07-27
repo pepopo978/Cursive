@@ -172,6 +172,7 @@ local barOptions = {
 		name = L["Health Bar Texture"],
 		desc = L["Health Bar Texture"],
 		order = 55,
+		usage = "Interface\\AddOns\\pfUI\\img\\bar_tukui",
 		get = function()
 			return Cursive.db.profile.bartexture
 		end,
