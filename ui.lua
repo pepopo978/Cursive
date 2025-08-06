@@ -157,9 +157,20 @@ Cursive.UpdateFramesFromConfig = function()
 	if ui.rootBarFrame then
 		UpdateRootBarFrame()
 	end
+
+	-- after 3 seconds reset the unit frames so all changes are applied
+	Cursive:ScheduleEvent("resetUnitFrames", Cursive.ResetUnitFrames, 3)
 end
 
 Cursive.ResetUnitFrames = function()
+	-- hide all existing unit frames
+	for col, rows in pairs(ui.unitFrames) do
+		for row, unitFrame in pairs(rows) do
+			if unitFrame and unitFrame:IsShown() then
+				unitFrame:Hide()
+			end
+		end
+	end
 	-- clear cached frames so they are recreated
 	ui.unitFrames = {}
 end

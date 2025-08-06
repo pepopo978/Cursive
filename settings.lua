@@ -180,7 +180,6 @@ local barOptions = {
 			if v ~= Cursive.db.profile.bartexture then
 				Cursive.db.profile.bartexture = v
 				Cursive.UpdateFramesFromConfig()
-				Cursive.ResetUnitFrames()
 			end
 		end,
 	},
