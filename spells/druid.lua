@@ -75,5 +75,9 @@ function getDruidSpells()
 		[9898] = { name = L["demoralizing roar"], rank = 5, duration = 30 },
 
 		[5209] = { name = L["challenging roar"], rank = 1, duration = 6 },
+
+		[9005] = { name = L["pounce bleed"], rank = 1, duration = 18 },
+		[9823] = { name = L["pounce bleed"], rank = 2, duration = 18 },
+		[9827] = { name = L["pounce bleed"], rank = 3, duration = 18 },
 	}
 end

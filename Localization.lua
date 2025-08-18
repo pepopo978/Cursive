@@ -128,6 +128,8 @@ L:RegisterTranslations("enUS", function()
 		["Maim"] = true,
 		["demoralizing roar"] = true,
 		["challenging roar"] = true,
+		["ferocious bite"] = true,
+		["pounce bleed"] = true,
 
 		-- hunter
 		["scorpid sting"] = true,
@@ -330,6 +332,8 @@ L:RegisterTranslations("zhCN", function()
 		["Maim"] = "致残",
 		["demoralizing roar"] = "挫志咆哮",
 		["challenging roar"] = "挑战咆哮",
+		["ferocious bite"] = "凶猛撕咬",
+		["pounce bleed"] = "突袭流血",
 
 		-- hunter
 		["scorpid sting"] = "毒蝎钉刺",
@@ -367,7 +371,7 @@ L:RegisterTranslations("zhCN", function()
 		["gouge"] = "凿击",
 		["rupture"] = "割裂", -- no idea if right
 		["kidney shot"] = "肾击", -- no idea if right
-		["expose armor"] =   "破甲", -- no idea if right
+		["expose armor"] = "破甲", -- no idea if right
 		["garrote"] = "锁喉", -- no idea if right
 		["deadly poison"] = "致命毒药", -- no idea if right
 		["deadly poison II"] = "致命毒药 II",
