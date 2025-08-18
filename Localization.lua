@@ -41,6 +41,7 @@ L:RegisterTranslations("enUS", function()
 		["Your (.+) fail.+\. (.+) is immune"] = true,
 		["Your (.+) was blocked by (.+)"] = true,
 		["Your (.+) was dodged by (.+)"] = true,
+		["Your Molten Blast(.+)for .+ Fire damage"] = true,
 
 		-- global
 		["|cffffcc00Cursive:|cffffaaaa Couldn't detect SuperWoW."] = true,
@@ -178,6 +179,7 @@ L:RegisterTranslations("enUS", function()
 
 		-- shaman
 		["flame shock"] = true,
+		["molten blast"] = true,
 
 		-- warlock
 		["conflagrate"] = true,
@@ -249,6 +251,7 @@ L:RegisterTranslations("zhCN", function()
 		["Your (.+) was dodged by (.+)"] = "你的(.+)被(.+)躲闪过去了",
 		["Your (.+) was blocked by (.+)"] = "你的(.+)被(.+)格挡了",
 		["Your (.+) fail.+\. (.+) is immune"] = "你的(.+)施放失败。(.+)对此免疫",
+		["Your Molten Blast(.+)for .+ Fire damage"] = "你的熔岩爆裂(.+)造成了.+点火焰伤害",
 
 		-- global
 		["|cffffcc00Cursive:|cffffaaaa Couldn't detect SuperWoW."] = "|cffffcc00Cursive:|cffffaaaa 无法检测到SuperWoW.",
@@ -382,6 +385,7 @@ L:RegisterTranslations("zhCN", function()
 
 		-- shaman
 		["flame shock"] = "烈焰震击", -- no idea if right
+		["molten blast"] = "熔岩爆裂", -- no idea if right
 
 		-- warlock
 		["conflagrate"] = "引燃", -- no idea if right

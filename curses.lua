@@ -30,6 +30,7 @@ local curses = {
 	lastComboPoints = 0,
 	lastCastSpellId = 0,
 	lastCastTargetGuid = 0,
+	lastMoltenBlastTargetGuid = 0,
 
 	sharedDebuffs = {
 		faeriefire = {},
@@ -47,6 +48,8 @@ local parry_test = L["Your (.+) is parried by (.+)"]
 local immune_test = L["Your (.+) fail.+\. (.+) is immune"]
 local block_test = L["Your (.+) was blocked by (.+)"]
 local dodge_test = L["Your (.+) was dodged by (.+)"]
+
+local molten_blast_test = L["Your Molten Blast(.+)for .+ Fire damage"]
 
 local lastGuid = nil
 
@@ -241,6 +244,10 @@ Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, 
 		curses.lastCastSpellId = spellID
 		curses.lastCastTargetGuid = targetGuid
 
+		if spellID >= 36916 and spellID <= 36921 then
+			curses.lastMoltenBlastTargetGuid = targetGuid
+		end
+
 		if curses.trackedCurseIds[spellID] then
 			lastGuid = targetGuid
 			local duration = curses:GetCurseDuration(spellID) - 0.2
@@ -307,17 +314,17 @@ Cursive:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE",
 				}
 			end
 
-			local spellName, target
+			local spellName, failedTarget
 			for _, test in pairs(spell_failed_tests) do
 				local _, _, foundSpell, foundTarget = string.find(message, test)
 				if foundSpell and foundTarget then
 					spellName = foundSpell
-					target = foundTarget
+					failedTarget = foundTarget
 					break
 				end
 			end
 
-			if spellName and target then
+			if spellName and failedTarget then
 				spellName = string.lower(spellName)
 
 				-- clear pending cast
@@ -331,6 +338,14 @@ Cursive:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE",
 					end
 				elseif spellName == L["conflagrate"] and lastGuid then
 					Cursive:CancelScheduledEvent("updateCurse" .. lastGuid .. spellName)
+				end
+				return
+			end
+
+			if curses.isShaman and string.find(message, molten_blast_test) then
+				local flame_shock = L["flame shock"]
+				if curses:HasCurse(flame_shock, curses.lastMoltenBlastTargetGuid, 0) then
+					curses.guids[curses.lastMoltenBlastTargetGuid][flame_shock]["start"] = GetTime() -- reset start time to current time
 				end
 			end
 		end
@@ -499,7 +514,7 @@ function curses:HasCurse(lowercaseSpellNameNoRank, targetGuid, minRemaining)
 
 	if curses.guids[targetGuid] and curses.guids[targetGuid][lowercaseSpellNameNoRank] then
 		local remaining = Cursive.curses:TimeRemaining(curses.guids[targetGuid][lowercaseSpellNameNoRank])
-		if remaining > minRemaining then
+		if remaining >= minRemaining then
 			return true
 		end
 	end
