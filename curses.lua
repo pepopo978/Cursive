@@ -27,6 +27,9 @@ local curses = {
 	resistSoundGuids = {},
 	expiringSoundGuids = {},
 	requestedExpiringSoundGuids = {}, -- guid added on spellcast, moved to expiringSoundGuids once rendered by ui
+	lastComboPoints = 0,
+	lastCastSpellId = 0,
+	lastCastTargetGuid = 0,
 
 	sharedDebuffs = {
 		faeriefire = {},
@@ -61,7 +64,6 @@ function curses:LoadCurses()
 	curses.isRogue = playerClassName == "ROGUE"
 	curses.isShaman = playerClassName == "SHAMAN"
 	curses.isWarrior = playerClassName == "WARRIOR"
-
 
 	-- curses to track
 	if curses.isWarlock then
@@ -108,6 +110,35 @@ function curses:LoadCurses()
 		curses.trackedCurseNamesToTextures[data.name] = texture
 		-- update trackedCurseIds
 		curses.trackedCurseIds[id].texture = texture
+	end
+
+	if curses.isDruid then
+		Cursive:RegisterEvent("PLAYER_COMBO_POINTS", function()
+			local currentComboPoints = GetComboPoints()
+			if currentComboPoints > curses.lastComboPoints then
+				-- combo points increased, check if last spell was Ferocious Bite
+				if curses.lastCastSpellId == 22557 or
+						curses.lastCastSpellId == 22568 or
+						curses.lastCastSpellId == 22827 or
+						curses.lastCastSpellId == 22828 or
+						curses.lastCastSpellId == 22829 or
+						curses.lastCastSpellId == 31018 then
+
+					-- check if Rip active
+					local rip = L["rip"]
+					if curses:HasCurse(rip, curses.lastCastTargetGuid, 0) then
+						curses.guids[curses.lastCastTargetGuid][rip]["start"] = GetTime() -- reset start time to current time
+					end
+
+					-- check if Rake active
+					local rake = L["rake"]
+					if curses:HasCurse(rake, curses.lastCastTargetGuid, 0) then
+						curses.guids[curses.lastCastTargetGuid][rake]["start"] = GetTime() -- reset start time to current time
+					end
+				end
+			end
+			curses.lastComboPoints = currentComboPoints
+		end)
 	end
 end
 
@@ -206,6 +237,9 @@ Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, 
 			targetGuid = targetGuid,
 			castDuration = castDuration
 		}
+
+		curses.lastCastSpellId = spellID
+		curses.lastCastTargetGuid = targetGuid
 
 		if curses.trackedCurseIds[spellID] then
 			lastGuid = targetGuid
