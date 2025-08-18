@@ -1,3 +1,21 @@
+function getGougeDuration()
+	-- Improved Gouge: +.5s per talent
+	local _, _, _, _, count = GetTalentInfo(2, 1)
+	if count and count > 0 then
+		return 4 + (count * .5)
+	end
+
+	return 4
+end
+
+function getRuptureDuration()
+	return 6 + GetComboPoints() * 2
+end
+
+function getKidneyShotDuration()
+	return 1 + GetComboPoints()
+end
+
 local L = AceLibrary("AceLocale-2.2"):new("Cursive")
 function getRogueSpells()
 	return {
@@ -8,11 +26,21 @@ function getRogueSpells()
 		[2070] = { name = L["sap"], rank = 2, duration = 35 },
 		[11297] = { name = L["sap"], rank = 3, duration = 45 },
 
-		[1776] = { name = L["gouge"], rank = 1, duration = 4 },
-		[1777] = { name = L["gouge"], rank = 2, duration = 4 },
-		[8629] = { name = L["gouge"], rank = 3, duration = 4 },
-		[11285] = { name = L["gouge"], rank = 4, duration = 4 },
-		[11286] = { name = L["gouge"], rank = 5, duration = 4 },
+		[1776] = { name = L["gouge"], rank = 1, duration = 4, calculateDuration = getGougeDuration },
+		[1777] = { name = L["gouge"], rank = 2, duration = 4, calculateDuration = getGougeDuration },
+		[8629] = { name = L["gouge"], rank = 3, duration = 4, calculateDuration = getGougeDuration },
+		[11285] = { name = L["gouge"], rank = 4, duration = 4, calculateDuration = getGougeDuration },
+		[11286] = { name = L["gouge"], rank = 5, duration = 4, calculateDuration = getGougeDuration },
+
+		[1943] = { name = L["rupture"], rank = 1, duration = 6, calculateDuration = getRuptureDuration },
+		[8639] = { name = L["rupture"], rank = 2, duration = 6, calculateDuration = getRuptureDuration },
+		[8640] = { name = L["rupture"], rank = 3, duration = 6, calculateDuration = getRuptureDuration },
+		[11273] = { name = L["rupture"], rank = 4, duration = 6, calculateDuration = getRuptureDuration },
+		[11274] = { name = L["rupture"], rank = 5, duration = 6, calculateDuration = getRuptureDuration },
+		[11275] = { name = L["rupture"], rank = 6, duration = 6, calculateDuration = getRuptureDuration },
+
+		[408] = { name = L["kidney shot"], rank = 1, duration = 1, calculateDuration = getKidneyShotDuration },
+		[8643] = { name = L["kidney shot"], rank = 2, duration = 1, calculateDuration = getKidneyShotDuration },
 
 		[8647] = { name = L["expose armor"], rank = 1, duration = 30 }, -- this is a shared debuff but almost always only done by 1 rogue
 		[8649] = { name = L["expose armor"], rank = 2, duration = 30 },

@@ -139,6 +139,8 @@ end
 function curses:GetCurseDuration(curseSpellID)
 	if curses.trackedCurseIds[curseSpellID].variableDuration then
 		return curses:ScanTooltipForDuration(curseSpellID)
+	elseif curses.trackedCurseIds[curseSpellID].calculateDuration then
+		return curses.trackedCurseIds[curseSpellID].calculateDuration()
 	end
 
 	return curses.trackedCurseIds[curseSpellID].duration
@@ -207,7 +209,8 @@ Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, 
 
 		if curses.trackedCurseIds[spellID] then
 			lastGuid = targetGuid
-			Cursive:ScheduleEvent("addCurse" .. targetGuid .. curses.trackedCurseIds[spellID].name, curses.ApplyCurse, 0.2, self, spellID, targetGuid, GetTime())
+			local duration = curses:GetCurseDuration(spellID) - 0.2
+			Cursive:ScheduleEvent("addCurse" .. targetGuid .. curses.trackedCurseIds[spellID].name, curses.ApplyCurse, 0.2, self, spellID, targetGuid, GetTime(), duration)
 		elseif curses.conflagrateSpellIds[spellID] then
 			Cursive:ScheduleEvent("updateCurse" .. targetGuid .. L["conflagrate"], curses.UpdateCurse, 0.2, self, spellID, targetGuid, GetTime())
 		end
@@ -500,13 +503,12 @@ function curses:ApplySharedCurse(sharedDebuffKey, spellID, targetGuid, startTime
 end
 
 -- Apply curse from player
-function curses:ApplyCurse(spellID, targetGuid, startTime)
+function curses:ApplyCurse(spellID, targetGuid, startTime, duration)
 	-- clear pending cast
 	curses.pendingCast = {}
 
 	local name = curses.trackedCurseIds[spellID].name
 	local rank = curses.trackedCurseIds[spellID].rank
-	local duration = curses:GetCurseDuration(spellID)
 
 	if not curses.guids[targetGuid] then
 		curses.guids[targetGuid] = {}

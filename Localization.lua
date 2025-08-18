@@ -163,6 +163,8 @@ L:RegisterTranslations("enUS", function()
 		["blind"] = true,
 		["sap"] = true,
 		["gouge"] = true,
+		["rupture"] = true,
+		["kidney shot"] = true,
 		["expose armor"] = true,
 		["garrote"] = true,
 		["deadly poison"] = true,
@@ -363,7 +365,9 @@ L:RegisterTranslations("zhCN", function()
 		["blind"] = "致盲",
 		["sap"] = "闷棍",
 		["gouge"] = "凿击",
-		["expose armor"] = "破甲", -- no idea if right
+		["rupture"] = "割裂", -- no idea if right
+		["kidney shot"] = "肾击", -- no idea if right
+		["expose armor"] =   "破甲", -- no idea if right
 		["garrote"] = "锁喉", -- no idea if right
 		["deadly poison"] = "致命毒药", -- no idea if right
 		["deadly poison II"] = "致命毒药 II",
