@@ -325,9 +325,8 @@ Cursive:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE",
 			end
 
 			if spellName and failedTarget then
-				spellName = string.lower(spellName)
+				spellName = curses:GetLowercaseSpellName(spellName)
 
-				-- clear pending cast
 				curses.pendingCast = {}
 
 				if curses.trackedCurseNamesToTextures[spellName] and lastGuid then
@@ -355,7 +354,7 @@ Cursive:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER", function(message)
 	-- check if spell that faded is relevant
 	local _, _, spellName, target = string.find(message, fades_test)
 	if spellName and target then
-		spellName = string.lower(spellName)
+		spellName = curses:GetLowercaseSpellName(spellName)
 		if curses.trackedCurseNamesToTextures[spellName] then
 			-- loop through targets with active curses
 			for guid, data in pairs(curses.guids) do
@@ -373,6 +372,17 @@ Cursive:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER", function(message)
 	end
 end
 )
+
+function curses:GetLowercaseSpellName(spellName)
+	spellName = string.lower(spellName)
+
+	-- handle faerie fire special case
+	if curses.isDruid and string.find(spellName, L["faerie fire"]) then
+		return L["faerie fire"]
+	end
+
+	return spellName
+end
 
 function curses:GetLastTickTime(curseData)
 	local ticks = curses.trackedCurseIds[curseData.spellID].numTicks
