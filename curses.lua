@@ -205,6 +205,17 @@ function curses:ScanGuidForCurse(guid, curseSpellID)
 	return nil
 end
 
+function curses:GetLowercaseSpellName(spellName)
+	spellName = string.lower(spellName)
+
+	-- handle faerie fire special case
+	if curses.isDruid and string.find(spellName, L["faerie fire"]) then
+		return L["faerie fire"]
+	end
+
+	return spellName
+end
+
 Cursive:RegisterEvent("LEARNED_SPELL_IN_TAB", function()
 	-- reload curses in case spell slots changed
 	curses:LoadCurses()
@@ -372,17 +383,6 @@ Cursive:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER", function(message)
 	end
 end
 )
-
-function curses:GetLowercaseSpellName(spellName)
-	spellName = string.lower(spellName)
-
-	-- handle faerie fire special case
-	if curses.isDruid and string.find(spellName, L["faerie fire"]) then
-		return L["faerie fire"]
-	end
-
-	return spellName
-end
 
 function curses:GetLastTickTime(curseData)
 	local ticks = curses.trackedCurseIds[curseData.spellID].numTicks
