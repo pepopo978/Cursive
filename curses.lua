@@ -28,8 +28,8 @@ local curses = {
 	expiringSoundGuids = {},
 	requestedExpiringSoundGuids = {}, -- guid added on spellcast, moved to expiringSoundGuids once rendered by ui
 	lastComboPoints = 0,
-	lastCastSpellId = 0,
-	lastCastTargetGuid = 0,
+	lastFerociousBiteTime = 0,
+	lastFerociousBiteTargetGuid = 0,
 	lastMoltenBlastTargetGuid = 0,
 
 	sharedDebuffs = {
@@ -119,24 +119,21 @@ function curses:LoadCurses()
 		Cursive:RegisterEvent("PLAYER_COMBO_POINTS", function()
 			local currentComboPoints = GetComboPoints()
 			if currentComboPoints > curses.lastComboPoints then
-				-- combo points increased, check if last spell was Ferocious Bite
-				if curses.lastCastSpellId == 22557 or
-						curses.lastCastSpellId == 22568 or
-						curses.lastCastSpellId == 22827 or
-						curses.lastCastSpellId == 22828 or
-						curses.lastCastSpellId == 22829 or
-						curses.lastCastSpellId == 31018 then
+				-- combo points did not decrease, check if Ferocious Bite was used is the last .5 sec
+				if GetTime() - curses.lastFerociousBiteTime < 0.5 and
+						curses.lastFerociousBiteTargetGuid and
+						curses.lastFerociousBiteTargetGuid ~= 0 then
 
 					-- check if Rip active
 					local rip = L["rip"]
-					if curses:HasCurse(rip, curses.lastCastTargetGuid, 0) then
-						curses.guids[curses.lastCastTargetGuid][rip]["start"] = GetTime() -- reset start time to current time
+					if curses:HasCurse(rip, curses.lastFerociousBiteTargetGuid, 0) then
+						curses.guids[curses.lastFerociousBiteTargetGuid][rip]["start"] = GetTime() -- reset start time to current time
 					end
 
 					-- check if Rake active
 					local rake = L["rake"]
-					if curses:HasCurse(rake, curses.lastCastTargetGuid, 0) then
-						curses.guids[curses.lastCastTargetGuid][rake]["start"] = GetTime() -- reset start time to current time
+					if curses:HasCurse(rake, curses.lastFerociousBiteTargetGuid, 0) then
+						curses.guids[curses.lastFerociousBiteTargetGuid][rake]["start"] = GetTime() -- reset start time to current time
 					end
 				end
 			end
@@ -252,8 +249,16 @@ Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, 
 			castDuration = castDuration
 		}
 
-		curses.lastCastSpellId = spellID
-		curses.lastCastTargetGuid = targetGuid
+		-- track ferocious bite cast time and target
+		if spellID == 22557 or
+				spellID == 22568 or
+				spellID == 22827 or
+				spellID == 22828 or
+				spellID == 22829 or
+				spellID == 31018 then
+			curses.lastFerociousBiteTime = GetTime()
+			curses.lastFerociousBiteTargetGuid = targetGuid
+		end
 
 		if spellID >= 36916 and spellID <= 36921 then
 			curses.lastMoltenBlastTargetGuid = targetGuid
