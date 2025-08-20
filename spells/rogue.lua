@@ -62,5 +62,8 @@ function getRogueSpells()
 		[25349] = { name = L["deadly poison V"], rank = 5, duration = 12 },
 
 		[16511] = { name = L["hemorrhage"], rank = 1, duration = 15 },
+
+		[1833] = { name = L["cheap shot"], rank = 1, duration = 4 },
+		[14902] = { name = L["cheap shot"], rank = 1, duration = 4 },
 	}
 end
