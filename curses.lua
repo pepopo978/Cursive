@@ -249,19 +249,23 @@ Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, 
 			castDuration = castDuration
 		}
 
-		-- track ferocious bite cast time and target
-		if spellID == 22557 or
-				spellID == 22568 or
-				spellID == 22827 or
-				spellID == 22828 or
-				spellID == 22829 or
-				spellID == 31018 then
-			curses.lastFerociousBiteTime = GetTime()
-			curses.lastFerociousBiteTargetGuid = targetGuid
+		if curses.isDruid then
+			-- track ferocious bite cast time and target
+			if spellID == 22557 or
+					spellID == 22568 or
+					spellID == 22827 or
+					spellID == 22828 or
+					spellID == 22829 or
+					spellID == 31018 then
+				curses.lastFerociousBiteTime = GetTime()
+				curses.lastFerociousBiteTargetGuid = targetGuid
+			end
 		end
 
-		if spellID >= 36916 and spellID <= 36921 then
-			curses.lastMoltenBlastTargetGuid = targetGuid
+		if curses.isShaman then
+			if spellID >= 36916 and spellID <= 36921 then
+				curses.lastMoltenBlastTargetGuid = targetGuid
+			end
 		end
 
 		if curses.trackedCurseIds[spellID] then
