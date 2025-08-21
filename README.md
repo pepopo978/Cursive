@@ -139,6 +139,9 @@ Currently only Faerie Fire is supported as I felt it warranted special handling.
 
 Cursive data can be accessed in other addons 
 
+You can check if curse is active with
+`Cursive.curses:HasCurse(lowercaseSpellNameNoRank, targetGuid, minRemaining)`
+
 You can get raw curse data using 
 `Cursive.curses:GetCurseData(spellName, guid)`
 
