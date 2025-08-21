@@ -9,7 +9,14 @@ function getGougeDuration()
 end
 
 function getRuptureDuration()
-	return 6 + GetComboPoints() * 2
+	local duration = 6 + GetComboPoints() * 2
+
+	local _, _, _, _, count = GetTalentInfo(1, 10)
+	if count and count > 0 then
+		return duration + (count * 2)
+	end
+
+	return duration
 end
 
 function getKidneyShotDuration()
