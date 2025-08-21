@@ -142,6 +142,18 @@ Cursive data can be accessed in other addons
 You can get raw curse data using 
 `Cursive.curses:GetCurseData(spellName, guid)`
 
+Curse data is a table with the following structure:
+```
+{
+		rank = int,
+		duration = float,
+		start = float,
+		spellID = int,
+		targetGuid = int,
+		currentPlayer = bool,
+}
+```
+
 Here's an example that gets the time left on Corruption on the current target:
 ```
 /run _, guid = UnitExists("target"); local data = Cursive.curses:GetCurseData("Corruption", guid); print(Cursive.curses:TimeRemaining(data))
