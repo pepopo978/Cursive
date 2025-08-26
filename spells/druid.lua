@@ -1,3 +1,7 @@
+function getRipDuration()
+	return 8 + GetComboPoints() * 2
+end
+
 local L = AceLibrary("AceLocale-2.2"):new("Cursive")
 function getDruidSpells()
 	return {
@@ -53,12 +57,12 @@ function getDruidSpells()
 		[1824] = { name = L["rake"], rank = 3, duration = 9, variableDuration = true },
 		[9904] = { name = L["rake"], rank = 4, duration = 9, variableDuration = true },
 
-		[1079] = { name = L["rip"], rank = 1, duration = 12, variableDuration = true },
-		[9492] = { name = L["rip"], rank = 2, duration = 12, variableDuration = true },
-		[9493] = { name = L["rip"], rank = 3, duration = 12, variableDuration = true },
-		[9752] = { name = L["rip"], rank = 4, duration = 12, variableDuration = true },
-		[9894] = { name = L["rip"], rank = 5, duration = 12, variableDuration = true },
-		[9896] = { name = L["rip"], rank = 6, duration = 12, variableDuration = true },
+		[1079] = { name = L["rip"], rank = 1, duration = 8, calculateDuration = getRipDuration },
+		[9492] = { name = L["rip"], rank = 2, duration = 8, calculateDuration = getRipDuration },
+		[9493] = { name = L["rip"], rank = 3, duration = 8, calculateDuration = getRipDuration },
+		[9752] = { name = L["rip"], rank = 4, duration = 8, calculateDuration = getRipDuration },
+		[9894] = { name = L["rip"], rank = 5, duration = 8, calculateDuration = getRipDuration },
+		[9896] = { name = L["rip"], rank = 6, duration = 8, calculateDuration = getRipDuration },
 
 		[2908] = { name = L["soothe animal"], rank = 1, duration = 15 },
 		[8955] = { name = L["soothe animal"], rank = 2, duration = 15 },

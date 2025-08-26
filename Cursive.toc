@@ -1,6 +1,6 @@
 ## Interface: 11200
-## Title: [|CFF33AAFFSUPERWOW|R] Cursive 2.4.7
-## Title-zhCN: [|CFF33AAFFSUPERWOW|R] Cursive 2.4.7
+## Title: [|CFF33AAFFSUPERWOW|R] Cursive 2.4.8
+## Title-zhCN: [|CFF33AAFFSUPERWOW|R] Cursive 2.4.8
 ## Author: Pepopo
 ## Notes: Uses SuperWoW GUIDs to show units in combat and track curses
 ## Notes-zhCN: 使用SuperWoW的GUID功能来显示战斗中的单位并监视诅咒等
