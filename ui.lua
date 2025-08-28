@@ -95,7 +95,10 @@ local function UpdateRootBarFrame()
 	end
 
 	ui.rootBarFrame:SetWidth(config.maxcol * GetBarWidth())
-	ui.rootBarFrame:SetHeight(config.maxrow * config.height)
+	-- Calculate height: title area + all rows + extra spacing
+	local title_size = 12 + config.spacing
+	local total_height = title_size + (config.maxrow * (config.height + config.spacing)) + config.spacing
+	ui.rootBarFrame:SetHeight(total_height)
 end
 
 local function CreateRoot()
@@ -283,7 +286,15 @@ end
 local function CreateBarFirstSection(unitFrame, guid)
 	local config = Cursive.db.profile
 	local firstSection = CreateFrame("Frame", "Cursive1stSection", unitFrame)
-	firstSection:SetPoint("LEFT", unitFrame, "LEFT", 0, 0)
+
+	if config.invertbars then
+		-- When inverted, position relative to second section (rightmost)
+		firstSection:SetPoint("LEFT", unitFrame.secondSection, "RIGHT", 0, 0)
+	else
+		-- Normal positioning (leftmost)
+		firstSection:SetPoint("LEFT", unitFrame, "LEFT", 0, 0)
+	end
+	
 	firstSection:SetWidth(GetBarFirstSectionWidth())
 	firstSection:SetHeight(config.height)
 	firstSection:EnableMouse(false)
@@ -294,8 +305,13 @@ local function CreateBarFirstSection(unitFrame, guid)
 		local targetLeft = firstSection:CreateTexture(nil, "OVERLAY")
 		targetLeft:SetWidth(ui.targetIndicatorSize)
 		targetLeft:SetHeight(8)
-		targetLeft:SetPoint("LEFT", unitFrame, "LEFT", 0, 0)
-		targetLeft:SetTexture("Interface\\AddOns\\Cursive\\img\\target-left")
+		if config.invertbars then
+			targetLeft:SetPoint("RIGHT", firstSection, "RIGHT", 0, 0)
+			targetLeft:SetTexture("Interface\\AddOns\\Cursive\\img\\target-right")
+		else
+			targetLeft:SetPoint("LEFT", unitFrame, "LEFT", 0, 0)
+			targetLeft:SetTexture("Interface\\AddOns\\Cursive\\img\\target-left")
+		end
 		targetLeft:Hide()
 		unitFrame.target_left = targetLeft
 	end
@@ -305,7 +321,11 @@ local function CreateBarFirstSection(unitFrame, guid)
 		local icon = firstSection:CreateTexture(nil, "OVERLAY")
 		icon:SetWidth(config.raidiconsize)
 		icon:SetHeight(config.raidiconsize)
-		icon:SetPoint("RIGHT", firstSection, "RIGHT", 0, 0)
+		if config.invertbars then
+			icon:SetPoint("LEFT", firstSection, "LEFT", 0, 0)
+		else
+			icon:SetPoint("RIGHT", firstSection, "RIGHT", 0, 0)
+		end
 		icon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
 		icon:Hide()
 		unitFrame.icon = icon
@@ -315,7 +335,15 @@ end
 local function CreateBarSecondSection(unitFrame, guid)
 	local config = Cursive.db.profile
 	local secondSection = CreateFrame("Button", "Cursive2ndSection", unitFrame)
-	secondSection:SetPoint("LEFT", unitFrame.firstSection, "RIGHT", 0, 0)
+
+	if config.invertbars then
+		-- When inverted, position relative to third section (which is created first)
+		secondSection:SetPoint("LEFT", unitFrame.thirdSection, "RIGHT", 0, 0)
+	else
+		-- Normal positioning relative to first section
+		secondSection:SetPoint("LEFT", unitFrame.firstSection, "RIGHT", 0, 0)
+	end
+	
 	secondSection:SetWidth(GetBarSecondSectionWidth())
 	secondSection:SetHeight(config.height)
 	unitFrame.secondSection = secondSection
@@ -387,7 +415,15 @@ local function CreateBarThirdSection(unitFrame, guid)
 	local config = Cursive.db.profile
 
 	local thirdSection = CreateFrame("Frame", "Cursive3rdSection", unitFrame)
-	thirdSection:SetPoint("LEFT", unitFrame.secondSection, "RIGHT", 0, 0)
+
+	if config.invertbars then
+		-- When inverted, this is positioned first (leftmost)
+		thirdSection:SetPoint("LEFT", unitFrame, "LEFT", 0, 0)
+	else
+		-- Normal positioning relative to second section
+		thirdSection:SetPoint("LEFT", unitFrame.secondSection, "RIGHT", 0, 0)
+	end
+	
 	thirdSection:SetWidth(GetBarThirdSectionWidth())
 	thirdSection:SetHeight(config.height)
 	thirdSection:EnableMouse(false)
@@ -398,7 +434,15 @@ local function CreateBarThirdSection(unitFrame, guid)
 		local curse = thirdSection:CreateTexture(nil, "OVERLAY")
 		curse:SetWidth(config.curseiconsize)
 		curse:SetHeight(config.curseiconsize)
-		curse:SetPoint("LEFT", thirdSection, "LEFT", i * ui.padding + ((i - 1) * config.curseiconsize), 0)
+
+		if config.invertbars then
+			-- When inverted, position from right to left
+			local rightOffset = i * ui.padding + ((i - 1) * config.curseiconsize)
+			curse:SetPoint("RIGHT", thirdSection, "RIGHT", -rightOffset, 0)
+		else
+			-- Normal positioning from left to right
+			curse:SetPoint("LEFT", thirdSection, "LEFT", i * ui.padding + ((i - 1) * config.curseiconsize), 0)
+		end
 
 		curse.timer = thirdSection:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 		curse.timer:SetFontObject(GameFontHighlight)
@@ -423,9 +467,18 @@ local function CreateBar(row, col, guid)
 	unitFrame:SetWidth(width)
 	unitFrame:SetHeight(config.height)
 
-	CreateBarFirstSection(unitFrame, guid)
-	CreateBarSecondSection(unitFrame, guid)
-	CreateBarThirdSection(unitFrame, guid)
+	local config = Cursive.db.profile
+	if config.invertbars then
+		-- Create sections in reverse order: 3 -> 2 -> 1
+		CreateBarThirdSection(unitFrame, guid)
+		CreateBarSecondSection(unitFrame, guid)
+		CreateBarFirstSection(unitFrame, guid)
+	else
+		-- Normal order: 1 -> 2 -> 3
+		CreateBarFirstSection(unitFrame, guid)
+		CreateBarSecondSection(unitFrame, guid)
+		CreateBarThirdSection(unitFrame, guid)
+	end
 
 	ui.unitFrames[col][row] = unitFrame
 	return unitFrame
@@ -434,7 +487,14 @@ end
 local function GetBarCords(row, col)
 	local config = Cursive.db.profile
 	local x = (col - 1) * GetBarWidth()
-	local y = row * (config.height + config.spacing) -- don't subtract 1 to account for header
+	local y
+	if config.expandupwards then
+		-- For upward expansion: start from bottom with spacing, then go up
+		y = config.spacing + ((row - 1) * (config.height + config.spacing))
+	else
+		-- For downward expansion: use original logic (don't subtract 1 to account for header)
+		y = -(row * (config.height + config.spacing))
+	end
 	return x, y
 end
 
@@ -510,10 +570,15 @@ local function DisplayGuid(guid)
 	local x, y = GetBarCords(ui.row, ui.col)
 
 	-- update position if required
-	if not unitFrame.pos or unitFrame.pos ~= x .. -y then
+	local config = Cursive.db.profile
+	if not unitFrame.pos or unitFrame.pos ~= x .. y then
 		unitFrame:ClearAllPoints()
-		unitFrame:SetPoint("TOPLEFT", ui.rootBarFrame, "TOPLEFT", x, -y)
-		unitFrame.pos = x .. -y
+		if config.expandupwards then
+			unitFrame:SetPoint("BOTTOMLEFT", ui.rootBarFrame, "BOTTOMLEFT", x, y)
+		else
+			unitFrame:SetPoint("TOPLEFT", ui.rootBarFrame, "TOPLEFT", x, y)
+		end
+		unitFrame.pos = x .. y
 	end
 
 	-- check for shared debuffs

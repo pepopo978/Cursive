@@ -41,6 +41,8 @@ Cursive:RegisterDefaults("profile", {
 
 	curseordering = L["Expiring soonest -> latest"],
 	curseshowdecimals = false,
+	invertbars = false,
+	expandupwards = false,
 
 	filterincombat = true,
 	filterhostile = true,
@@ -67,11 +69,42 @@ local function splitString(str, delimiter)
 end
 
 local barOptions = {
+	["invertbars"] = {
+		type = "toggle",
+		name = "Invert Bar Display",
+		desc = "Show sections in order 3-2-1 and reverse element order in sections 1 and 3",
+		order = 1,
+		get = function()
+			return Cursive.db.profile.invertbars
+		end,
+		set = function(v)
+			Cursive.db.profile.invertbars = v
+			Cursive.UpdateFramesFromConfig()
+		end,
+	},
+	["expandupwards"] = {
+		type = "toggle",
+		name = "Expand Bars Upwards",
+		desc = "Make bars expand upwards instead of downwards",
+		order = 2,
+		get = function()
+			return Cursive.db.profile.expandupwards
+		end,
+		set = function(v)
+			Cursive.db.profile.expandupwards = v
+			Cursive.UpdateFramesFromConfig()
+		end,
+	},
+	["spacer1"] = {
+		type = "header",
+		name = "Section Display",
+		order = 5,
+	},
 	["showtargetindicator"] = {
 		type = "toggle",
 		name = L["Show Targeting Arrow"],
 		desc = L["Show Targeting Arrow"],
-		order = 1,
+		order = 10,
 		get = function()
 			return Cursive.db.profile.showtargetindicator
 		end,
@@ -84,7 +117,7 @@ local barOptions = {
 		type = "toggle",
 		name = L["Show Raid Icons"],
 		desc = L["Show Raid Icons"],
-		order = 10,
+		order = 15,
 		get = function()
 			return Cursive.db.profile.showraidicons
 		end,
@@ -110,7 +143,7 @@ local barOptions = {
 		type = "toggle",
 		name = L["Show Unit Name"],
 		desc = L["Show Unit Name"],
-		order = 30,
+		order = 25,
 		get = function()
 			return Cursive.db.profile.showunitname
 		end,
@@ -123,13 +156,18 @@ local barOptions = {
 		type = "toggle",
 		name = "Always Show Current Target",
 		desc = "Always show current target at the bottom of the mob list if it is not already shown",
-		order = 32,
+		order = 30,
 		get = function()
 			return Cursive.db.profile.alwaysshowcurrenttarget
 		end,
 		set = function(v)
 			Cursive.db.profile.alwaysshowcurrenttarget = v
 		end,
+	},
+	["spacer2"] = {
+		type = "header",
+		name = "Size & Appearance",
+		order = 35,
 	},
 	["barwidth"] = {
 		type = "range",
