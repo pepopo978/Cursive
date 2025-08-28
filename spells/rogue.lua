@@ -9,8 +9,7 @@ function getGougeDuration()
 end
 
 function getRuptureDuration()
-	local duration = 6 + GetComboPoints() * 2
-
+	local duration = 6 + Cursive.curses.GetComboPointsUsed() * 2
 	local _, _, _, _, count = GetTalentInfo(1, 10)
 	if count and count > 0 then
 		return duration + (count * 2)
@@ -20,7 +19,7 @@ function getRuptureDuration()
 end
 
 function getKidneyShotDuration()
-	return 1 + GetComboPoints()
+	return 1 + Cursive.curses.GetComboPointsUsed()
 end
 
 local L = AceLibrary("AceLocale-2.2"):new("Cursive")

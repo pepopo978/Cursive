@@ -27,7 +27,8 @@ local curses = {
 	resistSoundGuids = {},
 	expiringSoundGuids = {},
 	requestedExpiringSoundGuids = {}, -- guid added on spellcast, moved to expiringSoundGuids once rendered by ui
-	lastComboPoints = 0,
+	previousComboPoints = 0,
+	comboPoints = 0,
 	lastFerociousBiteTime = 0,
 	lastFerociousBiteTargetGuid = 0,
 	lastMoltenBlastTargetGuid = 0,
@@ -52,6 +53,16 @@ local dodge_test = L["Your (.+) was dodged by (.+)"]
 local molten_blast_test = L["Your Molten Blast(.+)for .+ Fire damage"]
 
 local lastGuid = nil
+
+-- I think depending on ping the combo point used event can fire either before or after your ability cast
+function curses:GetComboPointsUsed()
+	if curses.comboPoints == 0 then
+		return curses.previousComboPoints
+	else
+		return curses.comboPoints
+	end
+end
+
 
 function curses:LoadCurses()
 	-- reset dicts
@@ -115,10 +126,10 @@ function curses:LoadCurses()
 		curses.trackedCurseIds[id].texture = texture
 	end
 
-	if curses.isDruid then
+	if curses.isDruid or curses.isRogue then
 		Cursive:RegisterEvent("PLAYER_COMBO_POINTS", function()
 			local currentComboPoints = GetComboPoints()
-			if currentComboPoints > curses.lastComboPoints then
+			if curses.isDruid and currentComboPoints >= curses.comboPoints then
 				-- combo points did not decrease, check if Ferocious Bite was used is the last .5 sec
 				if GetTime() - curses.lastFerociousBiteTime < 0.5 and
 						curses.lastFerociousBiteTargetGuid and
@@ -137,7 +148,8 @@ function curses:LoadCurses()
 					end
 				end
 			end
-			curses.lastComboPoints = currentComboPoints
+			curses.previousComboPoints = curses.comboPoints
+			curses.comboPoints = currentComboPoints
 		end)
 	end
 end

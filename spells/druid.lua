@@ -1,5 +1,5 @@
 function getRipDuration()
-	return 8 + GetComboPoints() * 2
+	return 8 + Cursive.curses.GetComboPointsUsed() * 2
 end
 
 local L = AceLibrary("AceLocale-2.2"):new("Cursive")
