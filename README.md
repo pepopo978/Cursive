@@ -127,6 +127,9 @@ This also works for Multicurse:
 /script if not Cursive:Multicurse("Curse of Recklessness", "HIGHEST_HP", {refreshtime=1}) then if not Cursive:Multicurse("Corruption", "HIGHEST_HP", {refreshtime=3}) then Cursive:Multicurse("Siphon Life", "HIGHEST_HP", {refreshtime=1}) end end
 ```
 
+Example with more options
+`/script Cursive:Multicurse("Curse of Recklessness", "HIGHEST_HP", {warnings=1,resistsound=1,expiringsound=1,refreshtime=2})`
+
 All cursive commands will return true only if it attempted to cast or it found a target.
 
 ## Shared Debuffs
