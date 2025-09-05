@@ -280,7 +280,14 @@ ui.BarUpdate = function()
 end
 
 ui.BarClick = function()
-	TargetUnit(this.parent.guid)
+	if arg1 == "LeftButton" then
+		TargetUnit(this.parent.guid)
+	elseif arg1 == "RightButton" then
+		TargetUnit(this.parent.guid)
+		if (not PlayerFrame.inCombat) then
+			AttackTarget()
+		end
+	end
 end
 
 local function CreateBarFirstSection(unitFrame, guid)
@@ -349,6 +356,7 @@ local function CreateBarSecondSection(unitFrame, guid)
 	unitFrame.secondSection = secondSection
 	secondSection.parent = unitFrame
 
+	secondSection:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 	secondSection:SetScript("OnClick", ui.BarClick)
 	secondSection:SetScript("OnEnter", ui.BarEnter)
 	secondSection:SetScript("OnLeave", ui.BarLeave)
