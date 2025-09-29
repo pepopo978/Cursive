@@ -382,8 +382,13 @@ local function pickTarget(selectedPriority, lowercaseSpellNameNoRank, checkRange
 					if passedOptionFilters(guid, options) then
 						local passedRangeCheck = false
 						if IsSpellInRange then
-							-- use IsSpellInRange from nampower if available
-							local result = IsSpellInRange(lowercaseSpellNameNoRank, guid)
+							local result
+							if Cursive.curses.isDruid and string.find(lowercaseSpellNameNoRank, "faerie fire %(feral%)") then
+								-- IsSpellInRange doesn't work with Faerie Fire (Feral), use spellid instead
+								result = IsSpellInRange(17392, guid)
+							else
+								result = IsSpellInRange(lowercaseSpellNameNoRank, guid)
+							end
 							if result == -1 then
 								passedRangeCheck = checkRange == false or CheckInteractDistance(guid, 4) -- fallback to old range check
 							else
