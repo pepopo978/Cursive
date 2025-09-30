@@ -280,12 +280,21 @@ Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, 
 			end
 		end
 
+		-- delay to check for resists/failures
+		local delay = 0.2
+
+		local _, _, nping = GetNetStats()
+		-- ignore extreme pings
+		if nping and nping > 0 and nping < 500 then
+			delay = 0.05 + (nping / 1000.0) -- convert to seconds
+		end
+
 		if curses.trackedCurseIds[spellID] then
 			lastGuid = targetGuid
-			local duration = curses:GetCurseDuration(spellID) - 0.2
-			Cursive:ScheduleEvent("addCurse" .. targetGuid .. curses.trackedCurseIds[spellID].name, curses.ApplyCurse, 0.2, self, spellID, targetGuid, GetTime(), duration)
+			local duration = curses:GetCurseDuration(spellID) - delay
+			Cursive:ScheduleEvent("addCurse" .. targetGuid .. curses.trackedCurseIds[spellID].name, curses.ApplyCurse, delay, self, spellID, targetGuid, GetTime(), duration)
 		elseif curses.conflagrateSpellIds[spellID] then
-			Cursive:ScheduleEvent("updateCurse" .. targetGuid .. L["conflagrate"], curses.UpdateCurse, 0.2, self, spellID, targetGuid, GetTime())
+			Cursive:ScheduleEvent("updateCurse" .. targetGuid .. L["conflagrate"], curses.UpdateCurse, delay, self, spellID, targetGuid, GetTime())
 		end
 	elseif event == "START" then
 		if curses.trackedCurseIds[spellID] then
@@ -589,6 +598,22 @@ function curses:ApplyCurse(spellID, targetGuid, startTime, duration)
 
 	local name = curses.trackedCurseIds[spellID].name
 	local rank = curses.trackedCurseIds[spellID].rank
+
+	if curses.isDruid and name == L["rake"] then
+		-- check that target has rake debuff
+		-- some mobs are immune and don't trigger the "spell failed xxx is immune" log
+		for i = 1, 32 do
+			local _, _, _, debuffSpellId = UnitDebuff(targetGuid, i)
+			if debuffSpellId then
+				if debuffSpellId == spellID then
+					break
+				end
+			else
+				-- no rake found, don't add curse
+				return
+			end
+		end
+	end
 
 	if not curses.guids[targetGuid] then
 		curses.guids[targetGuid] = {}

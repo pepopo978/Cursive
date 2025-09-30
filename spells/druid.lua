@@ -1,4 +1,11 @@
 function getRipDuration()
+	-- check if using black morass idol
+	local _, _, id = strfind(GetInventoryItemLink("player", 18) or "", "item:(%d+)")
+	if id == "61699" then
+		-- 10% less duration
+		return (8 + Cursive.curses.GetComboPointsUsed() * 2) * 0.9
+	end
+
 	return 8 + Cursive.curses.GetComboPointsUsed() * 2
 end
 
