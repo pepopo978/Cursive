@@ -600,18 +600,9 @@ function curses:ApplyCurse(spellID, targetGuid, startTime, duration)
 	local rank = curses.trackedCurseIds[spellID].rank
 
 	if curses.isDruid and name == L["rake"] then
-		-- check that target has rake debuff
-		-- some mobs are immune and don't trigger the "spell failed xxx is immune" log
-		for i = 1, 32 do
-			local _, _, _, debuffSpellId = UnitDebuff(targetGuid, i)
-			if debuffSpellId then
-				if debuffSpellId == spellID then
-					break
-				end
-			else
-				-- no rake found, don't add curse
-				return
-			end
+		if not curses:ScanGuidForCurse(targetGuid, spellID) then
+			-- rake not found on target, do not apply
+			return
 		end
 	end
 
