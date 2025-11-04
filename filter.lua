@@ -66,7 +66,7 @@ filter.notignored = function(unit)
 		return true
 	end
 	for _, str in ipairs(Cursive.db.profile.ignorelist) do
-		if string.find(string.lower(unitName), string.lower(str), nil, false) then
+		if string.find(string.lower(unitName), string.lower(str), nil, not Cursive.db.profile.ignorelistuseregex) then
 			return false
 		end
 	end

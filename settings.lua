@@ -53,6 +53,7 @@ Cursive:RegisterDefaults("profile", {
 	filterignored = true,
 
 	ignorelist = {},
+	ignorelistuseregex = false,
 })
 
 local function splitString(str, delimiter)
@@ -451,7 +452,7 @@ local mobFilters = {
 	["ignorelist"] = {
 		type = "text",
 		name = L["Ignored Mobs List (Enter to save)"],
-		desc = L["Comma separated list of strings to ignore if found in the unit name"],
+		desc = L["Ignored Mobs Desc"],
 		usage = "whelp, black dragonkin, player3",
 		order = 68,
 		get = function()
@@ -466,6 +467,8 @@ local mobFilters = {
 			else
 				Cursive.db.profile.ignorelist = splitString(v, ",");
 			end
+			-- check for common lua regex patterns
+			Cursive.db.profile.ignorelistuseregex = string.find(v, "[*+%%?]") ~= nil
 		end,
 	},
 }

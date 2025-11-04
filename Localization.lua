@@ -102,7 +102,7 @@ L:RegisterTranslations("enUS", function()
 		["Expiring latest -> soonest"] = true,
 		["Not ignored"] = true,
 		["Ignored Mobs List (Enter to save)"] = true,
-		["Comma separated list of strings to ignore if found in the unit name"] = true,
+		["Ignored Mobs Desc"] = "Comma separated list of strings to ignore if found in the unit name.  If you use any of these regex characters (*+%?) it will do a regex search otherwise it will do a plain text search.  So both Rift-Lost and Rift%-Lost should work.",
 		["Shared Faerie Fire"] = true,
 		["This will show other player's Faerie Fires and avoid trying to cast Faerie Fire on those mobs"] = true,
 
@@ -309,7 +309,7 @@ L:RegisterTranslations("zhCN", function()
 		["Expiring latest -> soonest"] = "最新->即将到期",
 		["Not ignored"] = "不被忽略",
 		["Ignored Mobs List (Enter to save)"] = "忽略的怪物列表（回车保存）",
-		["Comma separated list of strings to ignore if found in the unit name"] = "如果在单位名称中找到，则忽略的字符串列表，用半角逗号分隔",
+		["Ignored Mobs Desc"] = "用逗号分隔的字符串列表，如果在单位名称中找到则忽略。如果你使用了这些正则表达式字符(*+%?)，它将进行正则表达式搜索，否则将进行纯文本搜索。所以Rift-Lost和Rift%-Lost都应该有效.",
 		["Shared Faerie Fire"] = "共享精灵之火",
 		["This will show other player's Faerie Fires and avoid trying to cast Faerie Fire on those mobs"] = "这将显示其他玩家的精灵之火，并避免尝试在这些怪物上施放精灵之火",
 
