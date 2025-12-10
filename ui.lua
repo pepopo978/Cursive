@@ -454,7 +454,7 @@ local function CreateBarThirdSection(unitFrame, guid)
 
 		curse.timer = thirdSection:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 		curse.timer:SetFontObject(GameFontHighlight)
-		curse.timer:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
+		curse.timer:SetFont(STANDARD_TEXT_FONT, config.cursetimersize, "OUTLINE")
 		curse.timer:SetTextColor(1, 1, 1)
 		curse.timer:SetAllPoints(curse)
 

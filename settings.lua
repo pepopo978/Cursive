@@ -38,6 +38,7 @@ Cursive:RegisterDefaults("profile", {
 	maxrow = 10,
 	maxcol = 1,
 	textsize = 9,
+	cursetimersize = 11,
 
 	curseordering = L["Expiring soonest -> latest"],
 	curseshowdecimals = false,
@@ -304,8 +305,8 @@ local barOptions = {
 	},
 	["textsize"] = {
 		type = "range",
-		name = L["Text Size"],
-		desc = L["Text Size"],
+		name = L["Name/Hp Text Size"],
+		desc = L["Name/Hp Text Size"],
 		order = 90,
 		min = 8,
 		max = 20,
@@ -316,6 +317,24 @@ local barOptions = {
 		set = function(v)
 			if v ~= Cursive.db.profile.textsize then
 				Cursive.db.profile.textsize = v
+				Cursive.UpdateFramesFromConfig()
+			end
+		end,
+	},
+	["cursetimersize"] = {
+		type = "range",
+		name = L["Curse Timer Text Size"],
+		desc = L["Curse Timer Text Size"],
+		order = 95,
+		min = 6,
+		max = 20,
+		step = 1,
+		get = function()
+			return Cursive.db.profile.cursetimersize
+		end,
+		set = function(v)
+			if v ~= Cursive.db.profile.cursetimersize then
+				Cursive.db.profile.cursetimersize = v
 				Cursive.UpdateFramesFromConfig()
 			end
 		end,
