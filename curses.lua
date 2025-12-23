@@ -131,6 +131,13 @@ function curses:LoadCurses()
 		curses.trackedCurseIds = getWarriorSpells()
 	end
 
+
+    -- add dots from non-class specific sources, for example from trinkets, or gear in general
+	curses.trackedCurseIds[45416] = { name = "potent venom", rank = 1, duration = 12 } -- Vial of Potent Venoms (trinket)
+
+    -- assign icons for non-class specific dots
+	curses.trackedCurseNamesToTextures["potent venom"] = "Ability_Rogue_DualWeild"
+
 	-- load shared debuffs
 	curses.sharedDebuffs = getSharedDebuffs()
 
