@@ -623,28 +623,28 @@ local function DisplayGuid(guid)
 			local remaining = Cursive.curses:TimeRemaining(curseData)
 			local curse = unitFrame["curse" .. curseNumber]
 			if remaining >= 0 then
-				curse:SetTexture(Cursive.curses.trackedCurseIds[curseData.spellID].texture)
+        curse:SetTexture(Cursive.curses.trackedCurseIds[curseData.spellID].texture)
 
-				if curseData["currentPlayer"] == false then
-					curse:SetDesaturated(true); -- desaturate if not applied by current player
-				else
-					curse:SetDesaturated(false); -- saturate if applied by current player
-				end
+        if curseData["currentPlayer"] == false then
+          curse:SetDesaturated(true); -- desaturate if not applied by current player
+        else
+          curse:SetDesaturated(false); -- saturate if applied by current player
+        end
 
-				-- curse:SetTexCoord(.078, .92, .079, .937) rounded icons
-				curse.timer:SetText(remaining)
-				curse.timer:Show()
-				curse:Show()
+        -- curse:SetTexCoord(.078, .92, .079, .937) rounded icons
+        curse.timer:SetText(remaining)
+        curse.timer:Show()
+        curse:Show()
 
-				if remaining < 1 then
-					if Cursive.curses:ShouldPlayExpiringSound(curseName, guid) then
-						PlaySoundFile("Interface\\AddOns\\Cursive\\sounds\\expiring.mp3")
-					end
-				elseif Cursive.curses:HasRequestedExpiringSound(curseName, guid) then
-					Cursive.curses:EnableExpiringSound(curseName, guid)
-				end
-			end
-			curseNumber = curseNumber + 1
+        if remaining < 1 then
+          if Cursive.curses:ShouldPlayExpiringSound(curseName, guid) then
+            PlaySoundFile("Interface\\AddOns\\Cursive\\sounds\\expiring.mp3")
+          end
+        elseif Cursive.curses:HasRequestedExpiringSound(curseName, guid) then
+          Cursive.curses:EnableExpiringSound(curseName, guid)
+        end
+        curseNumber = curseNumber + 1
+      end
 		end
 	end
 
