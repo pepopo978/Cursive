@@ -585,8 +585,22 @@ function curses:HasCurse(lowercaseSpellNameNoRank, targetGuid, minRemaining)
 		lowercaseSpellNameNoRank = L["faerie fire"]
 	end
 
+  -- handle malediction for warlocks
+  if curses.isWarlock and
+      lowercaseSpellNameNoRank == L["curse of recklessness"] or
+      lowercaseSpellNameNoRank == L["curse of the elements"] or
+      lowercaseSpellNameNoRank == L["curse of shadow"] then
+    -- check if they have malediction
+    local _, _, _, _, malediction = GetTalentInfo(1, 17)
+
+    if malediction > 0 then
+      lowercaseSpellNameNoRank = L["curse of agony"] -- check for curse of agony instead
+    end
+  end
+
 	if curses.guids[targetGuid] and curses.guids[targetGuid][lowercaseSpellNameNoRank] then
 		local remaining = Cursive.curses:TimeRemaining(curses.guids[targetGuid][lowercaseSpellNameNoRank])
+
 		if remaining >= minRemaining then
 			return true
 		end

@@ -187,6 +187,8 @@ All commands will ignore targets with the following CCs on them:
 Multicurse will only ever target enemies that are already in combat (except if you target a mob directly first) to
 prevent pulling things you didn't intend like marked patrols.
 
+For Warlocks with the Malediction talent, when checking if Curse of Recklessness, Curse of the Elements, or Curse of Shadow is already on a target, the addon will instead check for Curse of Agony to allow you to refresh agony using them.  Don't use the refreshtime option with this as the server won't refresh Curse of Agony if it is still on the mob.
+
 Mobs with raid marks will be displayed first.
 
 Mobs will the top 3 max hps will always display next. I may make this configurable in the future.
