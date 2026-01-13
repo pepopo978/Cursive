@@ -1,9 +1,9 @@
 local L = AceLibrary("AceLocale-2.2"):new("Cursive")
 function getPriestSpells()
 	return {
-		[1425] = { name = L["shackle undead"], rank = 1, duration = 30 },
-		[9486] = { name = L["shackle undead"], rank = 2, duration = 40 },
-		[10956] = { name = L["shackle undead"], rank = 3, duration = 50 },
+		[9484] = { name = L["shackle undead"], rank = 1, duration = 30 },
+		[9485] = { name = L["shackle undead"], rank = 2, duration = 40 },
+		[10955] = { name = L["shackle undead"], rank = 3, duration = 50 },
 
 		[453] = { name = L["mind soothe"], rank = 1, duration = 15 },
 		[8192] = { name = L["mind soothe"], rank = 2, duration = 15 },
