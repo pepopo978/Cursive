@@ -62,10 +62,10 @@ function getRogueSpells()
 		[11290] = { name = L["garrote"], rank = 6, duration = 18 },
 
 		[2818] = { name = L["deadly poison"], rank = 1, duration = 12 },
-		[2819] = { name = L["deadly poison II"], rank = 2, duration = 12 },
-		[11353] = { name = L["deadly poison III"], rank = 3, duration = 12 },
-		[11354] = { name = L["deadly poison IV"], rank = 4, duration = 12 },
-		[25349] = { name = L["deadly poison V"], rank = 5, duration = 12 },
+		[2819] = { name = L["deadly poison ii"], rank = 2, duration = 12 },
+		[11353] = { name = L["deadly poison iii"], rank = 3, duration = 12 },
+		[11354] = { name = L["deadly poison iv"], rank = 4, duration = 12 },
+		[25349] = { name = L["deadly poison v"], rank = 5, duration = 12 },
 
 		[16511] = { name = L["hemorrhage"], rank = 1, duration = 15 },
 

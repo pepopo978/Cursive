@@ -495,7 +495,7 @@ end
 function curses:TimeRemaining(curseData)
 	local dhReduction = 0
 
-	if curses.trackedCurseIds[curseData.spellID].darkHarvest then
+	if curses.trackedCurseIds[curseData.spellID] and curses.trackedCurseIds[curseData.spellID].darkHarvest then
 		curses:TrackDarkHarvest(curseData)
 
 		dhReduction = curses:GetDarkHarvestReduction(curseData)

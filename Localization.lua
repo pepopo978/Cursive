@@ -172,10 +172,10 @@ L:RegisterTranslations("enUS", function()
 		["expose armor"] = true,
 		["garrote"] = true,
 		["deadly poison"] = true,
-		["deadly poison II"] = true,
-		["deadly poison III"] = true,
-		["deadly poison IV"] = true,
-		["deadly poison V"] = true,
+		["deadly poison ii"] = true,
+		["deadly poison iii"] = true,
+		["deadly poison iv"] = true,
+		["deadly poison v"] = true,
 		["hemorrhage"] = true,
 		["cheap shot"] = true,
 
@@ -380,10 +380,10 @@ L:RegisterTranslations("zhCN", function()
 		["expose armor"] = "破甲", -- no idea if right
 		["garrote"] = "锁喉", -- no idea if right
 		["deadly poison"] = "致命毒药", -- no idea if right
-		["deadly poison II"] = "致命毒药 II",
-		["deadly poison III"] = "致命毒药 III",
-		["deadly poison IV"] = "致命毒药 IV",
-		["deadly poison V"] = "致命毒药 V",
+		["deadly poison ii"] = "致命毒药 II",
+		["deadly poison iii"] = "致命毒药 III",
+		["deadly poison iv"] = "致命毒药 IV",
+		["deadly poison v"] = "致命毒药 V",
 		["hemorrhage"] = "出血", -- no idea if right
 		["cheap shot"] = "肮脏的打击", -- no idea if right
 
