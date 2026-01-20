@@ -176,6 +176,8 @@ L:RegisterTranslations("enUS", function()
 		["deadly poison iii"] = true,
 		["deadly poison iv"] = true,
 		["deadly poison v"] = true,
+		["corrosive poison"] = true,
+		["corrosive poison ii"] = true,
 		["hemorrhage"] = true,
 		["cheap shot"] = true,
 
@@ -384,6 +386,8 @@ L:RegisterTranslations("zhCN", function()
 		["deadly poison iii"] = "致命毒药 III",
 		["deadly poison iv"] = "致命毒药 IV",
 		["deadly poison v"] = "致命毒药 V",
+		["corrosive poison"] = "腐蚀毒药",
+		["corrosive poison ii"] = "腐蚀毒药 II",
 		["hemorrhage"] = "出血", -- no idea if right
 		["cheap shot"] = "肮脏的打击", -- no idea if right
 
