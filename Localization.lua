@@ -104,10 +104,20 @@ L:RegisterTranslations("enUS", function()
 		["Not ignored"] = true,
 		["Ignored Mobs List (Enter to save)"] = true,
 		["Ignored Mobs Desc"] = "Comma separated list of strings to ignore if found in the unit name.  If you use any of these regex characters (*+%?) it will do a regex search otherwise it will do a plain text search.  So both Rift-Lost and Rift%-Lost should work.",
-		["Shared Faerie Fire"] = true,
-		["This will show other player's Faerie Fires and avoid trying to cast Faerie Fire on those mobs"] = true,
+	["Shared Faerie Fire"] = true,
+	["This will show other player's Faerie Fires and avoid trying to cast Faerie Fire on those mobs"] = true,
+	["Shared Sunder Armor"] = true,
+	["This will show other player's Sunder Armor"] = true,
+	["Shared Expose Armor"] = true,
+	["This will show other player's Expose Armor"] = true,
+	["Shared Curse of Recklessness"] = true,
+	["This will show other player's Curse of Recklessness"] = true,
+	["Shared Judgement of Wisdom"] = true,
+	["This will show other player's Judgement of Wisdom"] = true,
+	["Hide Own Debuffs"] = true,
+	["Hide your own debuffs, show only shared debuffs from other players"] = true,
 
-		-- spells
+	-- spells
 		["Rank"] = true,
 		["Rank 1"] = true,
 		["Rank 2"] = true,
@@ -181,11 +191,14 @@ L:RegisterTranslations("enUS", function()
 		["hemorrhage"] = true,
 		["cheap shot"] = true,
 
-		-- shaman
-		["flame shock"] = true,
-		["molten blast"] = true,
+	-- shaman
+	["flame shock"] = true,
+	["molten blast"] = true,
 
-		-- warlock
+	-- paladin
+	["judgement of wisdom"] = true,
+
+	-- warlock
 		["conflagrate"] = true,
 		["corruption"] = true,
 		["curse of agony"] = true,
@@ -203,9 +216,10 @@ L:RegisterTranslations("enUS", function()
 		["siphon life"] = true,
 		["fear"] = true,
 
-		-- warrior
-		["rend"] = true,
-	}
+	-- warrior
+	["rend"] = true,
+	["sunder armor"] = true,
+}
 end)
 
 L:RegisterTranslations("zhCN", function()
@@ -314,10 +328,20 @@ L:RegisterTranslations("zhCN", function()
 		["Not ignored"] = "不被忽略",
 		["Ignored Mobs List (Enter to save)"] = "忽略的怪物列表（回车保存）",
 		["Ignored Mobs Desc"] = "用逗号分隔的字符串列表，如果在单位名称中找到则忽略。如果你使用了这些正则表达式字符(*+%?)，它将进行正则表达式搜索，否则将进行纯文本搜索。所以Rift-Lost和Rift%-Lost都应该有效.",
-		["Shared Faerie Fire"] = "共享精灵之火",
-		["This will show other player's Faerie Fires and avoid trying to cast Faerie Fire on those mobs"] = "这将显示其他玩家的精灵之火，并避免尝试在这些怪物上施放精灵之火",
+	["Shared Faerie Fire"] = "共享精灵之火",
+	["This will show other player's Faerie Fires and avoid trying to cast Faerie Fire on those mobs"] = "这将显示其他玩家的精灵之火，并避免尝试在这些怪物上施放精灵之火",
+	["Shared Sunder Armor"] = "共享破甲",
+	["This will show other player's Sunder Armor"] = "这将显示其他玩家的破甲",
+	["Shared Expose Armor"] = "共享破甲",
+	["This will show other player's Expose Armor"] = "这将显示其他玩家的破甲",
+	["Shared Curse of Recklessness"] = "共享鲁莽诅咒",
+	["This will show other player's Curse of Recklessness"] = "这将显示其他玩家的鲁莽诅咒",
+	["Shared Judgement of Wisdom"] = "共享智慧审判",
+	["This will show other player's Judgement of Wisdom"] = "这将显示其他玩家的智慧审判",
+	["Hide Own Debuffs"] = "隐藏自己的减益",
+	["Hide your own debuffs, show only shared debuffs from other players"] = "隐藏自己的减益，只显示其他玩家的共享减益",
 
-		-- spells
+	-- spells
 		["Rank"] = "等级",
 		["Rank 1"] = "等级 1",
 		["Rank 2"] = "等级 2",
@@ -391,11 +415,14 @@ L:RegisterTranslations("zhCN", function()
 		["hemorrhage"] = "出血", -- no idea if right
 		["cheap shot"] = "肮脏的打击", -- no idea if right
 
-		-- shaman
-		["flame shock"] = "烈焰震击", -- no idea if right
-		["molten blast"] = "熔岩爆裂", -- no idea if right
+	-- shaman
+	["flame shock"] = "烈焰震击", -- no idea if right
+	["molten blast"] = "熔岩爆裂", -- no idea if right
 
-		-- warlock
+	-- paladin
+	["judgement of wisdom"] = "智慧审判", -- no idea if right
+
+	-- warlock
 		["conflagrate"] = "引燃", -- no idea if right
 		["corruption"] = "腐蚀术",
 		["curse of agony"] = "痛苦诅咒",
@@ -413,7 +440,8 @@ L:RegisterTranslations("zhCN", function()
 		["siphon life"] = "生命虹吸",
 		["fear"] = "恐惧",
 
-		-- warrior
-		["rend"] = '撕裂', -- no idea if right
-	}
+	-- warrior
+	["rend"] = '撕裂', -- no idea if right
+	["sunder armor"] = '破甲', -- no idea if right
+}
 end)
