@@ -112,8 +112,6 @@ L:RegisterTranslations("enUS", function()
 	["This will show other player's Expose Armor"] = true,
 	["Shared Curse of Recklessness"] = true,
 	["This will show other player's Curse of Recklessness"] = true,
-	["Shared Judgement of Wisdom"] = true,
-	["This will show other player's Judgement of Wisdom"] = true,
 	["Hide Own Debuffs"] = true,
 	["Hide your own debuffs, show only shared debuffs from other players"] = true,
 
@@ -194,9 +192,6 @@ L:RegisterTranslations("enUS", function()
 	-- shaman
 	["flame shock"] = true,
 	["molten blast"] = true,
-
-	-- paladin
-	["judgement of wisdom"] = true,
 
 	-- warlock
 		["conflagrate"] = true,
@@ -336,8 +331,6 @@ L:RegisterTranslations("zhCN", function()
 	["This will show other player's Expose Armor"] = "这将显示其他玩家的破甲",
 	["Shared Curse of Recklessness"] = "共享鲁莽诅咒",
 	["This will show other player's Curse of Recklessness"] = "这将显示其他玩家的鲁莽诅咒",
-	["Shared Judgement of Wisdom"] = "共享智慧审判",
-	["This will show other player's Judgement of Wisdom"] = "这将显示其他玩家的智慧审判",
 	["Hide Own Debuffs"] = "隐藏自己的减益",
 	["Hide your own debuffs, show only shared debuffs from other players"] = "隐藏自己的减益，只显示其他玩家的共享减益",
 
@@ -418,9 +411,6 @@ L:RegisterTranslations("zhCN", function()
 	-- shaman
 	["flame shock"] = "烈焰震击", -- no idea if right
 	["molten blast"] = "熔岩爆裂", -- no idea if right
-
-	-- paladin
-	["judgement of wisdom"] = "智慧审判", -- no idea if right
 
 	-- warlock
 		["conflagrate"] = "引燃", -- no idea if right

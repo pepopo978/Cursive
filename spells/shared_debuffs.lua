@@ -37,11 +37,6 @@ function getSharedDebuffs()
 		[7658] = { name = L["curse of recklessness"], rank = 2, duration = 120 },
 		[7659] = { name = L["curse of recklessness"], rank = 3, duration = 120 },
 		[11717] = { name = L["curse of recklessness"], rank = 4, duration = 120 },
-	},
-	judgementofwisdom = {
-		[20186] = { name = L["judgement of wisdom"], rank = 1, duration = 10 },
-		[20354] = { name = L["judgement of wisdom"], rank = 2, duration = 10 },
-		[20355] = { name = L["judgement of wisdom"], rank = 3, duration = 10 },
 	}
 }
 end

@@ -38,14 +38,12 @@ local curses = {
 		sunderarmor = {},
 		exposearmor = {},
 		curseofrecklessness = {},
-		judgementofwisdom = {},
 	},
 	sharedDebuffGuids = {
 		faeriefire = {},
 		sunderarmor = {},
 		exposearmor = {},
 		curseofrecklessness = {},
-		judgementofwisdom = {},
 	},
 
 	-- Whitelist of mobs that can bleed (for rake tracking at client debuff cap)
@@ -299,9 +297,6 @@ Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, 
 		end
 		if Cursive.db.profile.shareddebuffs.curseofrecklessness and curses.sharedDebuffs.curseofrecklessness[spellID] then
 			curses.sharedDebuffGuids.curseofrecklessness[targetGuid] = GetTime()
-		end
-		if Cursive.db.profile.shareddebuffs.judgementofwisdom and curses.sharedDebuffs.judgementofwisdom[spellID] then
-			curses.sharedDebuffGuids.judgementofwisdom[targetGuid] = GetTime()
 		end
 
 		return

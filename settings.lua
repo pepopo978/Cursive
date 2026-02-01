@@ -25,7 +25,6 @@ Cursive:RegisterDefaults("profile", {
 		sunderarmor = false,
 		exposearmor = false,
 		curseofrecklessness = false,
-		judgementofwisdom = false,
 	},
 	
 	hideonlydebuffs = false,
@@ -566,19 +565,6 @@ local sharedDebuffs = {
 		end,
 		set = function(v)
 			Cursive.db.profile.shareddebuffs.curseofrecklessness = v
-			Cursive.UpdateFramesFromConfig()
-		end,
-	},
-	["sharedJudgementOfWisdom"] = {
-		type = "toggle",
-		name = L["Shared Judgement of Wisdom"],
-		desc = L["This will show other player's Judgement of Wisdom"],
-		order = 45,
-		get = function()
-			return Cursive.db.profile.shareddebuffs.judgementofwisdom
-		end,
-		set = function(v)
-			Cursive.db.profile.shareddebuffs.judgementofwisdom = v
 			Cursive.UpdateFramesFromConfig()
 		end,
 	},
