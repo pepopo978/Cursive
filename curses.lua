@@ -35,10 +35,16 @@ local curses = {
 
 	sharedDebuffs = {
 		faeriefire = {},
+		sunderarmor = {},
+		exposearmor = {},
+		curseofrecklessness = {},
 	},
 	sharedDebuffGuids = {
-		faeriefire = {}, -- used for scanning for shared debuffs like faerie fire
-	}, -- used for scanning for shared debuffs like faerie fire
+		faeriefire = {},
+		sunderarmor = {},
+		exposearmor = {},
+		curseofrecklessness = {},
+	},
 
 	-- Whitelist of mobs that can bleed (for rake tracking at client debuff cap)
 	mobsThatBleed = {
@@ -277,15 +283,24 @@ Cursive:RegisterEvent("SPELLCAST_INTERRUPTED", StopChanneling);
 Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, spellID, castDuration)
 	-- immolate will fire both start and cast
 	if event == "CAST" then
-		local _, guid = UnitExists("player")
-		if casterGuid ~= guid then
-			-- check for faeriefire
-			if Cursive.db.profile.shareddebuffs.faeriefire and curses.sharedDebuffs.faeriefire[spellID] then
-				curses.sharedDebuffGuids.faeriefire[targetGuid] = GetTime()
-			end
-
-			return
+	local _, guid = UnitExists("player")
+	if casterGuid ~= guid then
+		-- check for shared debuffs from other players
+		if Cursive.db.profile.shareddebuffs.faeriefire and curses.sharedDebuffs.faeriefire[spellID] then
+			curses.sharedDebuffGuids.faeriefire[targetGuid] = GetTime()
 		end
+		if Cursive.db.profile.shareddebuffs.sunderarmor and curses.sharedDebuffs.sunderarmor[spellID] then
+			curses.sharedDebuffGuids.sunderarmor[targetGuid] = GetTime()
+		end
+		if Cursive.db.profile.shareddebuffs.exposearmor and curses.sharedDebuffs.exposearmor[spellID] then
+			curses.sharedDebuffGuids.exposearmor[targetGuid] = GetTime()
+		end
+		if Cursive.db.profile.shareddebuffs.curseofrecklessness and curses.sharedDebuffs.curseofrecklessness[spellID] then
+			curses.sharedDebuffGuids.curseofrecklessness[targetGuid] = GetTime()
+		end
+
+		return
+	end
 
 		-- store pending cast
 		curses.pendingCast = {
@@ -619,7 +634,7 @@ function curses:HasCurse(lowercaseSpellNameNoRank, targetGuid, minRemaining)
 end
 
 -- Apply shared curse from another player
-function curses:ApplySharedCurse(sharedDebuffKey, spellID, targetGuid, startTime)
+function curses:ApplySharedCurse(sharedDebuffKey, spellID, targetGuid, startTime, stacks)
 	local name = curses.sharedDebuffs[sharedDebuffKey][spellID].name
 	local rank = curses.sharedDebuffs[sharedDebuffKey][spellID].rank
 	local duration = curses.sharedDebuffs[sharedDebuffKey][spellID].duration
@@ -635,6 +650,7 @@ function curses:ApplySharedCurse(sharedDebuffKey, spellID, targetGuid, startTime
 		spellID = spellID,
 		targetGuid = targetGuid,
 		currentPlayer = false,
+		stacks = stacks or 0,
 	}
 end
 

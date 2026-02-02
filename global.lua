@@ -19,8 +19,11 @@ function Cursive:OnEnable()
 
 	DEFAULT_CHAT_FRAME:AddMessage(L["|cffffcc00Cursive:|cffffaaaa Loaded.  /cursive for commands and minimap icon for options."])
 
-	Cursive.curses:LoadCurses()
-	if Cursive.db.profile.enabled then
+	if Cursive.curses then
+		Cursive.curses:LoadCurses()
+	end
+	
+	if Cursive.db and Cursive.db.profile and Cursive.db.profile.enabled then
 		Cursive.core.enable()
 	end
 end

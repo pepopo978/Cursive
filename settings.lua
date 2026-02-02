@@ -22,7 +22,12 @@ Cursive:RegisterDefaults("profile", {
 
 	shareddebuffs = {
 		faeriefire = false,
+		sunderarmor = false,
+		exposearmor = false,
+		curseofrecklessness = false,
 	},
+	
+	hideonlydebuffs = false,
 
 	alwaysshowcurrenttarget = true,
 
@@ -493,6 +498,24 @@ local mobFilters = {
 }
 
 local sharedDebuffs = {
+	["hideOwnDebuffs"] = {
+		type = "toggle",
+		name = L["Hide Own Debuffs"],
+		desc = L["Hide your own debuffs, show only shared debuffs from other players"],
+		order = 1,
+		get = function()
+			return Cursive.db.profile.hideonlydebuffs
+		end,
+		set = function(v)
+			Cursive.db.profile.hideonlydebuffs = v
+			Cursive.UpdateFramesFromConfig()
+		end,
+	},
+	["spacer"] = {
+		type = "header",
+		name = " ",
+		order = 5,
+	},
 	["sharedFaerieFire"] = {
 		type = "toggle",
 		name = L["Shared Faerie Fire"],
@@ -503,6 +526,45 @@ local sharedDebuffs = {
 		end,
 		set = function(v)
 			Cursive.db.profile.shareddebuffs.faeriefire = v
+			Cursive.UpdateFramesFromConfig()
+		end,
+	},
+	["sharedSunderArmor"] = {
+		type = "toggle",
+		name = L["Shared Sunder Armor"],
+		desc = L["This will show other player's Sunder Armor"],
+		order = 20,
+		get = function()
+			return Cursive.db.profile.shareddebuffs.sunderarmor
+		end,
+		set = function(v)
+			Cursive.db.profile.shareddebuffs.sunderarmor = v
+			Cursive.UpdateFramesFromConfig()
+		end,
+	},
+	["sharedExposeArmor"] = {
+		type = "toggle",
+		name = L["Shared Expose Armor"],
+		desc = L["This will show other player's Expose Armor"],
+		order = 30,
+		get = function()
+			return Cursive.db.profile.shareddebuffs.exposearmor
+		end,
+		set = function(v)
+			Cursive.db.profile.shareddebuffs.exposearmor = v
+			Cursive.UpdateFramesFromConfig()
+		end,
+	},
+	["sharedCurseOfRecklessness"] = {
+		type = "toggle",
+		name = L["Shared Curse of Recklessness"],
+		desc = L["This will show other player's Curse of Recklessness"],
+		order = 40,
+		get = function()
+			return Cursive.db.profile.shareddebuffs.curseofrecklessness
+		end,
+		set = function(v)
+			Cursive.db.profile.shareddebuffs.curseofrecklessness = v
 			Cursive.UpdateFramesFromConfig()
 		end,
 	},

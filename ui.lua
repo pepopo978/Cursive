@@ -513,7 +513,7 @@ local function hasAnySpellId(guid, spellIds)
 			break
 		end
 		if spellIds[spellId] then
-			return spellId
+			return spellId, stacks
 		end
 	end
 
@@ -523,11 +523,11 @@ local function hasAnySpellId(guid, spellIds)
 			break
 		end
 		if spellIds[spellId] then
-			return spellId
+			return spellId, stacks
 		end
 	end
 
-	return nil
+	return nil, 0
 end
 
 local function GetSortedCurses(guidCurses)
@@ -590,18 +590,18 @@ local function DisplayGuid(guid)
 	end
 
 	-- check for shared debuffs
-	for sharedDebuffKey, guids in pairs(Cursive.curses.sharedDebuffGuids) do
-		if guids[guid] then
-			local sharedDebuffSpellIds = Cursive.curses.sharedDebuffs[sharedDebuffKey]
-			local spellId = hasAnySpellId(guid, sharedDebuffSpellIds)
-			if spellId ~= nil then
-				-- add curse to curses
-				Cursive.curses:ApplySharedCurse(sharedDebuffKey, spellId, guid, GetTime())
-				-- remove guid
-				Cursive.curses.sharedDebuffGuids[sharedDebuffKey][guid] = nil
+		for sharedDebuffKey, guids in pairs(Cursive.curses.sharedDebuffGuids) do
+			if guids[guid] then
+				local sharedDebuffSpellIds = Cursive.curses.sharedDebuffs[sharedDebuffKey]
+				local spellId, stacks = hasAnySpellId(guid, sharedDebuffSpellIds)
+				if spellId ~= nil then
+					-- add curse to curses
+					Cursive.curses:ApplySharedCurse(sharedDebuffKey, spellId, guid, GetTime(), stacks)
+					-- remove guid
+					Cursive.curses.sharedDebuffGuids[sharedDebuffKey][guid] = nil
+				end
 			end
 		end
-	end
 
 	-- update curses
 	local curseNumber = 1
@@ -619,14 +619,41 @@ local function DisplayGuid(guid)
 			if curseNumber > Cursive.db.profile.maxcurses then
 				break
 			end
+			
+			-- Skip own debuffs if hideownly is enabled
+			if Cursive.db.profile.hideonlydebuffs and curseData.currentPlayer then
+				-- skip this debuff, it's our own
+			else
 
-			local remaining = Cursive.curses:TimeRemaining(curseData)
-			local curse = unitFrame["curse" .. curseNumber]
-			if remaining >= 0 then
-        curse:SetTexture(Cursive.curses.trackedCurseIds[curseData.spellID].texture)
+		local remaining = Cursive.curses:TimeRemaining(curseData)
+		local curse = unitFrame["curse" .. curseNumber]
+		if remaining >= 0 then
+        -- Get texture from trackedCurseIds or directly from spell info for shared debuffs
+        local texture
+        if Cursive.curses.trackedCurseIds[curseData.spellID] then
+          texture = Cursive.curses.trackedCurseIds[curseData.spellID].texture
+        else
+          local _, _, spellTexture = SpellInfo(curseData.spellID)
+          texture = spellTexture
+        end
+        curse:SetTexture(texture)
 
+        -- Color logic: if hideownly is enabled, show shared debuffs in color, otherwise desaturated
         if curseData["currentPlayer"] == false then
-          curse:SetDesaturated(true); -- desaturate if not applied by current player
+          if Cursive.db.profile.hideonlydebuffs then
+            -- Check if it's Sunder Armor - only show in color if 5 stacks
+            if curseName == L["sunder armor"] then
+              if curseData.stacks and curseData.stacks >= 5 then
+                curse:SetDesaturated(false); -- red when 5 stacks
+              else
+                curse:SetDesaturated(true); -- grey if less than 5 stacks
+              end
+            else
+              curse:SetDesaturated(false); -- show other shared debuffs in color when hiding own
+            end
+          else
+            curse:SetDesaturated(true); -- desaturate if not applied by current player
+          end
         else
           curse:SetDesaturated(false); -- saturate if applied by current player
         end
@@ -645,6 +672,7 @@ local function DisplayGuid(guid)
         end
         curseNumber = curseNumber + 1
       end
+      end -- end of hideownly check
 		end
 	end
 
@@ -693,6 +721,10 @@ local displayedGuids = {};
 
 ui:SetAllPoints()
 ui:SetScript("OnUpdate", function()
+	if not Cursive.curses or not Cursive.core then
+		return
+	end
+	
 	local config = Cursive.db.profile
 
 	if not config.enabled then
