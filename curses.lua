@@ -270,9 +270,9 @@ end
 Cursive:RegisterEvent("SPELLCAST_CHANNEL_START", function()
 	curses.isChanneling = true
 end);
+
 Cursive:RegisterEvent("SPELLCAST_CHANNEL_STOP", StopChanneling);
 Cursive:RegisterEvent("SPELLCAST_INTERRUPTED", StopChanneling);
-Cursive:RegisterEvent("SPELLCAST_FAILED", StopChanneling);
 
 Cursive:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, spellID, castDuration)
 	-- immolate will fire both start and cast
