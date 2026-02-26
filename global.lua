@@ -1,21 +1,35 @@
 local L = AceLibrary("AceLocale-2.2"):new("Cursive")
 Cursive = AceLibrary("AceAddon-2.0"):new("AceEvent-2.0", "AceDebug-2.0", "AceModuleCore-2.0", "AceConsole-2.0", "AceDB-2.0", "AceHook-2.1")
-Cursive.superwow = true
+local function HasMinimumNampowerVersion(major, minor, patch)
+  if GetNampowerVersion then
+    local installedMajor, installedMinor, installedPatch = GetNampowerVersion()
 
-if not GetPlayerBuffID or not CombatLogAdd or not SpellInfo then
-	local notify = CreateFrame("Frame", "CursiveNoSuperwow", UIParent)
-	notify:SetScript("OnUpdate", function()
-		DEFAULT_CHAT_FRAME:AddMessage(L["|cffffcc00Cursive:|cffffaaaa Couldn't detect SuperWoW."])
-		this:Hide()
-	end)
+    if installedMajor > major then
+      return true
+    elseif installedMajor == major and installedMinor > minor then
+      return true
+    elseif installedMajor == major and installedMinor == minor and installedPatch >= patch then
+      return true
+    end
+  end
 
-	Cursive.superwow = false
+  return false
+end
+
+Cursive.nampower = HasMinimumNampowerVersion(2, 37, 0)
+
+if not Cursive.nampower then
+  DEFAULT_CHAT_FRAME:AddMessage("|cffff6060Cursive:|r could not detect nampower >= v2.37.0")
+  return
 end
 
 function Cursive:OnEnable()
-	if not Cursive.superwow then
+	if not Cursive.nampower then
 		return
 	end
+
+	SetCVar("NP_EnableSpellStartEvents", 1)
+	SetCVar("NP_EnableSpellGoEvents", 1)
 
 	DEFAULT_CHAT_FRAME:AddMessage(L["|cffffcc00Cursive:|cffffaaaa Loaded.  /cursive for commands and minimap icon for options."])
 

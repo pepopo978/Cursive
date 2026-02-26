@@ -1,4 +1,4 @@
-if not Cursive.superwow then
+if not Cursive.nampower then
 	return
 end
 
@@ -184,6 +184,7 @@ ui.BarEnter = function()
 	end
 	this.parent.hover = true
 
+  SetMouseoverUnit(this.parent.guid)
 	GameTooltip_SetDefaultAnchor(GameTooltip, this)
 	GameTooltip:SetUnit(this.parent.guid)
 	GameTooltip:Show()
@@ -191,6 +192,7 @@ end
 
 ui.BarLeave = function()
 	this.parent.hover = false
+  SetMouseoverUnit()
 	GameTooltip:Hide()
 end
 
