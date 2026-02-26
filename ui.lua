@@ -509,26 +509,12 @@ local function GetBarCords(row, col)
 end
 
 local function hasAnySpellId(guid, spellIds)
-	for i = 1, 16 do
-		local texture, stacks, spellSchool, spellId = UnitDebuff(guid, i);
-		if not spellId then
-			break
-		end
+	local auras = GetUnitField(guid, "aura")
+	for i, spellId in pairs(auras) do
 		if spellIds[spellId] then
 			return spellId
 		end
 	end
-
-	for i = 1, 32 do
-		local texture, stacks, spellId = UnitBuff(guid, i);
-		if not spellId then
-			break
-		end
-		if spellIds[spellId] then
-			return spellId
-		end
-	end
-
 	return nil
 end
 

@@ -534,9 +534,13 @@ function curses:GetCurseData(spellName, guid)
 	return nil
 end
 
-function curses:HasCurse(lowercaseSpellNameNoRank, targetGuid, minRemaining)
+function curses:HasCurse(lowercaseSpellNameNoRank, targetGuid, minRemaining, malediction)
 	if not minRemaining then
 		minRemaining = 0 -- default to 0
+	end
+
+	if malediction == nil then
+		malediction = 1 -- default to enabled
 	end
 
 	-- handle faerie fire special case
@@ -545,18 +549,16 @@ function curses:HasCurse(lowercaseSpellNameNoRank, targetGuid, minRemaining)
 		lowercaseSpellNameNoRank = L["faerie fire"]
 	end
 
-  -- handle malediction for warlocks
-  if curses.isWarlock and
-      lowercaseSpellNameNoRank == L["curse of recklessness"] or
-      lowercaseSpellNameNoRank == L["curse of the elements"] or
-      lowercaseSpellNameNoRank == L["curse of shadow"] then
-    -- check if they have malediction
-    local _, _, _, _, malediction = GetTalentInfo(1, 17)
-
-    if malediction > 0 then
-      lowercaseSpellNameNoRank = L["curse of agony"] -- check for curse of agony instead
-    end
-  end
+	-- handle malediction for warlocks
+	if curses.isWarlock and malediction ~= 0 and (
+			lowercaseSpellNameNoRank == L["curse of recklessness"] or
+			lowercaseSpellNameNoRank == L["curse of the elements"] or
+			lowercaseSpellNameNoRank == L["curse of shadow"]) then
+		local _, _, _, _, hasMalediction = GetTalentInfo(1, 17)
+		if hasMalediction > 0 then
+			lowercaseSpellNameNoRank = L["curse of agony"]
+		end
+	end
 
 	if curses.guids[targetGuid] and curses.guids[targetGuid][lowercaseSpellNameNoRank] then
 		local remaining = Cursive.curses:TimeRemaining(curses.guids[targetGuid][lowercaseSpellNameNoRank])

@@ -20,6 +20,8 @@ Cursive:RegisterDefaults("profile", {
 	showhealthbar = true,
 	showunitname = true,
 
+	malediction = true,
+
 	shareddebuffs = {
 		faeriefire = false,
 	},

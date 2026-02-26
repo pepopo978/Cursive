@@ -16,6 +16,7 @@ local commandOptions = {
 	name = L["Filter targets by name. Can be a partial match.  If no match is found, the command will do nothing."],
 	ignorespellid = L["Ignore targets with the specified spell id already on them. Useful for ignoring targets that already have a shared debuff."],
 	ignorespelltexture = L["Ignore targets with the specified spell texture already on them. Useful for ignoring targets that already have a shared debuff."],
+	malediction = L["For Warlocks with the Malediction talent: when checking if Curse of Recklessness, Curse of the Elements, or Curse of Shadow is already on a target, check for Curse of Agony instead. Default is 1 (enabled). Set malediction=0 to disable and check for the original curse."],
 }
 
 local commands = {
@@ -76,6 +77,11 @@ local function parseOptions(optionsStr)
 				local _, _, texture = string.find(optionsStr, "ignorespelltexture=([%w_]+)")
 				if texture then
 					options["ignorespelltexture"] = texture
+				end
+			elseif option == "malediction" then
+				local _, _, maledictionVal = string.find(optionsStr, "malediction=(%d)")
+				if maledictionVal then
+					options["malediction"] = tonumber(maledictionVal)
 				end
 			elseif string.find(optionsStr, option) then
 				options[option] = true
@@ -241,32 +247,12 @@ local crowdControlledSpellIds = {
 }
 
 local function isMobCrowdControlled(guid)
-	-- check if mob is CC'ed
-
-	-- check debuffs
-	for i = 1, 16 do
-		local _, _, _, spellId = UnitDebuff(guid, i)
-		if spellId then
-			if crowdControlledSpellIds[spellId] then
-				return true
-			end
-		else
-			break
+	local auras = GetUnitField(guid, "aura")
+	for i, spellId in pairs(auras) do
+		if crowdControlledSpellIds[spellId] then
+			return true
 		end
 	end
-
-	-- check buffs
-	for i = 1, 32 do
-		local _, _, spellId = UnitBuff(guid, i)
-		if spellId then
-			if crowdControlledSpellIds[spellId] then
-				return true
-			end
-		else
-			break
-		end
-	end
-
 	return false
 end
 
@@ -283,26 +269,12 @@ local function GetSquarePrioRaidTargetIndex(guid)
 end
 
 local function hasSpellId(guid, ignoreSpellId)
-	for i = 1, 16 do
-		local texture, stacks, spellSchool, spellId = UnitDebuff(guid, i);
-		if not spellId then
-			break
-		end
+	local auras = GetUnitField(guid, "aura")
+	for i, spellId in pairs(auras) do
 		if spellId == ignoreSpellId then
 			return true
 		end
 	end
-
-	for i = 1, 32 do
-		local texture, stacks, spellId = UnitBuff(guid, i);
-		if not spellId then
-			break
-		end
-		if spellId == ignoreSpellId then
-			return true
-		end
-	end
-
 	return false
 end
 
@@ -401,7 +373,7 @@ local function pickTarget(selectedPriority, lowercaseSpellNameNoRank, checkRange
 						end
 						if passedRangeCheck then
 							-- check if the target has the curse
-							if not Cursive.curses:HasCurse(lowercaseSpellNameNoRank, guid, refreshTime) and not isMobCrowdControlled(guid) then
+							if not Cursive.curses:HasCurse(lowercaseSpellNameNoRank, guid, refreshTime, options["malediction"]) and not isMobCrowdControlled(guid) then
 								local mobHp = UnitHealth(guid)
 								if not minHp or mobHp >= minHp then
 									local primaryValue = -1
@@ -512,7 +484,7 @@ function Cursive:Curse(spellName, targetedGuid, options)
 	-- remove (Rank x) from spellName if it exists
 	local lowercaseSpellNameNoRank = Cursive.utils.GetLowercaseSpellNameNoRank(spellName)
 
-	if targetedGuid and not Cursive.curses:HasCurse(lowercaseSpellNameNoRank, targetedGuid, options["refreshtime"]) and not isMobCrowdControlled(targetedGuid) then
+	if targetedGuid and not Cursive.curses:HasCurse(lowercaseSpellNameNoRank, targetedGuid, options["refreshtime"], options["malediction"]) and not isMobCrowdControlled(targetedGuid) then
 		castSpellWithOptions(string.lower(spellName), lowercaseSpellNameNoRank, targetedGuid, options)
 		return true
 	elseif options["warnings"] then
