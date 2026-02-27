@@ -100,8 +100,11 @@ All commands can take the following options separated by commas:
 - `name=<str>` : "Filter targets by name. Can be a partial match. If no match is found, the command will do nothing.",
 - `ignorespellid=<number>` : "Ignore targets with the specified spell id already on them. Useful for ignoring targets
   that already have a shared debuff.",
-- `ignorespelltexture=<number>` : "Ignore targets with the specified spell texture already on them. Useful for ignoring
+- `ignorespelltexture=<str>` : "Ignore targets with the specified spell texture already on them. Useful for ignoring
   targets that already have a shared debuff.",
+- `malediction=<0|1>` : "For Warlocks with the Malediction talent: when checking if Curse of Recklessness, Curse of
+  the Elements, or Curse of Shadow is already on a target, check for Curse of Agony instead. Default is 1 (enabled).
+  Set `malediction=0` to disable and check for the original curse.",
 
 EXAMPLE: `/cursive multicurse Corruption|HIGHEST_HP|warnings,resistsound,expiringsound,minhp=10000,refreshtime=2`
 
@@ -187,7 +190,7 @@ All commands will ignore targets with the following CCs on them:
 Multicurse will only ever target enemies that are already in combat (except if you target a mob directly first) to
 prevent pulling things you didn't intend like marked patrols.
 
-For Warlocks with the Malediction talent, when checking if Curse of Recklessness, Curse of the Elements, or Curse of Shadow is already on a target, the addon will instead check for Curse of Agony to allow you to refresh agony using them.  Don't use the refreshtime option with this as the server won't refresh Curse of Agony if it is still on the mob.
+For Warlocks with the Malediction talent, when checking if Curse of Recklessness, Curse of the Elements, or Curse of Shadow is already on a target, the addon will instead check for Curse of Agony to allow you to refresh agony using them. This is enabled by default and can be disabled per-command with `malediction=0`. Don't use the `refreshtime` option with this as the server won't refresh Curse of Agony if it is still on the mob.
 
 Mobs with raid marks will be displayed first.
 
