@@ -125,6 +125,7 @@ function curses:LoadCurses()
 	end
 
   -- build travelTimeSpellIds from spell data
+  -- travelTime spells must have a damage component otherwise it won't work
   curses.travelTimeSpellIds = {}
   for id, data in pairs(curses.trackedCurseIds) do
     if data.travelTime then
