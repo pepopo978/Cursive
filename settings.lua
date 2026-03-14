@@ -57,7 +57,7 @@ Cursive:RegisterDefaults("profile", {
 	ignorelistuseregex = false,
 })
 
-local function splitString(str, delimiter)
+local function splitIgnoreString(str, delimiter)
 	local result = {}
 	local from = 1
 	local delim_from, delim_to = string.find(str, delimiter, from)
@@ -490,7 +490,7 @@ local mobFilters = {
 			if not v or v == "" then
 				Cursive.db.profile.ignorelist = {}
 			else
-				Cursive.db.profile.ignorelist = splitString(v, ",");
+				Cursive.db.profile.ignorelist = splitIgnoreString(v, ",");
 			end
 			-- check for common lua regex patterns
 			Cursive.db.profile.ignorelistuseregex = string.find(v, "[*+%%?]") ~= nil
