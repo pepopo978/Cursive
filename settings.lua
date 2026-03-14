@@ -62,11 +62,17 @@ local function splitString(str, delimiter)
 	local from = 1
 	local delim_from, delim_to = string.find(str, delimiter, from)
 	while delim_from do
-		table.insert(result, string.sub(str, from, delim_from - 1))
+		local token = string.sub(str, from, delim_from - 1)
+		if string.len(token) >= 3 then
+			table.insert(result, token)
+		end
 		from = delim_to + 1
 		delim_from, delim_to = string.find(str, delimiter, from)
 	end
-	table.insert(result, string.sub(str, from))
+	local token = string.sub(str, from)
+	if string.len(token) >= 3 then
+		table.insert(result, token)
+	end
 	return result
 end
 
