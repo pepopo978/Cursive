@@ -155,7 +155,7 @@ Curse data is a table with the following structure:
 		duration = float,
 		start = float,
 		spellID = int,
-		targetGuid = int,
+		targetGuid = string,
 		currentPlayer = bool,
 }
 ```
