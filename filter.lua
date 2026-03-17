@@ -1,4 +1,4 @@
-if not Cursive.superwow then
+if not Cursive.nampower then
 	return
 end
 

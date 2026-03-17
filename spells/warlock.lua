@@ -60,9 +60,9 @@ function getWarlockSpells()
 		[11668] = { name = L["immolate"], rank = 7, duration = 15 },
 		[25309] = { name = L["immolate"], rank = 8, duration = 15 },
 
-		[6789] = { name = L["death coil"], rank = 1, duration = 3 },
-		[17925] = { name = L["death coil"], rank = 2, duration = 3 },
-		[17926] = { name = L["death coil"], rank = 3, duration = 3 },
+		[6789] = { name = L["death coil"], rank = 1, duration = 3, travelTime = true },
+		[17925] = { name = L["death coil"], rank = 2, duration = 3, travelTime = true },
+		[17926] = { name = L["death coil"], rank = 3, duration = 3, travelTime = true },
 
 		[710] = { name = L["banish"], rank = 1, duration = 20 },
 		[18647] = { name = L["banish"], rank = 2, duration = 30 },

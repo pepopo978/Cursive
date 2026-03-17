@@ -1,4 +1,4 @@
-if not Cursive.superwow then
+if not Cursive.nampower then
 	return
 end
 
@@ -19,6 +19,8 @@ Cursive:RegisterDefaults("profile", {
 	showraidicons = true,
 	showhealthbar = true,
 	showunitname = true,
+
+	malediction = true,
 
 	shareddebuffs = {
 		faeriefire = false,

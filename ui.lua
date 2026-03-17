@@ -1,4 +1,4 @@
-if not Cursive.superwow then
+if not Cursive.nampower then
 	return
 end
 
@@ -184,6 +184,7 @@ ui.BarEnter = function()
 	end
 	this.parent.hover = true
 
+  SetMouseoverUnit(this.parent.guid)
 	GameTooltip_SetDefaultAnchor(GameTooltip, this)
 	GameTooltip:SetUnit(this.parent.guid)
 	GameTooltip:Show()
@@ -191,6 +192,7 @@ end
 
 ui.BarLeave = function()
 	this.parent.hover = false
+  SetMouseoverUnit()
 	GameTooltip:Hide()
 end
 
@@ -507,26 +509,12 @@ local function GetBarCords(row, col)
 end
 
 local function hasAnySpellId(guid, spellIds)
-	for i = 1, 16 do
-		local texture, stacks, spellSchool, spellId = UnitDebuff(guid, i);
-		if not spellId then
-			break
-		end
+	local auras = GetUnitField(guid, "aura")
+	for i, spellId in pairs(auras) do
 		if spellIds[spellId] then
 			return spellId
 		end
 	end
-
-	for i = 1, 32 do
-		local texture, stacks, spellId = UnitBuff(guid, i);
-		if not spellId then
-			break
-		end
-		if spellIds[spellId] then
-			return spellId
-		end
-	end
-
 	return nil
 end
 

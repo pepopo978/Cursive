@@ -1,4 +1,4 @@
-if not Cursive.superwow then
+if not Cursive.nampower then
 	return
 end
 
@@ -24,10 +24,6 @@ Cursive.core.add = function(unit)
 end
 
 Cursive.core.addGuid = function(guid)
-	-- check if first two characters are 0x
-	if string.sub(guid, 1, 2) ~= "0x" then
-		return
-	end
 	if UnitExists(guid) and not UnitIsDead(guid) then
 		Cursive.core.guids[guid] = GetTime()
 	end
@@ -41,8 +37,8 @@ Cursive.core.enable = function()
 	-- unitstr
 	Cursive.core:RegisterEvent("PLAYER_TARGET_CHANGED")
 	-- arg1
-	Cursive.core:RegisterEvent("UNIT_COMBAT") -- this can get called with player/target/raid1 etc
-	Cursive.core:RegisterEvent("UNIT_MODEL_CHANGED")
+  Cursive.core:RegisterEvent("UNIT_COMBAT_GUID") -- this can get called with player/target/raid1 etc
+  Cursive.core:RegisterEvent("UNIT_MODEL_CHANGED_GUID")
 end
 
 Cursive.core.disable = function()
