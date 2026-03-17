@@ -16,10 +16,10 @@ local function HasMinimumNampowerVersion(major, minor, patch)
   return false
 end
 
-Cursive.nampower = HasMinimumNampowerVersion(2, 37, 0)
+Cursive.nampower = HasMinimumNampowerVersion(2, 40, 0)
 
 if not Cursive.nampower then
-  DEFAULT_CHAT_FRAME:AddMessage("|cffff6060Cursive:|r could not detect nampower >= v2.37.0")
+  DEFAULT_CHAT_FRAME:AddMessage("|cffff6060Cursive:|r could not detect nampower >= v2.40.0")
   return
 end
 
