@@ -369,7 +369,7 @@ Cursive:RegisterEvent("SPELL_CHANNEL_START", function(spellID, targetGuid, durat
     curses.darkHarvestData = {
       spellID = spellID,
       targetGuid = targetGuid,
-      castDuration = curses:ScanTooltipForDuration(spellID),
+      castDuration = durationMs / 1000,
       start = GetTime()
     }
 	end
@@ -415,7 +415,7 @@ function curses:GetLastTickTime(curseData)
 	end
 
 	local tickTime = curseData.duration / ticks
-	local currentTime = GetTime() + tickTime * .2 -- dh won't apply to previous tick if within 20% of tick time
+	local currentTime = GetTime()
 
 	return math.floor((currentTime - curseData.start) / tickTime) * tickTime + curseData.start
 end

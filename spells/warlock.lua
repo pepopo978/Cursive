@@ -21,10 +21,6 @@ function getWarlockSpells()
 		[18880] = { name = L["siphon life"], rank = 3, duration = 30, variableDuration = true, darkHarvest = true, numTicks=10 },
 		[18881] = { name = L["siphon life"], rank = 4, duration = 30, variableDuration = true, darkHarvest = true, numTicks=10 },
 
-		[52550] = { name = L["dark harvest"], rank = 1, duration = 8, variableDuration = true },
-		[52551] = { name = L["dark harvest"], rank = 2, duration = 8, variableDuration = true },
-		[52552] = { name = L["dark harvest"], rank = 3, duration = 8, variableDuration = true },
-
 		[603] = { name = L["curse of doom"], rank = 1, duration = 60 },
 
 		[704] = { name = L["curse of recklessness"], rank = 1, duration = 120 },

@@ -1,6 +1,6 @@
 ## Interface: 11200
-## Title: Cursive 3.0.0
-## Title-zhCN: Cursive 3.0.0
+## Title: Cursive 3.0.1
+## Title-zhCN: Cursive 3.0.1
 ## Author: Pepopo
 ## Notes: Uses GUIDs to show units in combat and track curses
 ## Notes-zhCN: 使用的GUID功能来显示战斗中的单位并监视诅咒等
