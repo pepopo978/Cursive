@@ -59,10 +59,10 @@ function getDruidSpells()
 		[9834] = { name = L["moonfire"], rank = 9, duration = 18, variableDuration = true },
 		[9835] = { name = L["moonfire"], rank = 10, duration = 18, variableDuration = true },
 
-		[1822] = { name = L["rake"], rank = 1, duration = 9, variableDuration = true },
-		[1823] = { name = L["rake"], rank = 2, duration = 9, variableDuration = true },
-		[1824] = { name = L["rake"], rank = 3, duration = 9, variableDuration = true },
-		[9904] = { name = L["rake"], rank = 4, duration = 9, variableDuration = true },
+		[1822] = { name = L["rake"], rank = 1, duration = 9, variableDuration = true, meleeBleed=true },
+		[1823] = { name = L["rake"], rank = 2, duration = 9, variableDuration = true, meleeBleed=true },
+		[1824] = { name = L["rake"], rank = 3, duration = 9, variableDuration = true, meleeBleed=true },
+		[9904] = { name = L["rake"], rank = 4, duration = 9, variableDuration = true, meleeBleed=true },
 
 		[1079] = { name = L["rip"], rank = 1, duration = 8, calculateDuration = getRipDuration },
 		[9492] = { name = L["rip"], rank = 2, duration = 8, calculateDuration = getRipDuration },
@@ -87,8 +87,8 @@ function getDruidSpells()
 
 		[5209] = { name = L["challenging roar"], rank = 1, duration = 6 },
 
-		[9005] = { name = L["pounce bleed"], rank = 1, duration = 18 },
-		[9823] = { name = L["pounce bleed"], rank = 2, duration = 18 },
-		[9827] = { name = L["pounce bleed"], rank = 3, duration = 18 },
+		[9005] = { name = L["pounce bleed"], rank = 1, duration = 18, meleeBleed=true },
+		[9823] = { name = L["pounce bleed"], rank = 2, duration = 18, meleeBleed=true },
+		[9827] = { name = L["pounce bleed"], rank = 3, duration = 18, meleeBleed=true },
 	}
 end

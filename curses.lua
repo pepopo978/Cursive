@@ -291,6 +291,26 @@ local function StopChanneling()
 	curses.isChanneling = false
 end
 
+local function VerifyMeleeBleedApplied(targetGuid, spellID)
+	local curseData = curses.trackedCurseIds[spellID]
+	if not curseData or not curseData.meleeBleed then
+		return
+	end
+
+	if not curses.guids[targetGuid] or not curses.guids[targetGuid][curseData.name] then
+		return
+	end
+
+	local auras = GetUnitField(targetGuid, "aura") or {}
+	for i, auraSpellID in pairs(auras) do
+		if auraSpellID == spellID then
+			return
+		end
+	end
+
+	curses:RemoveCurse(targetGuid, curseData.name)
+end
+
 Cursive:RegisterEvent("SPELLCAST_CHANNEL_START", function()
 	curses.isChanneling = true
 end);
@@ -300,13 +320,11 @@ Cursive:RegisterEvent("SPELLCAST_INTERRUPTED", StopChanneling);
 
 -- player spell completions
 Cursive:RegisterEvent("SPELL_GO_SELF", function(itemId, spellID, casterGuid, targetGuid, castFlags, numTargetsHit, numTargetsMissed)
-  if numTargetsMissed > 0 then
-    curses.pendingCast = {}
-  elseif numTargetsHit > 0 or curses.travelTimeSpellIds[spellID] then
-		curses.pendingCast = {
-			spellID = spellID,
-			targetGuid = targetGuid,
-		}
+  if curses.travelTimeSpellIds[spellID] and numTargetsMissed == 0 then
+			curses.pendingCast = {
+				spellID = spellID,
+				targetGuid = targetGuid,
+			}
   end
 
   if curses.isDruid then
@@ -339,6 +357,9 @@ Cursive:RegisterEvent("SPELL_GO_SELF", function(itemId, spellID, casterGuid, tar
 			lastGuid = targetGuid
       local duration = curses:GetCurseDuration(spellID)
       curses:ApplyCurse(spellID, targetGuid, GetTime(), duration)
+      if curses.trackedCurseIds[spellID].meleeBleed and not curses.mobsThatBleed[targetGuid] then
+        Cursive:ScheduleEvent(VerifyMeleeBleedApplied, 0.05, targetGuid, spellID)
+      end
 		elseif curses.conflagrateSpellIds[spellID] then
       curses:UpdateCurse(spellID, targetGuid, GetTime())
 		end
@@ -351,7 +372,6 @@ Cursive:RegisterEvent("SPELL_START_SELF", function(itemId, spellID, casterGuid, 
     curses.pendingCast = {
       spellID = spellID,
       targetGuid = targetGuid,
-      castDuration = castTime / 1000
     }
   end
 end)
@@ -608,17 +628,6 @@ function curses:ApplyCurse(spellID, targetGuid, startTime, duration)
 
 	local name = curses.trackedCurseIds[spellID].name
 	local rank = curses.trackedCurseIds[spellID].rank
-
-	if curses.isDruid and name == L["rake"] then
-		-- check if mob is in bleed whitelist first
-		-- these bosses are most likely to hit 48 client debuff cap
-		if not curses.mobsThatBleed[targetGuid] then
-			if not curses:ScanGuidForCurse(targetGuid, spellID) then
-				-- rake not found on target, do not apply
-				return
-			end
-		end
-	end
 
 	if not curses.guids[targetGuid] then
 		curses.guids[targetGuid] = {}
