@@ -73,6 +73,8 @@ local curses = {
 		["0xF130003E75015AB4"] = true, --Sapphiron
 		["0xF130003E76015AED"] = true, --Kel'Thuzad
 	},
+  bleedImmuneMobs = { -- populated with mob names that fail VerifyMeleeBleedApplied to allow skipping future bleed checks
+  }
 }
 
 -- combat events for curses
@@ -301,12 +303,26 @@ local function VerifyMeleeBleedApplied(targetGuid, spellID)
 		return
 	end
 
+  if not UnitExists(targetGuid) then
+    return
+  end
+
+  local hasFullBuffsAndDebuffs = true
 	local auras = GetUnitField(targetGuid, "aura") or {}
 	for i, auraSpellID in pairs(auras) do
 		if auraSpellID == spellID then
 			return
+    elseif auraSpellID <= 0 then
+      hasFullBuffsAndDebuffs = false
 		end
 	end
+
+  if not hasFullBuffsAndDebuffs then
+    local mobName = UnitName(targetGuid)
+    if mobName then
+      curses.bleedImmuneMobs[mobName] = true
+    end
+  end
 
 	curses:RemoveCurse(targetGuid, curseData.name)
 end
@@ -355,10 +371,20 @@ Cursive:RegisterEvent("SPELL_GO_SELF", function(itemId, spellID, casterGuid, tar
   if numTargetsHit > 0 then
     if curses.trackedCurseIds[spellID] and not curses.travelTimeSpellIds[spellID] then
 			lastGuid = targetGuid
-      local duration = curses:GetCurseDuration(spellID)
-      curses:ApplyCurse(spellID, targetGuid, GetTime(), duration)
-      if curses.trackedCurseIds[spellID].meleeBleed and not curses.mobsThatBleed[targetGuid] then
-        Cursive:ScheduleEvent(VerifyMeleeBleedApplied, 0.05, targetGuid, spellID)
+      local curseData = curses.trackedCurseIds[spellID]
+      if curseData.meleeBleed then
+        local mobName = UnitName(targetGuid)
+        local isBleedImmuneMob = mobName and mobName ~= "" and curses.bleedImmuneMobs[mobName]
+        if not isBleedImmuneMob then
+          local duration = curses:GetCurseDuration(spellID)
+          curses:ApplyCurse(spellID, targetGuid, GetTime(), duration)
+          if not curses.mobsThatBleed[targetGuid] then
+            Cursive:ScheduleEvent(VerifyMeleeBleedApplied, 1, targetGuid, spellID)
+          end
+        end
+      else
+        local duration = curses:GetCurseDuration(spellID)
+        curses:ApplyCurse(spellID, targetGuid, GetTime(), duration)
       end
 		elseif curses.conflagrateSpellIds[spellID] then
       curses:UpdateCurse(spellID, targetGuid, GetTime())
@@ -626,8 +652,9 @@ function curses:ApplyCurse(spellID, targetGuid, startTime, duration)
 	-- clear pending cast
 	curses.pendingCast = {}
 
-	local name = curses.trackedCurseIds[spellID].name
-	local rank = curses.trackedCurseIds[spellID].rank
+  local curseData = curses.trackedCurseIds[spellID]
+  local name = curseData.name
+  local rank = curseData.rank
 
 	if not curses.guids[targetGuid] then
 		curses.guids[targetGuid] = {}

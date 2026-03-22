@@ -190,6 +190,10 @@ prevent pulling things you didn't intend like marked patrols.
 
 For Warlocks with the Malediction talent, when checking if Curse of Recklessness, Curse of the Elements, or Curse of Shadow is already on a target, the addon will instead check for Curse of Agony to allow you to refresh agony using them. This is enabled by default and can be disabled per-command with `malediction=0`. Don't use the `refreshtime` option with this as the server won't refresh Curse of Agony if it is still on the mob.
 
+Special spells such as `Rake` that deal direct damage but also apply a bleed DoT are handled differently from normal debuffs. When one lands, Cursive starts a 1 second timer then checks that the bleed aura actually appeared on the target. If it did not, Cursive removes the curse.
+
+If that verification failure happened while the target was not at the client buff/debuff cap, the addon assumes that mob name is bleed-immune and caches it in memory. Future casts against mobs with that same name will skip bleed tracking so you do not keep getting `Rake` timers for 1 second on bleed-immune targets.
+
 Mobs with raid marks will be displayed first.
 
 Mobs will the top 3 max hps will always display next. I may make this configurable in the future.
