@@ -159,6 +159,7 @@ L:RegisterTranslations("enUS", function()
 		["hex of weakness"] = true,
 		["shadow word: pain"] = true,
 		["vampiric embrace"] = true,
+		["burning zeal"] = true,
 		["holy fire"] = true,
 
 		-- Paladin
@@ -370,6 +371,7 @@ L:RegisterTranslations("zhCN", function()
 		["hex of weakness"] = "虚弱妖术",
 		["shadow word: pain"] = "暗言术：痛",
 		["vampiric embrace"] = "吸血鬼的拥抱",
+		["burning zeal"] = "炽燃热忱",
 		["holy fire"] = "神圣之火",
 
 		-- Paladin

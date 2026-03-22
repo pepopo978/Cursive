@@ -38,6 +38,8 @@ function getPriestSpells()
 
 		[15286] = { name = L["vampiric embrace"], rank = 1, duration = 60 },
 
+		[52980] = { name = L["burning zeal"], rank = 1, duration = 18 },
+
 		[14914] = { name = L["holy fire"], rank = 1, duration = 10 },
 		[15262] = { name = L["holy fire"], rank = 2, duration = 10 },
 		[15263] = { name = L["holy fire"], rank = 3, duration = 10 },
