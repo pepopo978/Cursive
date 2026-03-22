@@ -23,6 +23,18 @@ if not Cursive.nampower then
   return
 end
 
+Cursive:RegisterEvent("ADDON_LOADED", function(name)
+  if GetCVar("NP_EnableSpellStartEvents") ~= "1" then
+    DEFAULT_CHAT_FRAME:AddMessage("|cffff6060Cursive:|r Another addon disabled nampower spell start events.  Re-enabling as they are required.")
+    SetCVar("NP_EnableSpellStartEvents", 1)
+  end
+
+  if GetCVar("NP_EnableSpellGoEvents") ~= "1" then
+    DEFAULT_CHAT_FRAME:AddMessage("|cffff6060Cursive:|r Another addon disabled nampower spell go events.  Re-enabling as they are required.")
+    SetCVar("NP_EnableSpellGoEvents", 1)
+  end
+end)
+
 function Cursive:OnEnable()
 	if not Cursive.nampower then
 		return
