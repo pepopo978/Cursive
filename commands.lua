@@ -1,3 +1,7 @@
+if not Cursive.nampower then
+	return
+end
+
 local L = AceLibrary("AceLocale-2.2"):new("Cursive")
 local curseCommands = L["|cffffcc00Cursive:|cffffaaaa Commands:"]
 local priorityChoices = L["|cffffcc00Priority choices:"]

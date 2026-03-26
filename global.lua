@@ -33,6 +33,11 @@ Cursive:RegisterEvent("ADDON_LOADED", function(name)
     DEFAULT_CHAT_FRAME:AddMessage("|cffff6060Cursive:|r Another addon disabled nampower spell go events.  Re-enabling as they are required.")
     SetCVar("NP_EnableSpellGoEvents", 1)
   end
+
+  if GetCVar("NP_EnableUnitEventsGuid") ~= "1" then
+    DEFAULT_CHAT_FRAME:AddMessage("|cffff6060Cursive:|r Another addon disabled nampower guid events.  Re-enabling as they are required.")
+    SetCVar("NP_EnableUnitEventsGuid", 1)
+  end
 end)
 
 function Cursive:OnEnable()
@@ -42,6 +47,7 @@ function Cursive:OnEnable()
 
 	SetCVar("NP_EnableSpellStartEvents", 1)
 	SetCVar("NP_EnableSpellGoEvents", 1)
+	SetCVar("NP_EnableUnitEventsGuid", 1)
 
 	DEFAULT_CHAT_FRAME:AddMessage(L["|cffffcc00Cursive:|cffffaaaa Loaded.  /cursive for commands and minimap icon for options."])
 
