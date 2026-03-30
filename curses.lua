@@ -317,7 +317,16 @@ local function VerifyMeleeBleedApplied(targetGuid, spellID)
 		end
 	end
 
-  if not hasFullBuffsAndDebuffs then
+  local isPounceBleed = false
+  if spellID == 9005 or
+      spellID == 9823 or
+      spellID == 9827 then
+    isPounceBleed = true
+  end
+
+  -- pounce bleed can fail due to stun immunity as well
+  -- skip marking the mob as bleed immune for it
+  if not hasFullBuffsAndDebuffs and not isPounceBleed then
     local mobName = UnitName(targetGuid)
     if mobName then
       curses.bleedImmuneMobs[mobName] = true
@@ -373,6 +382,10 @@ Cursive:RegisterEvent("SPELL_GO_SELF", function(itemId, spellID, casterGuid, tar
 			lastGuid = targetGuid
       local curseData = curses.trackedCurseIds[spellID]
       if curseData.meleeBleed then
+        if numTargetsMissed > 0 then
+          -- I think this will always mean the bleed missed and we can skip the extra bleed immunity logic
+          return
+        end
         local mobName = UnitName(targetGuid)
         local isBleedImmuneMob = mobName and mobName ~= "" and curses.bleedImmuneMobs[mobName]
         if not isBleedImmuneMob then
