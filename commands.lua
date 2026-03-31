@@ -250,14 +250,28 @@ local crowdControlledSpellIds = {
 	[57644] = { name = "Veil of Vorgendor" },
 }
 
+local spellImmuneGuids = {
+  ["0xF1300030A9014A44"] = true, -- Blackwing Spellbinder
+  ["0xF1300030A911F78C"] = true, -- Blackwing Spellbinder
+  ["0xF1300030A911F78D"] = true, -- Blackwing Spellbinder
+  ["0xF1300030A9014EFE"] = true, -- Blackwing Spellbinder
+  ["0xF1300030A9014F08"] = true, -- Blackwing Spellbinder
+  ["0xF1300030A9014E75"] = true, -- Blackwing Spellbinder
+  ["0xF1300030A9014E6D"] = true, -- Blackwing Spellbinder
+}
+
 local function isMobCrowdControlled(guid)
-	local auras = GetUnitField(guid, "aura")
+	local auras = GetUnitField(guid, "aura") or {}
 	for i, spellId in pairs(auras) do
 		if crowdControlledSpellIds[spellId] then
 			return true
 		end
 	end
 	return false
+end
+
+local function isMobSpellImmune(guid)
+	return spellImmuneGuids[guid] and true or false
 end
 
 local function GetSquarePrioRaidTargetIndex(guid)
@@ -377,7 +391,9 @@ local function pickTarget(selectedPriority, lowercaseSpellNameNoRank, checkRange
 						end
 						if passedRangeCheck then
 							-- check if the target has the curse
-							if not Cursive.curses:HasCurse(lowercaseSpellNameNoRank, guid, refreshTime, options["malediction"]) and not isMobCrowdControlled(guid) then
+              if not Cursive.curses:HasCurse(lowercaseSpellNameNoRank, guid, refreshTime, options["malediction"]) and
+                  not isMobCrowdControlled(guid) and
+                  not isMobSpellImmune(guid) then
 								local mobHp = UnitHealth(guid)
 								if not minHp or mobHp >= minHp then
 									local primaryValue = -1
@@ -488,7 +504,10 @@ function Cursive:Curse(spellName, targetedGuid, options)
 	-- remove (Rank x) from spellName if it exists
 	local lowercaseSpellNameNoRank = Cursive.utils.GetLowercaseSpellNameNoRank(spellName)
 
-	if targetedGuid and not Cursive.curses:HasCurse(lowercaseSpellNameNoRank, targetedGuid, options["refreshtime"], options["malediction"]) and not isMobCrowdControlled(targetedGuid) then
+	if targetedGuid and
+			not Cursive.curses:HasCurse(lowercaseSpellNameNoRank, targetedGuid, options["refreshtime"], options["malediction"]) and
+			not isMobCrowdControlled(targetedGuid) and
+			not isMobSpellImmune(targetedGuid) then
 		castSpellWithOptions(string.lower(spellName), lowercaseSpellNameNoRank, targetedGuid, options)
 		return true
 	elseif options["warnings"] then

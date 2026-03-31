@@ -185,6 +185,8 @@ All commands will ignore targets with the following CCs on them:
 - Freezing Trap
 - Banish
 
+All commands will also ignore spell-immune mobs the same way they ignore crowd controlled mobs. Currently this is only used for `Blackwing Spellbinder` in BWL.
+
 Multicurse will only ever target enemies that are already in combat (except if you target a mob directly first) to
 prevent pulling things you didn't intend like marked patrols.
 
