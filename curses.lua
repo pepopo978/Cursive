@@ -249,24 +249,10 @@ function curses:GetCurseDuration(curseSpellID)
 end
 
 function curses:ScanGuidForCurse(guid, curseSpellID)
-	for i = 1, 64 do
-		local _, _, _, spellID = UnitDebuff(guid, i)
-		if spellID then
-			if spellID == curseSpellID then
-				return true
-			end
-		else
-			break
-		end
-	end
-	for i = 1, 64 do
-		local _, _, spellID = UnitBuff(guid, i)
-		if spellID then
-			if spellID == curseSpellID then
-				return true
-			end
-		else
-			break
+  local auras = GetUnitField(guid, "aura") or {}
+  for i, spellID in pairs(auras) do
+    if spellID == curseSpellID then
+      return true
 		end
 	end
 
@@ -293,6 +279,15 @@ local function StopChanneling()
 	curses.isChanneling = false
 end
 
+local function GetAppliedCurseSpellID(spellID)
+	local curseData = curses.trackedCurseIds[spellID]
+	if curseData and curseData.debuffSpellId then
+		return curseData.debuffSpellId
+	end
+
+	return spellID
+end
+
 local function VerifyMeleeBleedApplied(targetGuid, spellID)
 	local curseData = curses.trackedCurseIds[spellID]
 	if not curseData or not curseData.meleeBleed then
@@ -308,25 +303,17 @@ local function VerifyMeleeBleedApplied(targetGuid, spellID)
   end
 
   local hasFullBuffsAndDebuffs = true
+	local appliedSpellID = GetAppliedCurseSpellID(spellID)
 	local auras = GetUnitField(targetGuid, "aura") or {}
 	for i, auraSpellID in pairs(auras) do
-		if auraSpellID == spellID then
+		if auraSpellID == appliedSpellID then
 			return
     elseif auraSpellID <= 0 then
       hasFullBuffsAndDebuffs = false
 		end
 	end
 
-  local isPounceBleed = false
-  if spellID == 9005 or
-      spellID == 9823 or
-      spellID == 9827 then
-    isPounceBleed = true
-  end
-
-  -- pounce bleed can fail due to stun immunity as well
-  -- skip marking the mob as bleed immune for it
-  if not hasFullBuffsAndDebuffs and not isPounceBleed then
+  if not hasFullBuffsAndDebuffs then
     local mobName = UnitName(targetGuid)
     if mobName then
       curses.bleedImmuneMobs[mobName] = true
@@ -455,7 +442,7 @@ Cursive:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER", function(message)
 				for curseName, curseData in pairs(data) do
 					if curseName == spellName then
 						-- see if target still has that curse
-						if not curses:ScanGuidForCurse(guid, curseData.spellID) then
+						if not curses:ScanGuidForCurse(guid, curseData.appliedSpellID or curseData.spellID) then
 							-- remove curse
 							curses:RemoveCurse(guid, curseName)
 						end
@@ -678,6 +665,7 @@ function curses:ApplyCurse(spellID, targetGuid, startTime, duration)
 		duration = duration,
 		start = startTime,
 		spellID = spellID,
+		appliedSpellID = GetAppliedCurseSpellID(spellID),
 		targetGuid = targetGuid,
 		currentPlayer = true,
 	}

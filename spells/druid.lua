@@ -87,8 +87,8 @@ function getDruidSpells()
 
 		[5209] = { name = L["challenging roar"], rank = 1, duration = 6 },
 
-		[9005] = { name = L["pounce bleed"], rank = 1, duration = 18, meleeBleed=true },
-		[9823] = { name = L["pounce bleed"], rank = 2, duration = 18, meleeBleed=true },
-		[9827] = { name = L["pounce bleed"], rank = 3, duration = 18, meleeBleed=true },
+		[9005] = { name = L["pounce bleed"], rank = 1, duration = 18, meleeBleed=true, debuffSpellId=9007 },
+		[9823] = { name = L["pounce bleed"], rank = 2, duration = 18, meleeBleed=true, debuffSpellId=9824 },
+		[9827] = { name = L["pounce bleed"], rank = 3, duration = 18, meleeBleed=true, debuffSpellId=9826 }
 	}
 end
