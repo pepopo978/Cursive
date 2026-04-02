@@ -17,6 +17,7 @@ local commandOptions = {
 	priotarget = L["Always prioritize current target when choosing target for multicurse.  Does not affect 'curse' command."],
 	ignoretarget = L["Ignore the current target when choosing target for multicurse.  Does not affect 'curse' command."],
 	playeronly = L["Only choose players and ignore npcs when choosing target for multicurse.  Does not affect 'curse' command."],
+	istapped = L["Only choose mobs tagged by other players when choosing target for multicurse.  Does not affect 'curse' command."],
 	name = L["Filter targets by name. Can be a partial match.  If no match is found, the command will do nothing."],
 	ignorespellid = L["Ignore targets with the specified spell id already on them. Useful for ignoring targets that already have a shared debuff."],
 	ignorespelltexture = L["Ignore targets with the specified spell texture already on them. Useful for ignoring targets that already have a shared debuff."],
@@ -338,6 +339,9 @@ local function passedOptionFilters(guid, options)
 		end
 	end
 	if options["playeronly"] and not UnitIsPlayer(guid) then
+		return false
+	end
+	if options["istapped"] and not UnitIsTapped(guid) then
 		return false
 	end
 	return true
