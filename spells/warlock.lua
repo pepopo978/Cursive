@@ -66,5 +66,7 @@ function getWarlockSpells()
 		[5782] = { name = L["fear"], rank = 1, duration = 10 },
 		[6213] = { name = L["fear"], rank = 2, duration = 15 },
 		[6215] = { name = L["fear"], rank = 3, duration = 20 },
+
+    [58183] = { name = L["parasite of aln"], rank = 1, duration = 24 },
 	}
 end
