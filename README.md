@@ -153,6 +153,8 @@ For example `Cursive.curses:HasCurse("corruption", GetUnitGUID("target"), 3, fal
 You can get raw curse data using 
 `Cursive.curses:GetCurseData(spellName, guid)`
 
+GetCurseData does not require the spellName to already be lowercase / no rank.
+
 Curse data is a table with the following structure:
 ```
 {
