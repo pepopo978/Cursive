@@ -148,6 +148,8 @@ Cursive data can be accessed in other addons
 You can check if curse is active with
 `Cursive.curses:HasCurse(lowercaseSpellNameNoRank, targetGuid, minRemaining, malediction)`
 
+For example `Cursive.curses:HasCurse("corruption", GetUnitGUID("target"), 3, false)` or `Cursive.curses:HasCurse(Cursive.utils.GetLowercaseSpellNameNoRank("Corruption (Rank 2)"), GetUnitGUID("target"), 3, false)` will check if Corruption is on the current target with at least 3 seconds remaining.  It won't specifically check for rank 2 just wanted to show that HasCurse only works with the lowercase spell name without rank.
+
 You can get raw curse data using 
 `Cursive.curses:GetCurseData(spellName, guid)`
 
